@@ -5,80 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Frankiemoji™ — A World of Expressions</title>
   <meta name="description" content="Handcrafted, human expressions. Frankiemoji — Drawn by hand. Felt by heart. Coming soon." />
-
-  <!-- Social sharing -->
   <meta property="og:title" content="Frankiemoji™ — A World of Expressions" />
   <meta property="og:description" content="Each emotion, handcrafted. Your expressions — elevated. Coming soon." />
   <meta property="og:image" content="world-of-expressions.png" />
-  <meta property="og:type" content="website" />
   <link rel="icon" href="data:," />
-
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Topbar -->
   <header class="topbar">
-    <div class="container">
-      <div class="brand">Frankiemoji™</div>
-      <nav class="nav">
-        <a href="#parade">Gallery</a>
-        <a href="#waitlist" class="btn small">Get Notified</a>
-      </nav>
-    </div>
+    <div class="brand">Frankiemoji™</div>
   </header>
 
-  <!-- HERO — cinematic image + overlay copy -->
-  <section class="hero">
-    <!-- use your uploaded image -->
-    <img class="hero-img" src="world-of-expressions.png" alt="A World of Expressions collage" />
-    <div class="hero-gradient"></div>
-    <div class="hero-copy container">
-      <h1>A World of Expressions.</h1>
-      <p>Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
-      <a class="btn" href="#waitlist">Join the Waitlist</a>
-    </div>
-  </section>
-
-  <!-- MOVING EMOJI PARADE (works even if you only have the big image) -->
-  <section id="parade" aria-label="Frankiemoji parade">
-    <!-- Row 1 -->
-    <div class="marquee">
-      <div class="track">
-        <!-- Tip: replace these <div class="tile"> with <img> tags once you upload individual emoji PNGs.
-             For now, we use your big image repeated for a pleasing motion effect. -->
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
+  <main>
+    <!-- HERO -->
+    <section class="hero" role="img" aria-label="A world of expressions">
+      <img class="hero-img" src="world-of-expressions.png" alt="A World of Expressions collage" />
+      <div class="hero-copy">
+        <h1>A World of Expressions.</h1>
+        <p>Drawn by hand. Felt by heart.</p>
+        <a class="cta" href="#waitlist">Join the Waitlist</a>
       </div>
-    </div>
-    <!-- Row 2 (reverse, slower) -->
-    <div class="marquee reverse">
-      <div class="track">
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-        <div class="tile" style="--bg:url('world-of-expressions.png')"></div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- WAITLIST -->
-  <section id="waitlist" class="waitlist container">
-    <h2>Coming Soon</h2>
-    <p>Be first to know when Frankiemoji launches.</p>
-    <!-- Temporary mailto: swap for Formspree/ConvertKit later -->
-    <a class="btn outline" href="mailto:frankiemoji@yourmail.com?subject=Frankiemoji%20Waitlist">Notify Me</a>
-  </section>
+    <!-- ANIMATED EMOJI STRIPS -->
+    <section class="reel">
+      <div class="strip" id="rowA" aria-label="Emoji gallery row A"></div>
+      <div class="strip reverse" id="rowB" aria-label="Emoji gallery row B"></div>
+      <p class="hint">Hover or touch & hold to pause • Swipe to skim • Motion respects “reduced motion” settings</p>
+    </section>
+
+    <!-- WAITLIST -->
+    <section id="waitlist" class="signup">
+      <h2>Coming Soon</h2>
+      <p>Be first to know when Frankiemoji launches.</p>
+      <!-- Replace mailto with Formspree/Vercel/ConvertKit later -->
+      <a class="cta outline" href="mailto:frankiemoji@yourmail.com?subject=Frankiemoji%20Waitlist">Get Notified</a>
+    </section>
+  </main>
 
   <footer class="footer">
-    <div class="container">
-      <small>© 2025 Frankiemoji™ — Drawn by hand. Felt by heart.</small>
-    </div>
+    <small>© 2025 Frankiemoji™ — Drawn by hand. Felt by heart.</small>
   </footer>
+
+  <script src="script.js" defer></script>
 </body>
 </html>
