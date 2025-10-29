@@ -2,39 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Frankiemoji™ — Express Yourself</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Frankiemoji™ — A World of Expressions</title>
+  <meta name="description" content="Handcrafted, human expressions. Frankiemoji — Drawn by hand. Felt by heart. Coming soon." />
+
+  <!-- Social sharing -->
+  <meta property="og:title" content="Frankiemoji™ — A World of Expressions" />
+  <meta property="og:description" content="Each emotion, handcrafted. Your expressions — elevated. Coming soon." />
+  <meta property="og:image" content="images/world-of-expressions.png" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:," /> <!-- tiny blank favicon -->
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <img src="images/frankiemoji-logo.png" alt="Frankiemoji Logo" class="logo" />
-    <h1>Frankiemoji™</h1>
-    <p class="tagline">Drawn by hand. Felt by heart.</p>
+  <header class="topbar">
+    <div class="brand">Frankiemoji™</div>
   </header>
 
   <main>
-    <section class="intro">
-      <h2>Meet the Next Evolution of Emoji</h2>
-      <p>
-        Frankiemoji brings real human expression back to messaging — hand-drawn, emotion-packed emojis that capture <strong>you</strong>.
-      </p>
-      <a href="#" class="cta">Join the Waitlist</a>
+    <!-- Full-bleed hero using your artwork -->
+    <section class="hero" role="img" aria-label="A world of expressions">
+      <div class="overlay"></div>
+      <img class="hero-img" src="images/world-of-expressions.png" alt="A World of Expressions collage" />
+      <div class="hero-copy">
+        <h1>A World of Expressions.</h1>
+        <p>Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
+        <a class="cta" href="#waitlist">Get notified</a>
+      </div>
     </section>
 
-    <section class="gallery">
-      <h2>Sample Expressions</h2>
-      <div class="emoji-grid">
-        <img src="images/sample1.png" alt="Happy Frankiemoji" />
-        <img src="images/sample2.png" alt="Excited Frankiemoji" />
-        <img src="images/sample3.png" alt="Chill Frankiemoji" />
-      </div>
+    <!-- Simple waitlist block (swap the action to your tool later) -->
+    <section id="waitlist" class="signup">
+      <h2>Coming soon</h2>
+      <p>Be first to know when Frankiemoji launches.</p>
+      <!-- Temporary mailto. Replace action with Formspree, Beehiiv, ConvertKit, etc. -->
+      <a class="cta outline" href="mailto:frankiemoji@yourmail.com?subject=Frankiemoji%20Waitlist">Join the waitlist</a>
     </section>
   </main>
 
-  <footer>
-    <p>© 2025 Frankiemoji™ | Created by Frank V. Martinez</p>
+  <footer class="footer">
+    <small>© 2025 Frankiemoji™ — Drawn by hand. Felt by heart.</small>
   </footer>
 </body>
 </html>
-<!-- rebuild trigger -->
