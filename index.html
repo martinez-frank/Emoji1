@@ -6,7 +6,7 @@
   <title>Frankiemoji™ — A World of Expressions</title>
   <meta name="description" content="Handcrafted human expressions. Frankiemoji — Drawn by hand. Felt by heart." />
   <meta property="og:title" content="Frankiemoji™ — A World of Expressions" />
-  <meta property="og:description" content="Each emotion, handcrafted. Your expressions — elevated." />
+  <meta property="og:description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated." />
   <meta property="og:image" content="world-of-expressions.png" />
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="style.css" />
@@ -17,29 +17,27 @@
   </header>
 
   <main>
-    <!-- HERO -->
+    <!-- Headline above the hero image (no overlay) -->
     <section class="hero" aria-label="A world of expressions">
-      <img class="hero-img" src="world-of-expressions.png" alt="A World of Expressions collage" />
-      <div class="hero-copy">
+      <div class="hero-copy hero-copy--above">
         <h1>A World of Expressions.</h1>
-        <p>Drawn by hand. Felt by heart.</p>
+        <p>Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
         <a class="cta" href="#waitlist">Join the Waitlist</a>
       </div>
-      <div class="hero-glow" aria-hidden="true"></div>
+      <img class="hero-img" src="world-of-expressions.png" alt="A World of Expressions collage" />
     </section>
 
-    <!-- ANIMATED EMOJI REELS -->
-    <section class="reel">
-      <div class="strip" id="rowA" aria-label="Emoji gallery row A"></div>
-      <div class="strip reverse" id="rowB" aria-label="Emoji gallery row B"></div>
+    <!-- Animated emoji reels (two rows, opposite directions) -->
+    <section class="reel" aria-label="Frankiemoji gallery">
+      <div class="strip" id="rowA"></div>
+      <div class="strip reverse" id="rowB"></div>
       <p class="hint">Hover or touch & hold to pause • Swipe to skim</p>
     </section>
 
-    <!-- WAITLIST -->
-    <section id="waitlist" class="signup">
-      <h2>Coming Soon</h2>
+    <!-- Simple mailto waitlist (swap to Formspree later) -->
+    <section id="waitlist" class="signup" aria-labelledby="waitlist-title">
+      <h2 id="waitlist-title">Coming Soon</h2>
       <p>Be first to know when Frankiemoji launches.</p>
-      <!-- Swap this mailto with Formspree/ConvertKit later -->
       <a class="cta outline" href="mailto:frankiemoji@yourmail.com?subject=Frankiemoji%20Waitlist">Get Notified</a>
     </section>
   </main>
@@ -51,3 +49,4 @@
   <script src="script.js" defer></script>
 </body>
 </html>
+
