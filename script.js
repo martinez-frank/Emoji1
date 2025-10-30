@@ -1,57 +1,69 @@
-// Set year
-document.getElementById('year').textContent = new Date().getFullYear();
-
-// Track Uploadcare state and enable "Continue" when we have a file + expression
-let uploadedUrl = null;
-let chosenExpr = 'HAPPY_SOFT';
-
-const uploader = uploadcare.Widget('[role=uploadcare-uploader]');
-uploader.onUploadComplete(info => {
-  uploadedUrl = info.cdnUrl;
-  mark('stUpload', true);
-  maybeEnableContinue();
+// Year in footer
+document.addEventListener('DOMContentLoaded', () => {
+  const y = document.getElementById('year');
+  if (y) y.textContent = new Date().getFullYear();
 });
 
-document.getElementById('expressionChoices').addEventListener('change', (e)=>{
-  if (e.target.name === 'expr') {
-    chosenExpr = e.target.value;
-    mark('stReady', true);
-    maybeEnableContinue();
+// Accessible, auto-rotating carousel
+(function initCarousel(){
+  const root = document.querySelector('.carousel');
+  if (!root) return;
+
+  const track = root.querySelector('.car-track');
+  const slides = Array.from(root.querySelectorAll('.car-slide'));
+  const prev = root.querySelector('.car-btn.prev');
+  const next = root.querySelector('.car-btn.next');
+  const dotsWrap = root.querySelector('.car-dots');
+  const auto = root.dataset.autorotate === 'true';
+  const interval = Number(root.dataset.interval || 3500);
+
+  let index = 0;
+  let timer = null;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    b.addEventListener('click', () => go(i));
+    dotsWrap.appendChild(b);
+  });
+
+  const dots = Array.from(dotsWrap.children);
+
+  function go(i){
+    index = (i + slides.length) % slides.length;
+    const x = -index * 100;
+    track.style.transform = `translateX(${x}%)`;
+    slides.forEach((s, k) => s.classList.toggle('is-active', k === index));
+    dots.forEach((d, k) => d.setAttribute('aria-selected', k === index ? 'true' : 'false'));
+    restart();
   }
-});
 
-function mark(id, ok){
-  const el = document.getElementById(id);
-  el.classList.remove('dot--gray','dot--green');
-  el.classList.add(ok ? 'dot--green' : 'dot--gray');
-}
+  function nextSlide(){ go(index + 1); }
+  function prevSlide(){ go(index - 1); }
 
-function maybeEnableContinue(){
-  const btn = document.getElementById('btnProceed');
-  btn.disabled = !(uploadedUrl && chosenExpr);
-}
+  next.addEventListener('click', nextSlide);
+  prev.addEventListener('click', prevSlide);
 
-document.getElementById('btnProceed').addEventListener('click', () => {
-  // MVP: send the user to Stripe with query params for later reconciliation
-  // Replace these with your actual Payment Links in HTML data attributes if you want pack selection here
-  // For now, default to Standard:
-  const defaultStripe = document.querySelector('[data-stripe*="standard"]')?.getAttribute('data-stripe')
-                       || 'https://buy.stripe.com/test_standard_link';
+  function restart(){
+    if (!auto) return;
+    clearInterval(timer);
+    timer = setInterval(nextSlide, interval);
+  }
 
-  // Pass along context you’ll read after payment (via success redirect or webhook reconciliation)
-  const params = new URLSearchParams({
-    photo: uploadedUrl,
-    expr: chosenExpr
+  // Pause on hover/focus for a11y
+  root.addEventListener('mouseenter', () => clearInterval(timer));
+  root.addEventListener('mouseleave', restart);
+  root.addEventListener('focusin', () => clearInterval(timer));
+  root.addEventListener('focusout', restart);
+
+  // Keyboard arrows
+  root.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
   });
-  window.location.href = `${defaultStripe}?${params.toString()}`;
-});
 
-// Top CTAs smooth-scroll
-['ctaStartTop','ctaStartHero'].forEach(id=>{
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.addEventListener('click', e=>{
-    e.preventDefault();
-    document.querySelector('#start').scrollIntoView({behavior:'smooth'});
-  });
-});
+  restart();
+})();
