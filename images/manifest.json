@@ -1,0 +1,42 @@
+{
+  "hero": "franklaugh.png",
+
+  "carousel": [
+    { "src": "franklaugh.png",        "caption": "Laugh" },
+    { "src": "franknervous.png",      "caption": "Nervous" },
+    { "src": "frankupset.png",        "caption": "Oh no" },
+    { "src": "frankcrazy.png",        "caption": "Confetti" }
+  ],
+
+  "stickers": [
+    "candikiss.png",
+    "candithumbsup.png",
+    "candiwink.png",
+    "aaronohno.png",
+    "aaronsad.png",
+    "coricoffee.png",
+    "corifrown.png",
+    "corihalo.png",
+    "corihearthands.png",
+    "corinervous.png",
+    "corismile.png",
+    "corisupset.png",
+    "denniscoolsunglasses.png",
+    "dennishappy.png",
+    "dennisheart.png",
+    "dennisthinking.png",
+    "donnysmile.png",
+    "donnysmir k.png",
+    "donnythumbsup.png",
+    "donnyprofessional.png",
+    "funnyface.png",
+    "halo.png",
+    "laugh.png"
+  ],
+
+  "pricing": {
+    "starter":  "franktongue.png",
+    "standard": "Standard.png",
+    "premium":  "Premium.png"
+  }
+}
