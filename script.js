@@ -5,14 +5,14 @@
 */
 
 const EMOJI = [
-  "wink.png",
-  "laugh.png",
-  "ohno.png",
-  "smirk.png",
-  "sleep.png",
-  "sweat.png",
-  "shock.png",
-  "halo.png" // ensure this exists as PNG; remove if not needed
+  "images/wink.png",
+  "images/laugh.png",
+  "images/ohno.png",
+  "images/smirk.png",
+  "images/sleep.png",
+  "images/sweat.png",
+  "images/shock.png",
+  "images/halo.png" // ensure this exists as PNG; remove if not needed
 ];
 
 // Build one scrolling track inside a .strip container
