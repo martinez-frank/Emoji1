@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Frankiemoji™ — Every expression begins with a pencil.</title>
+  <meta name="description" content="Turn a selfie into a likeness-preserving Frankiemoji. Drawn by hand, refined for your screen.">
+  <link rel="preload" as="image" href="images/paper-texture.webp">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="theme-canvas no-hero">
+  <header class="site-header">
+    <a class="brand" href="/">
+      <img src="images/logo.svg" alt="Frankiemoji logo" height="32"/>
+      <span>Frankiemoji™</span>
+    </a>
+    <nav class="nav">
+      <a href="#how">How it works</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#about">About</a>
+      <a class="btn primary" href="#upload">Get your emoji</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <h1>Every expression begins with a <em>pencil</em>.</h1>
+      <p>Hand-drawn lines. Likeness preserved. Digitally hand-finished so your messages feel human.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#upload">Start → Upload</a>
+        <a class="btn ghost" href="#how">See how it works</a>
+      </div>
+    </div>
+    <figure class="hero-art"><!-- intentionally empty --></figure>
+  </section>
+
+  <section id="gallery" class="carousel-wrap" aria-label="Frankiemoji examples">
+    <div class="carousel" data-autorotate="true" data-interval="3500">
+      <button class="car-btn prev" aria-label="Previous slide" data-dir="prev">‹</button>
+      <ul class="car-track" role="list"></ul>
+      <button class="car-btn next" aria-label="Next slide" data-dir="next">›</button>
+      <div class="car-dots" role="tablist" aria-label="Choose slide"></div>
+      <p class="car-hint">Hover or touch &amp; hold to pause • Swipe or use ← →</p>
+    </div>
+  </section>
+
+  <section id="how" class="how">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li><span class="num">1</span>Upload a clear, front-facing photo</li>
+      <li><span class="num">2</span>Pick your expression</li>
+      <li><span class="num">3</span>We draw your Frankiemoji and refine it digitally</li>
+      <li><span class="num">4</span>Download PNG/WebP and start using it</li>
+    </ol>
+  </section>
+
+  <section id="pricing" class="pricing">
+    <h2>Pick the perfect pack</h2>
+    <div class="plans">
+      <article class="plan">
+        <img data-price-icon="starter"  src="images/starter.png"  alt="" aria-hidden="true">
+        <h3>Starter</h3>
+        <p class="price">$9</p>
+        <p class="desc">1 custom expression • PNG &amp; WebP • transparent background</p>
+        <a href="#upload" class="btn primary">Get Starter</a>
+      </article>
+
+      <article class="plan featured" aria-label="Most popular">
+        <span class="badge">Most Popular</span>
+        <img data-price-icon="standard" src="images/standard.png" alt="" aria-hidden="true">
+        <h3>Standard</h3>
+        <p class="price">$24</p>
+        <p class="desc">4 expressions • sticker-size exports • best for texting</p>
+        <a href="#upload" class="btn primary">Get Standard</a>
+      </article>
+
+      <article class="plan">
+        <img data-price-icon="premium"  src="images/premium.png"  alt="" aria-hidden="true">
+        <h3>Premium</h3>
+        <p class="price">$49</p>
+        <p class="desc">10 expressions • commercial use • layered file on request</p>
+        <a href="#upload" class="btn primary">Get Premium</a>
+      </article>
+    </div>
+    <p class="fine">Personal usage included. Business &amp; brand work available on request.</p>
+  </section>
+
+  <section class="stickers">
+    <h2>A world of expressions</h2>
+    <p class="lede">Each emotion, handcrafted. Your expressions — elevated.</p>
+    <ul class="sticker-grid" role="list"></ul>
+  </section>
+
+  <section id="about" class="about">
+    <div class="about-card">
+      <h2>From pencil to pixels</h2>
+      <p>Frankiemoji began with sketchbooks and a simple idea: capture genuine expressions. We draw by hand, then refine digitally so your emoji looks like <em>you</em>.</p>
+      <a class="btn ghost" href="#upload">Try it now</a>
+    </div>
+  </section>
+
+  <section id="upload" class="upload" aria-labelledby="upload-title">
+    <h2 id="upload-title">Upload</h2>
+    <form class="upload-box" action="#" method="post" onsubmit="return false;">
+      <input type="file" accept="image/*" id="file">
+      <label for="file" class="btn primary">Choose a photo</label>
+      <p class="fine">Good lighting, front-facing, no sunglasses. PNG/JPG/WebP.</p>
+    </form>
+  </section>
+
+  <footer class="site-footer">
+    <p>© <span id="year"></span> Frankiemoji™</p>
+    <a href="https://github.com/martinez-frank/Emoji1" target="_blank" rel="noopener">GitHub</a>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
