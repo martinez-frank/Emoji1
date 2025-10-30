@@ -1,156 +1,126 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Frankiemoji — Born with a Pencil. Evolved with AI.</title>
-  <meta name="description" content="Turn a selfie into a likeness-preserving Frankiemoji. Hand-drawn style, selectable expressions.">
-  <link rel="preload" as="image" href="images/hero@2x.webp">
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Frankiemoji™ — Every expression begins with a pencil.</title>
+  <meta name="description" content="Turn a selfie into a likeness-preserving Frankiemoji. Drawn by hand, refined for your screen.">
+  <link rel="preload" as="image" href="images/paper-texture.webp">
+  <link rel="stylesheet" href="style.css"/>
 </head>
-<body>
+<body class="theme-canvas">
   <header class="site-header">
     <a class="brand" href="/">
-      <img src="images/logo.svg" alt="Frankiemoji logo" height="32" />
-      <span>Frankiemoji</span>
+      <img src="images/logo.svg" alt="Frankiemoji logo" height="32"/>
+      <span>Frankiemoji™</span>
     </a>
-
     <nav class="nav">
       <a href="#how">How it works</a>
+      <a href="#gallery">Gallery</a>
       <a href="#pricing">Pricing</a>
-      <a href="#stickers">Sticker Packs</a>
       <a href="#about">About</a>
-      <a class="cta" href="#start">Start</a>
+      <a class="btn primary" href="#upload">Get your emoji</a>
     </nav>
   </header>
 
   <!-- Hero -->
-  <section class="hero" id="start">
-    <div class="hero-content">
-      <h1>Turn your selfie into a <span class="accent">Frankiemoji</span></h1>
-      <p>Hand-drawn style. Likeness preserved. Pick the expression. <strong>Time-to-first-emoji &lt; 60s</strong> (MVP).</p>
+  <section class="hero">
+    <div class="hero-copy">
+      <h1>Every expression begins with a <em>pencil</em>.</h1>
+      <p>Hand-drawn lines. Likeness preserved. Digitally hand-finished so your messages feel human.</p>
       <div class="hero-actions">
         <a class="btn primary" href="#upload">Start → Upload</a>
         <a class="btn ghost" href="#how">See how it works</a>
       </div>
     </div>
-    <picture>
-      <source srcset="images/hero@2x.webp" type="image/webp">
-      <img class="hero-art" src="images/hero@2x.jpg" alt="Phone chat mock showing Frankiemoji reactions" loading="eager" decoding="async">
-    </picture>
+    <figure class="hero-art">
+      <!-- Swap this to your sketch→color asset if you like -->
+      <img src="images/hero-sketch-to-color.webp" alt="Sketch to finished Frankiemoji example" loading="eager" decoding="async">
+    </figure>
   </section>
 
-  <!-- Carousel -->
-  <section class="carousel-wrap" aria-label="Featured Frankiemoji examples">
+  <!-- Expressions Carousel -->
+  <section id="gallery" class="carousel-wrap" aria-label="Frankiemoji examples">
     <div class="carousel" data-autorotate="true" data-interval="3500">
       <button class="car-btn prev" aria-label="Previous slide" data-dir="prev">‹</button>
-      <ul class="car-track" role="list">
-        <!-- Replace filenames with your actual images -->
-        <li class="car-slide is-active">
-          <img src="images/carousel-01.webp" alt="Happy Frankiemoji example" loading="lazy" decoding="async">
-        </li>
-        <li class="car-slide">
-          <img src="images/carousel-02.webp" alt="Tired Frankiemoji example" loading="lazy" decoding="async">
-        </li>
-        <li class="car-slide">
-          <img src="images/carousel-03.webp" alt="Angry Frankiemoji example" loading="lazy" decoding="async">
-        </li>
-        <li class="car-slide">
-          <img src="images/carousel-04.webp" alt="Smirk Frankiemoji example" loading="lazy" decoding="async">
-        </li>
-      </ul>
+      <ul class="car-track" role="list"><!-- slides injected by JS --></ul>
       <button class="car-btn next" aria-label="Next slide" data-dir="next">›</button>
-
-      <div class="car-dots" role="tablist" aria-label="Choose slide">
-        <!-- JS will populate dots for the number of slides -->
-      </div>
+      <div class="car-dots" role="tablist" aria-label="Choose slide"><!-- dots injected --></div>
+      <p class="car-hint">Hover or touch & hold to pause • Swipe or use ← →</p>
     </div>
   </section>
 
   <!-- How it works -->
-  <section class="how" id="how">
+  <section id="how" class="how">
     <h2>How it works</h2>
     <ol class="steps">
-      <li><span class="num">1</span>Upload a selfie (front-facing, good light)</li>
-      <li><span class="num">2</span>Choose an expression (Happy, Angry, Tired…)</li>
-      <li><span class="num">3</span>We render your Frankiemoji in seconds</li>
-      <li><span class="num">4</span>Download PNG/WebP & add to your keyboard</li>
+      <li><span class="num">1</span>Upload a clear, front-facing photo</li>
+      <li><span class="num">2</span>Pick your expression</li>
+      <li><span class="num">3</span>We draw your Frankiemoji and refine it digitally</li>
+      <li><span class="num">4</span>Download PNG/WebP and start using it</li>
     </ol>
   </section>
 
-  <!-- Pricing -->
-  <section class="pricing" id="pricing" aria-labelledby="pricing-title">
-    <h2 id="pricing-title">Pricing</h2>
+  <!-- Pricing (warm “card” look) -->
+  <section id="pricing" class="pricing">
+    <h2>Pick the perfect pack</h2>
     <div class="plans">
       <article class="plan">
-        <img src="images/price-single.png" alt="" aria-hidden="true" />
-        <h3>Single Emoji</h3>
+        <img src="images/price-single.png" alt="" aria-hidden="true">
+        <h3>Starter</h3>
         <p class="price">$9</p>
-        <p class="desc">One expression, 1024px PNG & WebP, transparent background.</p>
-        <a href="#upload" class="btn primary">Get Started</a>
+        <p class="desc">1 custom expression • PNG & WebP • transparent background</p>
+        <a href="#upload" class="btn primary">Get Starter</a>
       </article>
 
       <article class="plan featured" aria-label="Most popular">
-        <img src="images/price-pack.png" alt="" aria-hidden="true" />
-        <h3>Starter Pack</h3>
-        <p class="badge">Most Popular</p>
+        <span class="badge">Most Popular</span>
+        <img src="images/price-pack.png" alt="" aria-hidden="true">
+        <h3>Standard</h3>
         <p class="price">$24</p>
-        <p class="desc">Pack of 4 expressions + sticker-sized exports.</p>
-        <a href="#upload" class="btn primary">Choose Pack</a>
+        <p class="desc">4 expressions • sticker-size exports • best for texting</p>
+        <a href="#upload" class="btn primary">Get Standard</a>
       </article>
 
       <article class="plan">
-        <img src="images/price-pro.png" alt="" aria-hidden="true" />
-        <h3>Creator</h3>
+        <img src="images/price-pro.png" alt="" aria-hidden="true">
+        <h3>Premium</h3>
         <p class="price">$49</p>
-        <p class="desc">10 expressions, commercial use, layered PSD on request.</p>
-        <a href="#upload" class="btn primary">Go Creator</a>
+        <p class="desc">10 expressions • commercial use • layered file on request</p>
+        <a href="#upload" class="btn primary">Get Premium</a>
       </article>
     </div>
-    <p class="fine">All plans include personal, non-exclusive usage rights. Business/brand work available on request.</p>
+    <p class="fine">Personal usage included. Business & brand work available on request.</p>
   </section>
 
-  <!-- Sticker Packs -->
-  <section class="stickers" id="stickers">
-    <h2>Sticker Packs</h2>
-    <p class="lede">Build a pack with your real expressions. Perfect for iMessage, WhatsApp, Slack.</p>
-    <ul class="sticker-grid" role="list">
-      <!-- Swap these with your pack tiles -->
-      <li><img src="images/sticker-happy.webp" alt="Sticker: happy" loading="lazy"></li>
-      <li><img src="images/sticker-laugh.webp" alt="Sticker: laugh" loading="lazy"></li>
-      <li><img src="images/sticker-smirk.webp" alt="Sticker: smirk" loading="lazy"></li>
-      <li><img src="images/sticker-omg.webp" alt="Sticker: OMG" loading="lazy"></li>
-      <li><img src="images/sticker-tired.webp" alt="Sticker: tired" loading="lazy"></li>
-      <li><img src="images/sticker-angry.webp" alt="Sticker: angry" loading="lazy"></li>
-    </ul>
+  <!-- Sticker grid -->
+  <section class="stickers">
+    <h2>A world of expressions</h2>
+    <p class="lede">Each emotion, handcrafted. Your expressions — elevated.</p>
+    <ul class="sticker-grid" role="list"><!-- stickers injected by JS --></ul>
   </section>
 
   <!-- About -->
-  <section class="about" id="about">
+  <section id="about" class="about">
     <div class="about-card">
-      <h2>About Frankiemoji</h2>
-      <p><strong>Born with a Pencil. Evolved with AI.</strong> Frankiemoji blends hand-drawn craft with smart tooling to keep your likeness intact and your messages human.</p>
-      <ul class="bullets">
-        <li>Likeness-preserving linework & textured shading</li>
-        <li>Privacy-first: images processed only for creation</li>
-        <li>Fast preview → pay only when you love it</li>
-      </ul>
+      <h2>From pencil to pixels</h2>
+      <p>Frankiemoji began with sketchbooks and a simple idea: capture genuine expressions. We draw by hand, then refine digitally so your emoji looks like <em>you</em>.</p>
       <a class="btn ghost" href="#upload">Try it now</a>
     </div>
   </section>
 
-  <!-- Simple upload stub (hook this to Uploadcare or your flow) -->
-  <section class="upload" id="upload" aria-labelledby="upload-title">
+  <!-- Upload (stub) -->
+  <section id="upload" class="upload" aria-labelledby="upload-title">
     <h2 id="upload-title">Upload</h2>
     <form class="upload-box" action="#" method="post" onsubmit="return false;">
-      <input type="file" accept="image/*" id="file" />
+      <input type="file" accept="image/*" id="file">
       <label for="file" class="btn primary">Choose a photo</label>
-      <p class="fine">Good lighting, no sunglasses, front-facing. PNG/JPG/WebP.</p>
+      <p class="fine">Good lighting, front-facing, no sunglasses. PNG/JPG/WebP.</p>
     </form>
   </section>
 
   <footer class="site-footer">
-    <p>© <span id="year"></span> Frankiemoji™. All rights reserved.</p>
+    <p>© <span id="year"></span> Frankiemoji™</p>
     <a href="https://github.com/martinez-frank/Emoji1" target="_blank" rel="noopener">GitHub</a>
   </footer>
 
