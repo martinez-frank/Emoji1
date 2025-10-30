@@ -1,27 +1,13 @@
-/* ========= Configure your images here =========
-   Put exact filenames that exist in /images.
-   Use whatever you uploaded from the mocks. */
-
-const CAROUSEL_IMAGES = [
-  // { src: "world-of-expressions.webp", caption: "A World of Expressions" },
-  // Example placeholders — replace with your actual file names:
-  { src: "carousel-01.webp", caption: "Wink" },
-  { src: "carousel-02.webp", caption: "Laugh" },
-  { src: "carousel-03.webp", caption: "Oh no" },
-  { src: "carousel-04.webp", caption: "Smirk" }
-];
-
-const STICKER_IMAGES = [
-  // Simple grid list — add/remove freely
-  "sticker-happy.webp",
-  "sticker-laugh.webp",
-  "sticker-smirk.webp",
-  "sticker-omg.webp",
-  "sticker-tired.webp",
-  "sticker-angry.webp"
-];
-
-/* ========= No edits needed below ========= */
+async function loadManifest() {
+  try {
+    const r = await fetch('images/manifest.json', { cache: 'no-store' });
+    if (!r.ok) throw new Error('No manifest');
+    return await r.json();
+  } catch {
+    // Fallback (empty)
+    return { hero: null, carousel: [], stickers: [], pricing: {} };
+  }
+}
 
 // Year
 document.addEventListener('DOMContentLoaded', () => {
@@ -29,96 +15,92 @@ document.addEventListener('DOMContentLoaded', () => {
   if (y) y.textContent = new Date().getFullYear();
 });
 
-// Inject carousel slides & dots
-(function initCarousel(){
-  const root = document.querySelector('.carousel');
-  if (!root) return;
+(async function init() {
+  const M = await loadManifest();
 
-  const track = root.querySelector('.car-track');
-  const prev = root.querySelector('.car-btn.prev');
-  const next = root.querySelector('.car-btn.next');
-  const dotsWrap = root.querySelector('.car-dots');
-  const auto = root.dataset.autorotate === 'true';
-  const interval = Number(root.dataset.interval || 3500);
+  // --- Hero image (optional) ---
+  const heroImg = document.querySelector('.hero-art img');
+  if (heroImg && M.hero) heroImg.src = `images/${M.hero}`;
 
-  // Build slides
-  CAROUSEL_IMAGES.forEach(({src, caption}, i) => {
-    const li = document.createElement('li');
-    li.className = 'car-slide';
+  // --- Pricing icons (optional) ---
+  const priceStarter = document.querySelector('[data-price-icon="starter"]');
+  const priceStandard = document.querySelector('[data-price-icon="standard"]');
+  const pricePremium = document.querySelector('[data-price-icon="premium"]');
+  if (priceStarter && M.pricing?.starter)   priceStarter.src   = `images/${M.pricing.starter}`;
+  if (priceStandard && M.pricing?.standard) priceStandard.src = `images/${M.pricing.standard}`;
+  if (pricePremium && M.pricing?.premium)   pricePremium.src   = `images/${M.pricing.premium}`;
 
-    const fig = document.createElement('figure');
-    fig.className = 'polaroid';
+  // --- Carousel ---
+  const carRoot  = document.querySelector('.carousel');
+  const track    = carRoot?.querySelector('.car-track');
+  const prev     = carRoot?.querySelector('.car-btn.prev');
+  const next     = carRoot?.querySelector('.car-btn.next');
+  const dotsWrap = carRoot?.querySelector('.car-dots');
+  if (carRoot && track && prev && next && dotsWrap) {
+    const auto = carRoot.dataset.autorotate === 'true';
+    const interval = Number(carRoot.dataset.interval || 3500);
 
-    const img = document.createElement('img');
-    img.src = `images/${src}`;
-    img.alt = caption ? `${caption} Frankiemoji example` : "Frankiemoji example";
-    img.loading = "lazy";
-    img.decoding = "async";
+    // build slides
+    (M.carousel || []).forEach(({ src, caption }, i) => {
+      const li = document.createElement('li');
+      li.className = 'car-slide';
+      const fig = document.createElement('figure');
+      fig.className = 'polaroid';
+      const img = document.createElement('img');
+      img.src = `images/${src}`;
+      img.alt = caption ? `${caption} Frankiemoji example` : 'Frankiemoji example';
+      img.loading = 'lazy'; img.decoding = 'async';
+      const cap = document.createElement('figcaption');
+      cap.textContent = caption || '';
+      fig.append(img, cap); li.append(fig); track.append(li);
 
-    const cap = document.createElement('figcaption');
-    cap.textContent = caption || "";
+      const dot = document.createElement('button');
+      dot.type = 'button'; dot.setAttribute('role', 'tab');
+      dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      dot.addEventListener('click', () => go(i));
+      dotsWrap.appendChild(dot);
+    });
 
-    fig.appendChild(img);
-    fig.appendChild(cap);
-    li.appendChild(fig);
-    track.appendChild(li);
+    const slides = Array.from(track.children);
+    const dots = Array.from(dotsWrap.children);
+    let index = 0, timer = null;
 
-    // dot
-    const dot = document.createElement('button');
-    dot.type = 'button';
-    dot.setAttribute('role', 'tab');
-    dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-    dot.addEventListener('click', () => go(i));
-    dotsWrap.appendChild(dot);
-  });
+    function go(i){
+      index = (i + slides.length) % slides.length;
+      track.style.transform = `translateX(${-index * 100}%)`;
+      dots.forEach((d,k)=>d.setAttribute('aria-selected', k===index ? 'true':'false'));
+      restart();
+    }
+    function nextSlide(){ go(index + 1); }
+    function prevSlide(){ go(index - 1); }
 
-  const slides = Array.from(track.children);
-  const dots = Array.from(dotsWrap.children);
-  let index = 0, timer = null;
+    next.addEventListener('click', nextSlide);
+    prev.addEventListener('click', prevSlide);
 
-  function go(i){
-    index = (i + slides.length) % slides.length;
-    const x = -index * 100;
-    track.style.transform = `translateX(${x}%)`;
-    dots.forEach((d, k) => d.setAttribute('aria-selected', k === index ? 'true' : 'false'));
+    function restart(){
+      if (!auto || !slides.length) return;
+      clearInterval(timer); timer = setInterval(nextSlide, interval);
+    }
+    carRoot.addEventListener('mouseenter', () => clearInterval(timer));
+    carRoot.addEventListener('mouseleave', restart);
+    carRoot.addEventListener('focusin', () => clearInterval(timer));
+    carRoot.addEventListener('focusout', restart);
+    carRoot.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
     restart();
   }
-  function nextSlide(){ go(index + 1); }
-  function prevSlide(){ go(index - 1); }
 
-  next.addEventListener('click', nextSlide);
-  prev.addEventListener('click', prevSlide);
-
-  function restart(){
-    if (!auto) return;
-    clearInterval(timer);
-    timer = setInterval(nextSlide, interval);
-  }
-
-  root.addEventListener('mouseenter', () => clearInterval(timer));
-  root.addEventListener('mouseleave', restart);
-  root.addEventListener('focusin', () => clearInterval(timer));
-  root.addEventListener('focusout', restart);
-  root.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') nextSlide();
-    if (e.key === 'ArrowLeft') prevSlide();
-  });
-
-  restart();
-})();
-
-// Inject sticker grid
-(function initStickers(){
+  // --- Stickers grid ---
   const grid = document.querySelector('.sticker-grid');
-  if (!grid) return;
-  STICKER_IMAGES.forEach(name => {
-    const li = document.createElement('li');
-    const img = document.createElement('img');
-    img.src = `images/${name}`;
-    img.alt = "Frankiemoji sticker";
-    img.loading = "lazy";
-    img.decoding = "async";
-    li.appendChild(img);
-    grid.appendChild(li);
-  });
+  if (grid && Array.isArray(M.stickers)) {
+    M.stickers.forEach(name => {
+      const li = document.createElement('li');
+      const img = document.createElement('img');
+      img.src = `images/${name}`; img.alt = 'Frankiemoji sticker';
+      img.loading = 'lazy'; img.decoding = 'async';
+      li.appendChild(img); grid.appendChild(li);
+    });
+  }
 })();
