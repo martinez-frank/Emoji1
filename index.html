@@ -1,41 +1,190 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Frankiemoji™ — A World of Expressions</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Frankiemoji™ — Born with a Pencil. Evolved with AI.</title>
+  <meta name="description" content="Turn a selfie into a Frankiemoji: a stylized, likeness-preserving emoji with selectable expressions." />
+  <link rel="preload" href="style.css" as="style" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Uploadcare Widget (client-side uploads) -->
+  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+  <!-- Replace with your public key -->
+  <script>window.UPLOADCARE_PUBLIC_KEY = "YOUR_UPLOADCARE_PUBLIC_KEY";</script>
 </head>
 <body>
-  <header>
-    <h1>Frankiemoji™</h1>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="#">Frankiemoji™</a>
+      <nav class="nav">
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a class="btn btn--primary" href="#start" id="ctaStartTop">Start</a>
+      </nav>
+    </div>
   </header>
 
   <main>
+    <!-- Hero -->
     <section class="hero">
-      <h2>A World of Expressions.</h2>
-      <p>Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
-      <div class="emoji-grid top">
-        <div class="emoji"><img src="images/wink.png" alt="Wink"><p>Wink</p></div>
-        <div class="emoji"><img src="images/laugh.png" alt="Laugh"><p>Laugh</p></div>
-        <div class="emoji"><img src="images/ohno.png" alt="Oh no"><p>Oh no</p></div>
-        <div class="emoji"><img src="images/smirk.png" alt="Smirk"><p>Smirk</p></div>
+      <div class="wrap hero__grid">
+        <div class="hero__copy">
+          <p class="eyebrow">A World of Expressions.</p>
+          <h1>Born with a Pencil.<br/>Evolved with AI.</h1>
+          <p class="lede">Turn your selfie into a likeness-true emoji—hand-drawn vibe, AI-assisted polish. Pick a mood, get your pack.</p>
+          <div class="hero__cta">
+            <a class="btn btn--primary btn--lg" href="#start" id="ctaStartHero">Start (60s MVP)</a>
+            <a class="btn btn--ghost" href="#pricing">See Pricing</a>
+          </div>
+          <ul class="kpis">
+            <li><strong>&lt;60s</strong> to first emoji (MVP)</li>
+            <li>Hand-crafted look</li>
+            <li>Own your likeness</li>
+          </ul>
+        </div>
+        <div class="hero__demo">
+          <figure class="card"><img src="images/wink.png" alt="Wink" /></figure>
+          <figure class="card"><img src="images/laugh.png" alt="Laugh" /></figure>
+          <figure class="card"><img src="images/ohno.png" alt="Oh no" /></figure>
+          <figure class="card"><img src="images/smirk.png" alt="Smirk" /></figure>
+        </div>
       </div>
     </section>
 
-    <section class="gallery">
-      <div class="emoji"><img src="images/halo.png" alt="Halo"></div>
-      <div class="emoji"><img src="images/sweat.png" alt="Sweat"></div>
-      <div class="emoji"><img src="images/shock.png" alt="Shock"></div>
-      <div class="emoji"><img src="images/sleep.png" alt="Sleep"></div>
+    <!-- Start Flow -->
+    <section id="start" class="start">
+      <div class="wrap start__panel">
+        <h2>Get your Frankiemoji</h2>
+        <ol class="steps">
+          <li><span>1</span>Upload a selfie</li>
+          <li><span>2</span>Pick an expression</li>
+          <li><span>3</span>Checkout</li>
+        </ol>
+
+        <div class="start__controls">
+          <!-- Uploadcare input -->
+          <label class="field">
+            <span>Selfie</span>
+            <input type="hidden" role="uploadcare-uploader" data-clearable data-images-only />
+          </label>
+
+          <!-- Expression picker -->
+          <fieldset class="field">
+            <legend>Expression</legend>
+            <div class="choices" id="expressionChoices">
+              <label><input type="radio" name="expr" value="HAPPY_SOFT" checked /> Happy</label>
+              <label><input type="radio" name="expr" value="SURPRISED_BIG" /> Surprised</label>
+              <label><input type="radio" name="expr" value="WINK" /> Wink</label>
+              <label><input type="radio" name="expr" value="TIRED" /> Tired</label>
+              <label><input type="radio" name="expr" value="THUMBS_UP" /> Thumbs Up</label>
+            </div>
+          </fieldset>
+
+          <!-- Status/progress -->
+          <div class="status" id="status">
+            <div class="status__row">
+              <span class="dot dot--gray" id="stUpload"></span> Upload
+            </div>
+            <div class="status__row">
+              <span class="dot dot--gray" id="stReady"></span> Ready to generate
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn--primary" id="btnProceed" disabled>Continue to Checkout</button>
+          </div>
+
+          <!-- Stripe Payment Link (placeholder) -->
+          <p class="hint">On click we’ll send you to payment. After payment, your emoji pack will generate and you’ll get an email with downloads.</p>
+        </div>
+      </div>
     </section>
 
-    <section class="cta">
-      <h3>A World of Expressions.</h3>
-      <p>Drawn by hand. Felt by heart.</p>
-      <button onclick="window.open('https://frankiemoji.com', '_blank')">Join the Waitlist</button>
+    <!-- How it works -->
+    <section id="how" class="how">
+      <div class="wrap">
+        <h2>How it works</h2>
+        <div class="how__grid">
+          <div class="how__card">
+            <h3>Upload</h3>
+            <p>Photo goes straight to cloud via Uploadcare—no server strain, no waiting.</p>
+          </div>
+          <div class="how__card">
+            <h3>Pick expression</h3>
+            <p>Choose from curated templates (smile, wink, surprised, thumbs up…).</p>
+          </div>
+          <div class="how__card">
+            <h3>Pay</h3>
+            <p>Secure Stripe Checkout. Then we generate 3–10 emojis asynchronously.</p>
+          </div>
+          <div class="how__card">
+            <h3>Get pack</h3>
+            <p>We send you PNGs/WebP (and optional SVG) in multiple sizes + a neat ZIP.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="promo-grid">
-      <div class="promo"><img src="images/wink.png" alt="Frankiemoji 1"><p>Frankiemoji 1</p></div>
-      <div clas
+    <!-- Pricing -->
+    <section id="pricing" class="pricing">
+      <div class="wrap">
+        <h2>Pick your pack</h2>
+        <div class="pricing__grid">
+          <article class="price-card">
+            <header>Starter</header>
+            <div class="price">$5</div>
+            <ul>
+              <li>3 custom emojis</li>
+              <li>1024/512/256 PNG</li>
+            </ul>
+            <a class="btn btn--ghost" data-stripe="https://buy.stripe.com/test_starter_link">Get Starter</a>
+          </article>
+
+          <article class="price-card featured">
+            <header>Standard <span class="pill">Most Popular</span></header>
+            <div class="price">$15</div>
+            <ul>
+              <li>9 custom emojis</li>
+              <li>PNG + WebP</li>
+              <li>Email support</li>
+            </ul>
+            <a class="btn btn--primary" data-stripe="https://buy.stripe.com/test_standard_link">Get Standard</a>
+          </article>
+
+          <article class="price-card">
+            <header>Premium</header>
+            <div class="price">$25</div>
+            <ul>
+              <li>18 custom emojis</li>
+              <li>PNG + WebP + SVG (optional)</li>
+              <li>Priority support</li>
+            </ul>
+            <a class="btn btn--ghost" data-stripe="https://buy.stripe.com/test_premium_link">Get Premium</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- About / Story -->
+    <section class="about">
+      <div class="wrap">
+        <h2>Crafting expressive avatars, from pencil to pixels</h2>
+        <p>Frankiemoji began with pencil sketches—real expressions, hand-drawn warmth. Then we layered in AI to keep your likeness while preserving that crafted feel.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div>© <span id="year"></span> Frankiemoji™</div>
+      <nav>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="mailto:hello@frankiemoji.com">Support</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
