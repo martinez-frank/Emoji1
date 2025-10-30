@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Frankiemoji™ — A World of Expressions</title>
   <meta name="description" content="Hand-drawn, likeness-preserving emoji. Your expressions — elevated.">
-  <link rel="stylesheet" href="style-v5.css" />
+  <link rel="stylesheet" href="style-v6.css" />
 </head>
 <body class="theme-canvas">
 
@@ -18,45 +18,45 @@
     </nav>
   </header>
 
-  <!-- HERO GALLERY (root design) -->
   <main id="content">
-    <section id="gallery" class="panel hero-grid" aria-label="Examples">
+    <!-- HERO: two rolling rows, opposite directions -->
+    <section id="gallery" class="panel hero-rows" aria-label="Examples">
       <div class="panel-inner">
         <h1 class="hero-title">A World of Expressions.</h1>
         <p class="hero-lede">Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
 
-        <ul id="heroGrid" class="grid" role="list" aria-live="polite"></ul>
+        <div class="rows">
+          <!-- Row A -->
+          <div class="row row-a" aria-hidden="false">
+            <ul id="rowA" class="track" role="list"></ul>
+          </div>
+          <!-- Row B -->
+          <div class="row row-b" aria-hidden="false">
+            <ul id="rowB" class="track" role="list"></ul>
+          </div>
+        </div>
 
         <p class="hint">Hover or touch & hold to pause • Swipe to skim</p>
       </div>
     </section>
 
-    <!-- PRICING -->
+    <!-- PRICING: image + button only -->
     <section id="pricing" class="panel pricing">
       <h2>Pick the perfect pack</h2>
       <div class="plans">
         <article class="plan">
-          <img data-price-icon="starter" src="images/starter.png" alt="" aria-hidden="true" />
-          <h3>Starter</h3>
-          <p class="price">$9</p>
-          <p class="desc">1 custom expression • PNG &amp; WebP • transparent background</p>
+          <img data-price-icon="starter" src="images/starter.png" alt="Starter pack" />
           <a class="btn primary" href="#get">Get Starter</a>
         </article>
 
         <article class="plan featured" aria-label="Most popular">
           <span class="badge">Most Popular</span>
-          <img data-price-icon="standard" src="images/standard.png" alt="" aria-hidden="true" />
-          <h3>Standard</h3>
-          <p class="price">$24</p>
-          <p class="desc">4 expressions • sticker-size exports • best for texting</p>
+          <img data-price-icon="standard" src="images/standard.png" alt="Standard pack" />
           <a class="btn primary" href="#get">Get Standard</a>
         </article>
 
         <article class="plan">
-          <img data-price-icon="premium" src="images/premium.png" alt="" aria-hidden="true" />
-          <h3>Premium</h3>
-          <p class="price">$49</p>
-          <p class="desc">10 expressions • commercial use • layered file on request</p>
+          <img data-price-icon="premium" src="images/premium.png" alt="Premium pack" />
           <a class="btn primary" href="#get">Get Premium</a>
         </article>
       </div>
@@ -78,6 +78,6 @@
     <a href="https://github.com/martinez-frank/Emoji1" target="_blank" rel="noopener">GitHub</a>
   </footer>
 
-  <script src="script-v5.js" defer></script>
+  <script src="script-v6.js" defer></script>
 </body>
 </html>
