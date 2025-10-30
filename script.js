@@ -1,64 +1,57 @@
-/* Frankiemoji: animated emoji reels
-   - Place your PNGs in /images/ (lowercase)
-   - Make sure names and casing match exactly below
-   - Hover/touch-hold pauses; swipe works natively; respects reduced motion
-*/
+// Set year
+document.getElementById('year').textContent = new Date().getFullYear();
 
-const EMOJI = [
-  "images/wink.png",
-  "images/laugh.png",
-  "images/ohno.png",
-  "images/smirk.png",
-  "images/sleep.png",
-  "images/sweat.png",
-  "images/shock.png",
-  "images/halo.png" // ensure this exists as PNG; remove if not needed
-];
+// Track Uploadcare state and enable "Continue" when we have a file + expression
+let uploadedUrl = null;
+let chosenExpr = 'HAPPY_SOFT';
 
-// Build one scrolling track inside a .strip container
-function buildTrack(hostId) {
-  const host = document.getElementById(hostId);
-  const track = document.createElement("div");
-  track.className = "track";
-  host.appendChild(track);
+const uploader = uploadcare.Widget('[role=uploadcare-uploader]');
+uploader.onUploadComplete(info => {
+  uploadedUrl = info.cdnUrl;
+  mark('stUpload', true);
+  maybeEnableContinue();
+});
 
-  // Duplicate to exceed 2x width (seamless loop)
-  const order = [...EMOJI, ...EMOJI, ...EMOJI];
-  order.forEach((name, i) => {
-    const card = document.createElement("div");
-    card.className = "card";
+document.getElementById('expressionChoices').addEventListener('change', (e)=>{
+  if (e.target.name === 'expr') {
+    chosenExpr = e.target.value;
+    mark('stReady', true);
+    maybeEnableContinue();
+  }
+});
 
-    const img = document.createElement("img");
-    img.loading = "lazy";
-    img.decoding = "async";
-    img.src = `images/${name}`;
-    img.alt = `Frankiemoji ${i + 1}`;
-
-    // Log missing files to console to help debugging
-    img.onerror = () => console.warn(`Image not found: images/${name}`);
-
-    card.appendChild(img);
-    track.appendChild(card);
-  });
+function mark(id, ok){
+  const el = document.getElementById(id);
+  el.classList.remove('dot--gray','dot--green');
+  el.classList.add(ok ? 'dot--green' : 'dot--gray');
 }
 
-function init() {
-  buildTrack("rowA");
-  buildTrack("rowB");
-
-  // Touch-hold pause for mobile
-  document.querySelectorAll(".strip").forEach(strip => {
-    let touching = false;
-    const tk = () => strip.querySelector(".track");
-    strip.addEventListener("touchstart", () => {
-      touching = true; tk().style.animationPlayState = "paused";
-    }, {passive:true});
-    ["touchend","touchcancel"].forEach(evt =>
-      strip.addEventListener(evt, () => {
-        if (touching){ tk().style.animationPlayState = "running"; touching = false; }
-      }, {passive:true})
-    );
-  });
+function maybeEnableContinue(){
+  const btn = document.getElementById('btnProceed');
+  btn.disabled = !(uploadedUrl && chosenExpr);
 }
 
-document.addEventListener("DOMContentLoaded", init);
+document.getElementById('btnProceed').addEventListener('click', () => {
+  // MVP: send the user to Stripe with query params for later reconciliation
+  // Replace these with your actual Payment Links in HTML data attributes if you want pack selection here
+  // For now, default to Standard:
+  const defaultStripe = document.querySelector('[data-stripe*="standard"]')?.getAttribute('data-stripe')
+                       || 'https://buy.stripe.com/test_standard_link';
+
+  // Pass along context you’ll read after payment (via success redirect or webhook reconciliation)
+  const params = new URLSearchParams({
+    photo: uploadedUrl,
+    expr: chosenExpr
+  });
+  window.location.href = `${defaultStripe}?${params.toString()}`;
+});
+
+// Top CTAs smooth-scroll
+['ctaStartTop','ctaStartHero'].forEach(id=>{
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('click', e=>{
+    e.preventDefault();
+    document.querySelector('#start').scrollIntoView({behavior:'smooth'});
+  });
+});
