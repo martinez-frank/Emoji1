@@ -1,52 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Frankiemoji™ — A World of Expressions</title>
-  <meta name="description" content="Handcrafted human expressions. Frankiemoji — Drawn by hand. Felt by heart." />
-  <meta property="og:title" content="Frankiemoji™ — A World of Expressions" />
-  <meta property="og:description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated." />
-  <meta property="og:image" content="world-of-expressions.png" />
-  <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">Frankiemoji™</div>
+  <header>
+    <h1>Frankiemoji™</h1>
   </header>
 
   <main>
-    <!-- Headline above the hero image (no overlay) -->
-    <section class="hero" aria-label="A world of expressions">
-      <div class="hero-copy hero-copy--above">
-        <h1>A World of Expressions.</h1>
-        <p>Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
-        <a class="cta" href="#waitlist">Join the Waitlist</a>
+    <section class="hero">
+      <h2>A World of Expressions.</h2>
+      <p>Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
+      <div class="emoji-grid top">
+        <div class="emoji"><img src="images/wink.png" alt="Wink"><p>Wink</p></div>
+        <div class="emoji"><img src="images/laugh.png" alt="Laugh"><p>Laugh</p></div>
+        <div class="emoji"><img src="images/ohno.png" alt="Oh no"><p>Oh no</p></div>
+        <div class="emoji"><img src="images/smirk.png" alt="Smirk"><p>Smirk</p></div>
       </div>
-      <img class="hero-img" src="world-of-expressions.png" alt="A World of Expressions collage" />
     </section>
 
-    <!-- Animated emoji reels (two rows, opposite directions) -->
-    <section class="reel" aria-label="Frankiemoji gallery">
-      <div class="strip" id="rowA"></div>
-      <div class="strip reverse" id="rowB"></div>
-      <p class="hint">Hover or touch & hold to pause • Swipe to skim</p>
+    <section class="gallery">
+      <div class="emoji"><img src="images/halo.png" alt="Halo"></div>
+      <div class="emoji"><img src="images/sweat.png" alt="Sweat"></div>
+      <div class="emoji"><img src="images/shock.png" alt="Shock"></div>
+      <div class="emoji"><img src="images/sleep.png" alt="Sleep"></div>
     </section>
 
-    <!-- Simple mailto waitlist (swap to Formspree later) -->
-    <section id="waitlist" class="signup" aria-labelledby="waitlist-title">
-      <h2 id="waitlist-title">Coming Soon</h2>
-      <p>Be first to know when Frankiemoji launches.</p>
-      <a class="cta outline" href="mailto:frankiemoji@yourmail.com?subject=Frankiemoji%20Waitlist">Get Notified</a>
+    <section class="cta">
+      <h3>A World of Expressions.</h3>
+      <p>Drawn by hand. Felt by heart.</p>
+      <button onclick="window.open('https://frankiemoji.com', '_blank')">Join the Waitlist</button>
     </section>
-  </main>
 
-  <footer class="footer">
-    <small>© 2025 Frankiemoji™ — Drawn by hand. Felt by heart.</small>
-  </footer>
-
-  <script src="script.js" defer></script>
-</body>
-</html>
-
+    <section class="promo-grid">
+      <div class="promo"><img src="images/wink.png" alt="Frankiemoji 1"><p>Frankiemoji 1</p></div>
+      <div clas
