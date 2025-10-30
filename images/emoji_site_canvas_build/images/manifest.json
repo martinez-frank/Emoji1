@@ -1,0 +1,66 @@
+{
+  "hero": null,
+  "carousel": [
+    {
+      "src": "laugh.png",
+      "caption": "Laugh"
+    },
+    {
+      "src": "smirk.png",
+      "caption": "Smirk"
+    },
+    {
+      "src": "ohno.png",
+      "caption": "Oh no"
+    },
+    {
+      "src": "shock.png",
+      "caption": "Shocked"
+    },
+    {
+      "src": "sleep.png",
+      "caption": "Sleepy"
+    },
+    {
+      "src": "franklaugh.png",
+      "caption": "Frank \u2014 Laugh"
+    },
+    {
+      "src": "frankupset.png",
+      "caption": "Frank \u2014 Upset"
+    },
+    {
+      "src": "frankcrazy.png",
+      "caption": "Frank \u2014 Confetti"
+    }
+  ],
+  "stickers": [
+    "candikiss.png",
+    "candithumbsup.png",
+    "candiwink.png",
+    "aaronohno.png",
+    "aaronsad.png",
+    "coricoffee.png",
+    "corifrown.png",
+    "corihalo.png",
+    "corihearthands.png",
+    "corinervous.png",
+    "corismile.png",
+    "corisupset.png",
+    "denniscoolsunglasses.png",
+    "dennishappy.png",
+    "dennisheart.png",
+    "dennisthinking.png",
+    "donnysmile.png",
+    "donnysmirk.png",
+    "donnythumbsup.png",
+    "donnyprofessional.png",
+    "funnyface.png",
+    "halo.png"
+  ],
+  "pricing": {
+    "starter": "starter.png",
+    "standard": "standard.png",
+    "premium": "premium.png"
+  }
+}
