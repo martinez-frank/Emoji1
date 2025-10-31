@@ -6,12 +6,12 @@
   <title>A World of Expressions – Frankiemoji</title>
   <meta name="description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated. Turn your selfie into handcrafted emojis.">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style-v7.css?v=7.7" />
+  <link rel="stylesheet" href="style-v7.css?v=7.8" />
 </head>
 
 <body>
 
-  <!-- Hero (extra spacing, clean header only) -->
+  <!-- Hero (clean header only) -->
   <section class="hero hero--spacious">
     <h1 class="hero-title">A World of Expressions.</h1>
     <p class="hero-sub">Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
@@ -23,7 +23,7 @@
     </div>
   </section>
 
-  <!-- Upload teaser (disclosure removed for cleaner intro) -->
+  <!-- Upload teaser -->
   <section id="start" class="upload-teaser">
     <div class="container">
       <div class="card upload-card">
@@ -39,16 +39,68 @@
       <div class="pricing-grid">
         <!-- Starter -->
         <div class="price-card">
-          <img class="price-img" src="images/starter.png" alt="Starter pack pricing" loading="lazy" width="640" height="820" />
+          <img class="price-img" src="images/starter.png?v=7.8" alt="Starter pack pricing" loading="lazy" />
           <button class="btn primary" aria-label="Get Starter">Get Starter</button>
         </div>
 
         <!-- Standard -->
         <div class="price-card" id="standard-card">
-          <img class="price-img" src="images/standard.png" alt="Standard pack pricing" loading="lazy" width="640" height="820" />
+          <img class="price-img" src="images/standard.png?v=7.8" alt="Standard pack pricing" loading="lazy" />
           <button class="btn primary" aria-label="Get Standard">Get Standard</button>
         </div>
 
         <!-- Premium -->
         <div class="price-card">
-          <img class="price-img" src="images/prem
+          <img class="price-img" src="images/premium.png?v=7.8" alt="Premium pack pricing" loading="lazy" />
+          <button class="btn primary" aria-label="Get Premium">Get Premium</button>
+        </div>
+      </div>
+
+      <!-- “MOST POPULAR” below, centered under middle card -->
+      <div class="popular-note" aria-hidden="true">
+        <span class="badge">MOST POPULAR</span>
+      </div>
+
+      <p class="pricing-note">Instant download. Email included.</p>
+    </div>
+  </section>
+
+  <!-- Sticky bottom bar (centered buttons) -->
+  <nav class="bottom-bar">
+    <div class="container bottom-inner bottom-inner--center">
+      <div class="bottom-actions">
+        <button class="btn primary" onclick="location.href='#story'">Our Story</button>
+        <button class="btn primary" onclick="location.href='#start'">Start My Pack</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Story anchor target (placeholder) -->
+  <section id="story" class="story-anchor" aria-hidden="true"></section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>Born with a Pencil. Evolved with AI.</p>
+      <div class="links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="mailto:hello@example.com">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Config for JS -->
+  <script>
+    window.FJ_CONF = {
+      owner: "martinez-frank",
+      repo:  "Emoji1",
+      branch: "main",
+      exclude: ["starter","standard","premium"]
+    };
+  </script>
+
+  <!-- Marquee / image loader script -->
+  <script src="script-v7.js?v=7.4" defer></script>
+</body>
+</html>
