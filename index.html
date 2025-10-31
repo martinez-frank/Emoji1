@@ -4,17 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Frankiemoji — A World of Expressions</title>
+  <meta name="description" content="Turn your selfie into handcrafted, likeness-preserving emojis. Born with a Pencil. Evolved with AI.">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- New styles -->
-  <link rel="stylesheet" href="style-v7.css" />
-
-  <meta name="description" content="Turn your selfie into handcrafted, likeness-preserving emojis. Born with a Pencil. Evolved with AI." />
+  <!-- Styles (cache-busted) -->
+  <link rel="stylesheet" href="style-v7.css?v=7.3">
 </head>
 <body>
-
   <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
@@ -26,15 +24,15 @@
     </div>
   </header>
 
-  <!-- Gallery hero (no hero icon) -->
+  <!-- Gallery hero -->
   <section class="hero">
     <h1 class="hero-title">A World of Expressions.</h1>
     <p class="hero-sub">Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
 
     <!-- Two opposing marquee rows -->
     <div class="marquee-wrap">
-      <div id="marquee-top"   class="marquee track-left"  aria-label="Emoji gallery row 1"></div>
-      <div id="marquee-btm"   class="marquee track-right" aria-label="Emoji gallery row 2"></div>
+      <div id="marquee-top" class="marquee track-left" aria-label="Emoji gallery row 1"></div>
+      <div id="marquee-btm" class="marquee track-right" aria-label="Emoji gallery row 2"></div>
     </div>
   </section>
 
@@ -43,13 +41,13 @@
     <div class="container">
       <div class="card upload-card">
         <h3>Upload your selfie to start your pack</h3>
-        <button class="btn primary" onclick="window.location.hash='#pricing'">Start My Pack</button>
+        <button class="btn primary" onclick="location.href='#pricing'">Start My Pack</button>
         <p class="muted">Photos auto-delete after 24 hours.</p>
       </div>
     </div>
   </section>
 
-  <!-- Pricing across the screen -->
+  <!-- Pricing -->
   <section id="pricing" class="pricing">
     <div class="container">
       <div class="pricing-grid">
@@ -91,13 +89,19 @@
     </div>
   </footer>
 
-  <!-- New script (auto-loads ALL emoji images from /images via GitHub API) -->
+  <!-- Config for JS -->
   <script>
-    // Configure this once; used to fetch image list dynamically.
-    window.GITHUB_OWNER = "martinez-frank";
-    window.GITHUB_REPO  = "Emoji1";
-    window.GITHUB_BRANCH = "main";
+    // If you rename owner/repo/branch, update here:
+    window.FJ_CONF = {
+      owner:  "martinez-frank",
+      repo:   "Emoji1",
+      branch: "main",
+      // files containing these substrings are excluded from carousel (case-insensitive)
+      exclude: ["starter","standard","premium"]
+    };
   </script>
-  <script src="script-v7.js" defer></script>
+
+  <!-- Script (cache-busted) -->
+  <script src="script-v7.js?v=7.3" defer></script>
 </body>
 </html>
