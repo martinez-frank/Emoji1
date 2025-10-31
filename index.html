@@ -6,13 +6,13 @@
   <title>A World of Expressions – Frankiemoji</title>
   <meta name="description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated. Turn your selfie into handcrafted emojis.">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style-v7.css?v=7.5" />
+  <link rel="stylesheet" href="style-v7.css?v=7.6" />
 </head>
 
 <body>
 
-  <!-- Hero (clean header only) -->
-  <section class="hero">
+  <!-- Hero (extra spacing, clean header only) -->
+  <section class="hero hero--spacious">
     <h1 class="hero-title">A World of Expressions.</h1>
     <p class="hero-sub">Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
 
@@ -23,13 +23,12 @@
     </div>
   </section>
 
-  <!-- Upload teaser -->
+  <!-- Upload teaser (disclosure removed for cleaner intro) -->
   <section id="start" class="upload-teaser">
     <div class="container">
       <div class="card upload-card">
         <h3>Upload your selfie to start your pack</h3>
         <button class="btn primary" onclick="location.href='#pricing'">Start My Pack</button>
-        <p class="muted">Photos auto-delete after 24 hours.</p>
       </div>
     </div>
   </section>
@@ -45,8 +44,7 @@
           <button class="btn primary">Get Starter</button>
         </div>
 
-        <div class="price-card popular">
-          <div class="badge">MOST POPULAR</div>
+        <div class="price-card" id="standard-card">
           <div class="tier">Standard</div>
           <div class="price">$15</div>
           <div class="desc">9 custom emojis</div>
@@ -60,20 +58,28 @@
           <button class="btn primary">Get Premium</button>
         </div>
       </div>
+
+      <!-- MOST POPULAR moved below, centered under the middle card -->
+      <div class="popular-note" aria-hidden="true">
+        <span class="badge">MOST POPULAR</span>
+      </div>
+
       <p class="pricing-note">Instant download. Email included.</p>
     </div>
   </section>
 
-  <!-- Sticky bottom bar -->
+  <!-- Sticky bottom bar (centered buttons, no Pricing) -->
   <nav class="bottom-bar">
-    <div class="container bottom-inner">
-      <div class="bottom-links">
-        <a href="#story">Our Story</a>
-        <a href="#pricing">Pricing</a>
+    <div class="container bottom-inner bottom-inner--center">
+      <div class="bottom-actions">
+        <button class="btn primary" onclick="location.href='#story'">Our Story</button>
+        <button class="btn primary" onclick="location.href='#start'">Start My Pack</button>
       </div>
-      <button class="btn primary" onclick="location.href='#start'">Start My Pack</button>
     </div>
   </nav>
+
+  <!-- (Optional future) Story anchor target so the button scrolls somewhere -->
+  <section id="story" class="story-anchor" aria-hidden="true"></section>
 
   <!-- Footer -->
   <footer class="site-footer">
