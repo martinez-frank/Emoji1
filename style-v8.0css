@@ -1,0 +1,190 @@
+/* =========================
+   Frankiemoji Styles v8.0
+   ========================= */
+
+/* Palette */
+:root{
+  --cream:#FAF3E0;
+  --espresso:#2C2419;
+  --graphite:#5F5B53;
+  --amber:#F0C06C;
+  --accent:#D8742B;
+  --paper:#F8EED1;
+}
+
+/* Base */
+*{box-sizing:border-box}
+html,body{
+  margin:0; padding:0;
+  background:var(--cream);
+  color:var(--espresso);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+h1,h2,h3,.tier{font-family:"DM Serif Display",Georgia,serif}
+img{display:block;max-width:100%}
+
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* Buttons */
+.btn{
+  display:inline-block;
+  border:1px solid transparent;
+  padding:12px 18px;
+  border-radius:12px;
+  background:#fff;
+  color:var(--espresso);
+  font-weight:600;
+  cursor:pointer;
+  transition:transform .12s ease;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--accent);color:#fff}
+
+/* ---------- Hero & Marquee ---------- */
+.hero{
+  text-align:center;
+  padding:48px 0 8px;
+}
+.hero.hero--spacious{padding-top:72px}
+.hero-title{font-size:56px;line-height:1.05;margin:0}
+.hero-sub{color:var(--graphite);margin:10px 0 24px}
+
+.marquee-wrap{overflow:hidden}
+.marquee{
+  display:flex;
+  gap:16px;
+  padding:8px 0;
+  will-change:transform;
+}
+
+/* Emoji sizing — explicit class + high specificity so it always wins */
+.marq-img,
+.marquee img.marq-img{
+  width:128px !important;
+  height:128px !important;
+  object-fit:contain;
+  border-radius:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+  background:#fff;
+  flex:0 0 auto;
+}
+
+/* Keyframes + default speeds (JS may override slightly) */
+@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+.track-left  { animation: scrollLeft 54s linear infinite; }
+.track-right { animation: scrollRight 57s linear infinite; }
+
+/* ---------- Upload teaser ---------- */
+.upload-teaser{padding:28px 0}
+.card.upload-card{
+  margin:0 auto;
+  max-width:640px;
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
+  text-align:center;
+  padding:28px 28px 22px;
+}
+.upload-card h3{margin:0 0 10px}
+
+/* ---------- Pricing (images as cards) ---------- */
+.pricing{
+  background:var(--paper);
+  padding:48px 0;
+}
+.pricing-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:24px;
+}
+.price-card{
+  background:transparent;
+  box-shadow:none;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  max-width:360px;
+  margin:0 auto;
+}
+.price-card .price-img{
+  width:100%;
+  height:auto;
+  aspect-ratio:5/7;
+  object-fit:cover;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  background:#fff;
+}
+.price-card .btn{
+  width:100%;
+  margin-top:12px;
+  border-radius:12px;
+}
+
+/* Popular badge under the grid */
+.popular-note{
+  display:grid;
+  place-items:center;
+  margin-top:10px;
+}
+.popular-note .badge{
+  background:var(--amber);
+  color:#3a2d16;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+
+.pricing-note{
+  text-align:center;
+  margin-top:14px;
+  color:var(--graphite);
+}
+
+/* ---------- Bottom bar (sticky, centered buttons) ---------- */
+.bottom-bar{
+  position:sticky;
+  bottom:0;
+  background:rgba(250,243,224,0.96);
+  backdrop-filter:saturate(140%) blur(6px);
+  border-top:1px solid #e8dfcc;
+  padding:10px 0;
+  z-index:40;
+}
+.bottom-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.bottom-inner--center{justify-content:center}
+.bottom-actions{display:flex;gap:12px}
+
+/* ---------- Footer ---------- */
+.site-footer{padding:28px 0}
+.site-footer .container{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  border-top:1px solid #eee;
+  padding-top:16px;
+}
+.site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
+.links{display:flex;align-items:center}
+
+/* ---------- Story anchor (placeholder) ---------- */
+.story-anchor{height:1px}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px){
+  .hero-title{font-size:42px}
+  .marquee img{height:96px;width:96px}
+  .bottom-actions{gap:10px}
+}
