@@ -1,8 +1,10 @@
-/* Frankiemoji homepage logic (v7.4)
-   - Filters out pricing/hidden/corrupted files
-   - Randomizes emoji order
-   - Slows scroll speed to 1/3 previous
-   - Skips any missing or 404 images gracefully
+/* Frankiemoji homepage logic (v8.0)
+   - Loads emoji images from /images
+   - GitHub API -> manifest.json fallback -> tiny built-in fallback
+   - Excludes pricing images
+   - Randomizes order
+   - Slow, opposing marquee rows
+   - Adds explicit class + width/height to prevent sizing regressions
 */
 
 (function(){
@@ -11,7 +13,7 @@
   const REPO   = CONF.repo   || "Emoji1";
   const BRANCH = CONF.branch || "main";
   const EXCLUDE = (CONF.exclude || ["starter","standard","premium"]).map(s => s.toLowerCase());
-  const EXTRA_EXCLUDE = [/\.ds_store/i, /manifest/i, /_/, /%20/]; // catch misc broken files
+  const EXTRA_EXCLUDE = [/\.ds_store/i, /manifest/i, /_$/, /%20/]; // extra safety
 
   const topEl = document.getElementById("marquee-top");
   const btmEl = document.getElementById("marquee-btm");
@@ -19,10 +21,7 @@
 
   const containsExcluded = (nameOrPath) => {
     const s = (nameOrPath || "").toLowerCase();
-    return (
-      EXCLUDE.some(x => s.includes(x)) ||
-      EXTRA_EXCLUDE.some(rx => rx.test(s))
-    );
+    return EXCLUDE.some(x => s.includes(x)) || EXTRA_EXCLUDE.some(rx => rx.test(s));
   };
 
   const shuffle = (arr) => {
@@ -35,13 +34,19 @@
 
   const buildTrack = (urls) => {
     const frag = document.createDocumentFragment();
-    const loop = urls.concat(urls);
+    const loop = urls.concat(urls); // duplicate for seamless scroll
     loop.forEach(src => {
       const img = new Image();
+      img.className = "marq-img";       // explicit class for CSS
       img.loading = "lazy";
       img.decoding = "async";
       img.alt = "Frankiemoji expression";
       img.src = src;
+
+      // Belt & suspenders: lock size even if CSS fails
+      img.width = 128;
+      img.height = 128;
+
       img.onerror = () => {
         console.warn("[Frankiemoji] Skipping broken image:", src);
         img.remove();
@@ -95,15 +100,16 @@
     topEl.appendChild(buildTrack(urls));
     btmEl.appendChild(buildTrack([...urls].reverse()));
 
-    // Slow to ~54s (1/3 speed)
+    // Slow to ~1/3 speed (can tweak here)
     topEl.style.animationDuration = (54 + Math.random() * 2).toFixed(2) + "s";
     btmEl.style.animationDuration = (57 + Math.random() * 2).toFixed(2) + "s";
 
+    // Pause on hover
     document.querySelectorAll(".marquee").forEach(m => {
       m.addEventListener("mouseenter", () => (m.style.animationPlayState = "paused"));
       m.addEventListener("mouseleave", () => (m.style.animationPlayState = "running"));
     });
 
-    console.log(`[Frankiemoji] Loaded ${urls.length} emojis (1/3 speed).`);
+    console.log(`[Frankiemoji] Loaded ${urls.length} emojis (v8.0).`);
   })();
 })();
