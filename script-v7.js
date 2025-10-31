@@ -1,9 +1,8 @@
-/* Frankiemoji homepage logic (v7.3)
-   - Loads emoji images from /images
-   - Tries GitHub API first; falls back to /images/manifest.json
-   - Excludes any file containing: starter, standard, premium (case-insensitive)
-   - Randomizes order each load
-   - Slower scroll with subtle per-row variation
+/* Frankiemoji homepage logic (v7.4)
+   - Filters out pricing/hidden/corrupted files
+   - Randomizes emoji order
+   - Slows scroll speed to 1/3 previous
+   - Skips any missing or 404 images gracefully
 */
 
 (function(){
@@ -12,15 +11,18 @@
   const REPO   = CONF.repo   || "Emoji1";
   const BRANCH = CONF.branch || "main";
   const EXCLUDE = (CONF.exclude || ["starter","standard","premium"]).map(s => s.toLowerCase());
+  const EXTRA_EXCLUDE = [/\.ds_store/i, /manifest/i, /_/, /%20/]; // catch misc broken files
 
   const topEl = document.getElementById("marquee-top");
   const btmEl = document.getElementById("marquee-btm");
   if (!topEl || !btmEl) return;
 
-  // ---------- helpers ----------
   const containsExcluded = (nameOrPath) => {
     const s = (nameOrPath || "").toLowerCase();
-    return EXCLUDE.some(x => s.includes(x));
+    return (
+      EXCLUDE.some(x => s.includes(x)) ||
+      EXTRA_EXCLUDE.some(rx => rx.test(s))
+    );
   };
 
   const shuffle = (arr) => {
@@ -33,19 +35,22 @@
 
   const buildTrack = (urls) => {
     const frag = document.createDocumentFragment();
-    const loop = urls.concat(urls); // seamless
+    const loop = urls.concat(urls);
     loop.forEach(src => {
       const img = new Image();
       img.loading = "lazy";
       img.decoding = "async";
       img.alt = "Frankiemoji expression";
       img.src = src;
+      img.onerror = () => {
+        console.warn("[Frankiemoji] Skipping broken image:", src);
+        img.remove();
+      };
       frag.appendChild(img);
     });
     return frag;
   };
 
-  // ---------- data sources ----------
   async function listFromGitHub() {
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/images?ref=${BRANCH}`;
     const res = await fetch(url, { headers: { Accept: "application/vnd.github+json" } });
@@ -59,13 +64,14 @@
   }
 
   async function listFromManifest() {
-    // Local fallback you control
-    const res = await fetch("images/manifest.json", { cache: "no-store" });
-    if (!res.ok) throw new Error(`manifest.json ${res.status}`);
-    const files = await res.json(); // ["images/a.png","images/b.png",...]
-    return files
-      .filter(x => /\.(png|jpe?g|webp|gif)$/i.test(x))
-      .filter(x => !containsExcluded(x));
+    try {
+      const res = await fetch("images/manifest.json", { cache: "no-store" });
+      if (!res.ok) throw new Error(`manifest ${res.status}`);
+      const files = await res.json();
+      return files.filter(x => /\.(png|jpe?g|webp|gif)$/i.test(x) && !containsExcluded(x));
+    } catch {
+      return [];
+    }
   }
 
   async function getEmojiList() {
@@ -75,38 +81,29 @@
     } catch (e) {
       console.warn("[Frankiemoji] GitHub API list failed, using manifest.json", e);
     }
-    try {
-      const mf = await listFromManifest();
-      if (mf.length) return mf;
-    } catch (e) {
-      console.warn("[Frankiemoji] manifest.json fallback failed", e);
-    }
-    // Final minimal fallback – prevents blank UI
+    const mf = await listFromManifest();
+    if (mf.length) return mf;
     return [
-      "images/e01.png","images/e02.png","images/e03.png",
-      "images/e04.png","images/e05.png","images/e06.png"
-    ].filter(x => !containsExcluded(x));
+      "images/e01.png","images/e02.png","images/e03.png","images/e04.png"
+    ];
   }
 
-  // ---------- run ----------
   (async () => {
     let urls = await getEmojiList();
-    urls = shuffle([...new Set(urls)]); // unique + random
+    urls = shuffle([...new Set(urls)]);
 
-    // Build rows
     topEl.appendChild(buildTrack(urls));
     btmEl.appendChild(buildTrack([...urls].reverse()));
 
-    // Natural speed variance
-    topEl.style.animationDuration = (18 + Math.random() * 2).toFixed(2) + "s";
-    btmEl.style.animationDuration = (19.5 + Math.random() * 2).toFixed(2) + "s";
+    // Slow to ~54s (1/3 speed)
+    topEl.style.animationDuration = (54 + Math.random() * 2).toFixed(2) + "s";
+    btmEl.style.animationDuration = (57 + Math.random() * 2).toFixed(2) + "s";
 
-    // Pause on hover
     document.querySelectorAll(".marquee").forEach(m => {
       m.addEventListener("mouseenter", () => (m.style.animationPlayState = "paused"));
       m.addEventListener("mouseleave", () => (m.style.animationPlayState = "running"));
     });
 
-    console.log("[Frankiemoji] Loaded emojis:", urls);
+    console.log(`[Frankiemoji] Loaded ${urls.length} emojis (1/3 speed).`);
   })();
 })();
