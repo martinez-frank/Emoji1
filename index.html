@@ -1,16 +1,87 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>A World of Expressions – Frankiemoji</title>
-  <meta name="description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated. Turn your selfie into handcrafted emojis.">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>A World of Expressions – Frankiemoji</title>
+<meta name="description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated. Turn your selfie into handcrafted emojis.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =========================
+   Frankiemoji Styles (inline v8.1)
+   ========================= */
+:root{
+  --cream:#FAF3E0; --espresso:#2C2419; --graphite:#5F5B53;
+  --amber:#F0C06C; --accent:#D8742B; --paper:#F8EED1;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--cream);color:var(--espresso);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif}
+h1,h2,h3{font-family:"DM Serif Display",Georgia,serif}
+img{display:block;max-width:100%}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
 
-  <!-- Single authoritative stylesheet (no fallbacks) -->
-  <link rel="stylesheet" href="style-v8.css?v=8.0" />
+/* Buttons */
+.btn{display:inline-block;border:1px solid transparent;padding:12px 18px;border-radius:12px;background:#fff;color:var(--espresso);font-weight:600;cursor:pointer;transition:transform .12s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--accent);color:#fff}
+
+/* Hero & Marquee */
+.hero{text-align:center;padding:48px 0 8px}
+.hero.hero--spacious{padding-top:72px}
+.hero-title{font-size:56px;line-height:1.05;margin:0}
+.hero-sub{color:var(--graphite);margin:10px 0 24px}
+.marquee-wrap{overflow:hidden}
+.marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
+.marq-img,.marquee img.marq-img{
+  width:128px!important;height:128px!important;object-fit:contain;border-radius:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto
+}
+@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+.track-left{animation:scrollLeft 54s linear infinite}
+.track-right{animation:scrollRight 57s linear infinite}
+
+/* Upload teaser */
+.upload-teaser{padding:28px 0}
+.card.upload-card{margin:0 auto;max-width:640px;background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.06);text-align:center;padding:28px 28px 22px}
+.upload-card h3{margin:0 0 10px}
+
+/* Pricing (images as cards) */
+.pricing{background:var(--paper);padding:48px 0}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.price-card{background:transparent;box-shadow:none;padding:0;display:flex;flex-direction:column;align-items:center;max-width:360px;margin:0 auto}
+.price-card .price-img{width:100%;height:auto;aspect-ratio:5/7;object-fit:cover;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.08);background:#fff}
+.price-card .btn{width:100%;margin-top:12px;border-radius:12px}
+
+/* Popular badge under the grid */
+.popular-note{display:grid;place-items:center;margin-top:10px}
+.popular-note .badge{background:var(--amber);color:#3a2d16;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+.pricing-note{text-align:center;margin-top:14px;color:var(--graphite)}
+
+/* Bottom bar */
+.bottom-bar{position:sticky;bottom:0;background:rgba(250,243,224,.96);backdrop-filter:saturate(140%) blur(6px);border-top:1px solid #e8dfcc;padding:10px 0;z-index:40}
+.bottom-inner{display:flex;align-items:center;justify-content:center;gap:16px}
+.bottom-actions{display:flex;gap:12px}
+
+/* Footer */
+.site-footer{padding:28px 0}
+.site-footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #eee;padding-top:16px}
+.site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
+.links{display:flex;align-items:center}
+
+/* Story anchor */
+.story-anchor{height:1px}
+
+/* Responsive */
+@media (max-width:900px){
+  .hero-title{font-size:42px}
+  .marquee img{height:96px;width:96px}
+  .bottom-actions{gap:10px}
+}
+</style>
 </head>
 
 <body>
@@ -19,7 +90,6 @@
     <h1 class="hero-title">A World of Expressions.</h1>
     <p class="hero-sub">Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
 
-    <!-- Emoji rows -->
     <div class="marquee-wrap">
       <div id="marquee-top" class="marquee track-left" aria-label="Emoji gallery row 1"></div>
       <div id="marquee-btm" class="marquee track-right" aria-label="Emoji gallery row 2"></div>
@@ -36,23 +106,21 @@
     </div>
   </section>
 
-  <!-- Pricing (images as cards + orange CTAs) -->
+  <!-- Pricing -->
   <section id="pricing" class="pricing">
     <div class="container">
       <div class="pricing-grid">
         <div class="price-card">
-          <img class="price-img" src="images/starter.png?v=8.0" alt="Starter pack pricing" loading="lazy" />
-          <button class="btn primary" aria-label="Get Starter">Get Starter</button>
+          <img class="price-img" src="images/starter.png" alt="Starter pack pricing" loading="lazy" />
+          <button class="btn primary">Get Starter</button>
         </div>
-
         <div class="price-card" id="standard-card">
-          <img class="price-img" src="images/standard.png?v=8.0" alt="Standard pack pricing" loading="lazy" />
-          <button class="btn primary" aria-label="Get Standard">Get Standard</button>
+          <img class="price-img" src="images/standard.png" alt="Standard pack pricing" loading="lazy" />
+          <button class="btn primary">Get Standard</button>
         </div>
-
         <div class="price-card">
-          <img class="price-img" src="images/premium.png?v=8.0" alt="Premium pack pricing" loading="lazy" />
-          <button class="btn primary" aria-label="Get Premium">Get Premium</button>
+          <img class="price-img" src="images/premium.png" alt="Premium pack pricing" loading="lazy" />
+          <button class="btn primary">Get Premium</button>
         </div>
       </div>
 
@@ -64,9 +132,9 @@
     </div>
   </section>
 
-  <!-- Sticky bottom bar -->
+  <!-- Bottom bar -->
   <nav class="bottom-bar">
-    <div class="container bottom-inner bottom-inner--center">
+    <div class="container bottom-inner">
       <div class="bottom-actions">
         <button class="btn primary" onclick="location.href='#story'">Our Story</button>
         <button class="btn primary" onclick="location.href='#start'">Start My Pack</button>
@@ -74,7 +142,6 @@
     </div>
   </nav>
 
-  <!-- Story anchor target (placeholder) -->
   <section id="story" class="story-anchor" aria-hidden="true"></section>
 
   <!-- Footer -->
@@ -82,24 +149,67 @@
     <div class="container">
       <p>Born with a Pencil. Evolved with AI.</p>
       <div class="links">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="mailto:hello@example.com">Contact</a>
+        <a href="#">Privacy</a><a href="#">Terms</a><a href="mailto:hello@example.com">Contact</a>
       </div>
     </div>
   </footer>
 
-  <!-- Config for JS -->
-  <script>
-    window.FJ_CONF = {
-      owner: "martinez-frank",
-      repo:  "Emoji1",
-      branch: "main",
-      exclude: ["starter","standard","premium"] // keep these out of the marquee
-    };
-  </script>
+<script>
+/* Frankiemoji marquee (inline v8.1) */
+(function(){
+  const CONF = {
+    owner: "martinez-frank", repo: "Emoji1", branch: "main",
+    exclude: ["starter","standard","premium"]
+  };
+  const topEl = document.getElementById("marquee-top");
+  const btmEl = document.getElementById("marquee-btm");
+  if(!topEl || !btmEl) return;
 
-  <!-- Marquee / image loader script -->
-  <script src="script-v8.js?v=8.0" defer></script>
-</body>
-</html>
+  const EXCLUDE = (CONF.exclude||[]).map(s=>s.toLowerCase());
+  const EXTRA_EXCLUDE=[/\.ds_store/i,/manifest/i,/%20/];
+
+  const containsExcluded = s => {
+    s=(s||"").toLowerCase();
+    return EXCLUDE.some(x=>s.includes(x)) || EXTRA_EXCLUDE.some(rx=>rx.test(s));
+  };
+
+  const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+
+  const buildTrack = urls => {
+    const frag=document.createDocumentFragment();
+    const loop=urls.concat(urls);
+    loop.forEach(src=>{
+      const img=new Image();
+      img.className="marq-img"; img.loading="lazy"; img.decoding="async";
+      img.alt="Frankiemoji expression"; img.src=src; img.width=128; img.height=128;
+      img.onerror=()=>{console.warn("Skip broken image:",src); img.remove();};
+      frag.appendChild(img);
+    });
+    return frag;
+  };
+
+  async function listFromGitHub(){
+    try{
+      const url=`https://api.github.com/repos/${CONF.owner}/${CONF.repo}/contents/images?ref=${CONF.branch}`;
+      const res=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
+      if(!res.ok) throw new Error(res.status);
+      const items=await res.json();
+      return items.filter(it=>it.type==="file")
+        .filter(it=>/\.(png|jpe?g|webp|gif)$/i.test(it.name))
+        .filter(it=>!containsExcluded(it.name) && !containsExcluded(it.path))
+        .map(it=>it.download_url);
+    }catch(e){return []}
+  }
+
+  async function listFromManifest(){
+    try{
+      const res=await fetch("images/manifest.json",{cache:"no-store"});
+      if(!res.ok) throw 0;
+      const arr=await res.json();
+      return arr.filter(x=>/\.(png|jpe?g|webp|gif)$/i.test(x) && !containsExcluded(x));
+    }catch(e){return []}
+  }
+
+  (async()=>{
+    let urls=await listFromGitHub();
+    if(!urls.length) urls=await listFromManifest();
