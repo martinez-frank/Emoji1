@@ -2,21 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>A World of Expressions – Frankiemoji</title>
   <meta name="description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated. Turn your selfie into handcrafted emojis.">
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style-v7.css?v=7.8" />
+
+  <!-- Primary CSS with fallback injection if it fails -->
+  <link rel="preload" as="style" href="style-v7.css?v=7.9" />
+  <link id="main-css" rel="stylesheet" href="style-v7.css?v=7.9" />
+  <script>
+    // If CSS fails to load (404 or blocked), inject a safe fallback.
+    (function(){
+      var link = document.getElementById('main-css');
+      function fallback(){
+        var ok = getComputedStyle(document.documentElement).getPropertyValue('--cream');
+        if(!ok){ // var not defined => CSS missing
+          var alt = document.createElement('link');
+          alt.rel = 'stylesheet';
+          alt.href = 'style.css?v=7.9'; // legacy backup if exists
+          document.head.appendChild(alt);
+          console.warn('[Frankiemoji] style-v7.css not detected; injected fallback style.css');
+        }
+      }
+      if (document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', fallback);
+      } else {
+        fallback();
+      }
+    })();
+  </script>
+  <noscript><link rel="stylesheet" href="style-v7.css?v=7.9" /></noscript>
 </head>
 
 <body>
-
-  <!-- Hero (clean header only) -->
+  <!-- Hero -->
   <section class="hero hero--spacious">
     <h1 class="hero-title">A World of Expressions.</h1>
     <p class="hero-sub">Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
 
-    <!-- Emoji rows -->
     <div class="marquee-wrap">
       <div id="marquee-top" class="marquee track-left" aria-label="Emoji gallery row 1"></div>
       <div id="marquee-btm" class="marquee track-right" aria-label="Emoji gallery row 2"></div>
@@ -33,30 +59,24 @@
     </div>
   </section>
 
-  <!-- Pricing (images as cards + orange CTAs) -->
+  <!-- Pricing (images as cards) -->
   <section id="pricing" class="pricing">
     <div class="container">
       <div class="pricing-grid">
-        <!-- Starter -->
         <div class="price-card">
-          <img class="price-img" src="images/starter.png?v=7.8" alt="Starter pack pricing" loading="lazy" />
+          <img class="price-img" src="images/starter.png?v=7.9" alt="Starter pack pricing" loading="lazy" />
           <button class="btn primary" aria-label="Get Starter">Get Starter</button>
         </div>
-
-        <!-- Standard -->
         <div class="price-card" id="standard-card">
-          <img class="price-img" src="images/standard.png?v=7.8" alt="Standard pack pricing" loading="lazy" />
+          <img class="price-img" src="images/standard.png?v=7.9" alt="Standard pack pricing" loading="lazy" />
           <button class="btn primary" aria-label="Get Standard">Get Standard</button>
         </div>
-
-        <!-- Premium -->
         <div class="price-card">
-          <img class="price-img" src="images/premium.png?v=7.8" alt="Premium pack pricing" loading="lazy" />
+          <img class="price-img" src="images/premium.png?v=7.9" alt="Premium pack pricing" loading="lazy" />
           <button class="btn primary" aria-label="Get Premium">Get Premium</button>
         </div>
       </div>
 
-      <!-- “MOST POPULAR” below, centered under middle card -->
       <div class="popular-note" aria-hidden="true">
         <span class="badge">MOST POPULAR</span>
       </div>
@@ -65,7 +85,7 @@
     </div>
   </section>
 
-  <!-- Sticky bottom bar (centered buttons) -->
+  <!-- Sticky bottom bar -->
   <nav class="bottom-bar">
     <div class="container bottom-inner bottom-inner--center">
       <div class="bottom-actions">
