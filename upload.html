@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Start Your Pack — Frankiemoji</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style-v8.0.css?v=8.0.1">
+  <link rel="stylesheet" href="style.css?v=8.0.1" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="style.css?v=8.0.1"></noscript>
+</head>
+<body class="cream">
+  <header class="site-header">
+    <a href="index.html" class="brand">Frankiemoji</a>
+    <nav class="site-nav">
+      <a href="index.html#pricing">Pricing</a>
+      <a href="our-story.html">Our Story</a>
+      <a class="btn primary" href="upload.html">Start my pack</a>
+    </nav>
+  </header>
+
+  <main class="container upload-flow">
+    <section class="hero center">
+      <h1>Start your pack</h1>
+      <p class="subtle">Upload a selfie, add your email, and we’ll get your hand-drawn emojis started.</p>
+    </section>
+
+    <section class="card upload-card">
+      <form id="startForm" novalidate>
+        <div class="field">
+          <label for="photo">Selfie (JPG/PNG)</label>
+          <input id="photo" name="photo" type="file" accept="image/png,image/jpeg" required>
+          <small class="hint">Clear, front-facing, good lighting works best.</small>
+        </div>
+
+        <div id="previewWrap" class="preview hidden">
+          <img id="previewImg" alt="Preview" />
+        </div>
+
+        <div class="field">
+          <label for="email">Email for delivery</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="field checkbox">
+          <label>
+            <input id="consent" type="checkbox" required>
+            I’m okay receiving my emojis and status updates by email.
+          </label>
+        </div>
+
+        <button class="btn primary" type="submit">Continue</button>
+        <p id="formMsg" class="form-msg subtle" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Born with a Pencil. Evolved with Technology.</p>
+    <nav class="footer-nav">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </footer>
+
+  <script>
+    const photo = document.getElementById('photo');
+    const previewWrap = document.getElementById('previewWrap');
+    const previewImg = document.getElementById('previewImg');
+    const form = document.getElementById('startForm');
+    const msg = document.getElementById('formMsg');
+
+    photo.addEventListener('change', () => {
+      const file = photo.files?.[0];
+      if (!file) return;
+      previewImg.src = URL.createObjectURL(file);
+      previewWrap.classList.remove('hidden');
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!photo.files[0]) { msg.textContent = 'Please add a selfie.'; return; }
+      if (!form.email.value) { msg.textContent = 'Please add an email.'; return; }
+      if (!document.getElementById('consent').checked) { msg.textContent = 'Please accept email updates.'; return; }
+      msg.textContent = 'Great! Your pack is starting. Check your inbox.';
+      form.querySelector('button').disabled = true;
+    });
+  </script>
+</body>
+</html>
