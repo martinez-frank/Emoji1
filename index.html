@@ -6,6 +6,7 @@
 <title>A World of Expressions – Frankiemoji</title>
 <meta name="description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated.">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- build: v8.3 -->
 
 <style>
 :root{
@@ -169,7 +170,7 @@ img{display:block;max-width:100%}
   </footer>
 
 <script>
-/* Frankiemoji marquee (v8.2) */
+/* Frankiemoji marquee (v8.3) */
 (function(){
   const CONF = {
     owner: "martinez-frank", repo: "Emoji1", branch: "main",
@@ -216,4 +217,31 @@ img{display:block;max-width:100%}
       if(!res.ok) throw 0;
       const arr=await res.json();
       return arr.filter(x=>/\.(png|jpe?g|webp|gif)$/i.test(x)&&!containsExcluded(x));
-    }catch(e)
+    }catch(e){
+      return [];
+    }
+  }
+  (async()=>{
+    let urls=await listFromGitHub();
+    if(!urls.length) urls=await listFromManifest();
+    if(!urls.length) urls=["images/e01.png","images/e02.png","images/e03.png","images/e04.png"];
+    urls=shuffle([...new Set(urls)]);
+
+    topEl.appendChild(buildTrack(urls));
+    btmEl.appendChild(buildTrack([...urls].reverse()));
+
+    // Slow, opposing rows
+    topEl.style.animationDuration=(54+Math.random()*2).toFixed(2)+"s";
+    btmEl.style.animationDuration=(57+Math.random()*2).toFixed(2)+"s";
+
+    // Pause on hover
+    document.querySelectorAll(".marquee").forEach(m=>{
+      m.addEventListener("mouseenter",()=>m.style.animationPlayState="paused");
+      m.addEventListener("mouseleave",()=>m.style.animationPlayState="running");
+    });
+  })();
+})();
+</script>
+</body>
+</html>
+
