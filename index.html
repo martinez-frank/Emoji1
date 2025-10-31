@@ -4,13 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>A World of Expressions – Frankiemoji</title>
-<meta name="description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated. Turn your selfie into handcrafted emojis.">
+<meta name="description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated.">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* =========================
-   Frankiemoji Styles (inline v8.1)
-   ========================= */
 :root{
   --cream:#FAF3E0; --espresso:#2C2419; --graphite:#5F5B53;
   --amber:#F0C06C; --accent:#D8742B; --paper:#F8EED1;
@@ -27,12 +24,11 @@ img{display:block;max-width:100%}
 .btn:hover{transform:translateY(-1px)}
 .btn.primary{background:var(--accent);color:#fff}
 
-/* Hero & Marquee */
-.hero{text-align:center;padding:48px 0 8px}
-.hero.hero--spacious{padding-top:72px}
+/* Hero + marquee */
+.hero{text-align:center;padding:64px 0 12px}
 .hero-title{font-size:56px;line-height:1.05;margin:0}
 .hero-sub{color:var(--graphite);margin:10px 0 24px}
-.marquee-wrap{overflow:hidden}
+.marquee-wrap{overflow:hidden;margin-top:8px}
 .marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
 .marq-img,.marquee img.marq-img{
   width:128px!important;height:128px!important;object-fit:contain;border-radius:16px;
@@ -45,30 +41,47 @@ img{display:block;max-width:100%}
 
 /* Upload teaser */
 .upload-teaser{padding:28px 0}
-.card.upload-card{margin:0 auto;max-width:640px;background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.06);text-align:center;padding:28px 28px 22px}
+.card.upload-card{
+  margin:0 auto;max-width:640px;background:#fff;border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.06);text-align:center;padding:28px 28px 22px
+}
 .upload-card h3{margin:0 0 10px}
 
 /* Pricing (images as cards) */
 .pricing{background:var(--paper);padding:48px 0}
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
-.price-card{background:transparent;box-shadow:none;padding:0;display:flex;flex-direction:column;align-items:center;max-width:360px;margin:0 auto}
+.pricing-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:24px;
+  justify-items:center;
+  max-width:900px;
+  margin:0 auto;
+}
+.price-card{background:transparent;box-shadow:none;padding:0;display:flex;flex-direction:column;align-items:center;max-width:360px}
 .price-card .price-img{width:100%;height:auto;aspect-ratio:5/7;object-fit:cover;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.08);background:#fff}
 .price-card .btn{width:100%;margin-top:12px;border-radius:12px}
 
-/* Popular badge under the grid */
 .popular-note{display:grid;place-items:center;margin-top:10px}
-.popular-note .badge{background:var(--amber);color:#3a2d16;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-
+.popular-note .badge{
+  background:var(--amber);color:#3a2d16;padding:6px 12px;border-radius:999px;
+  font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  box-shadow:0 1px 3px rgba(0,0,0,.06)
+}
 .pricing-note{text-align:center;margin-top:14px;color:var(--graphite)}
 
 /* Bottom bar */
-.bottom-bar{position:sticky;bottom:0;background:rgba(250,243,224,.96);backdrop-filter:saturate(140%) blur(6px);border-top:1px solid #e8dfcc;padding:10px 0;z-index:40}
+.bottom-bar{position:sticky;bottom:0;background:rgba(250,243,224,.96);
+  backdrop-filter:saturate(140%) blur(6px);border-top:1px solid #e8dfcc;
+  padding:10px 0;z-index:40}
 .bottom-inner{display:flex;align-items:center;justify-content:center;gap:16px}
 .bottom-actions{display:flex;gap:12px}
 
 /* Footer */
 .site-footer{padding:28px 0}
-.site-footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #eee;padding-top:16px}
+.site-footer .container{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  border-top:1px solid #eee;padding-top:16px
+}
 .site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
 .links{display:flex;align-items:center}
 
@@ -86,10 +99,11 @@ img{display:block;max-width:100%}
 
 <body>
   <!-- Hero -->
-  <section class="hero hero--spacious">
+  <section class="hero">
     <h1 class="hero-title">A World of Expressions.</h1>
     <p class="hero-sub">Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
 
+    <!-- Emoji carousel -->
     <div class="marquee-wrap">
       <div id="marquee-top" class="marquee track-left" aria-label="Emoji gallery row 1"></div>
       <div id="marquee-btm" class="marquee track-right" aria-label="Emoji gallery row 2"></div>
@@ -114,7 +128,7 @@ img{display:block;max-width:100%}
           <img class="price-img" src="images/starter.png" alt="Starter pack pricing" loading="lazy" />
           <button class="btn primary">Get Starter</button>
         </div>
-        <div class="price-card" id="standard-card">
+        <div class="price-card">
           <img class="price-img" src="images/standard.png" alt="Standard pack pricing" loading="lazy" />
           <button class="btn primary">Get Standard</button>
         </div>
@@ -155,7 +169,7 @@ img{display:block;max-width:100%}
   </footer>
 
 <script>
-/* Frankiemoji marquee (inline v8.1) */
+/* Frankiemoji marquee (v8.2) */
 (function(){
   const CONF = {
     owner: "martinez-frank", repo: "Emoji1", branch: "main",
@@ -163,19 +177,16 @@ img{display:block;max-width:100%}
   };
   const topEl = document.getElementById("marquee-top");
   const btmEl = document.getElementById("marquee-btm");
-  if(!topEl || !btmEl) return;
+  if(!topEl||!btmEl) return;
 
-  const EXCLUDE = (CONF.exclude||[]).map(s=>s.toLowerCase());
+  const EXCLUDE=(CONF.exclude||[]).map(s=>s.toLowerCase());
   const EXTRA_EXCLUDE=[/\.ds_store/i,/manifest/i,/%20/];
-
-  const containsExcluded = s => {
+  const containsExcluded=s=>{
     s=(s||"").toLowerCase();
-    return EXCLUDE.some(x=>s.includes(x)) || EXTRA_EXCLUDE.some(rx=>rx.test(s));
+    return EXCLUDE.some(x=>s.includes(x))||EXTRA_EXCLUDE.some(rx=>rx.test(s));
   };
-
-  const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
-
-  const buildTrack = urls => {
+  const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const buildTrack=urls=>{
     const frag=document.createDocumentFragment();
     const loop=urls.concat(urls);
     loop.forEach(src=>{
@@ -187,7 +198,6 @@ img{display:block;max-width:100%}
     });
     return frag;
   };
-
   async function listFromGitHub(){
     try{
       const url=`https://api.github.com/repos/${CONF.owner}/${CONF.repo}/contents/images?ref=${CONF.branch}`;
@@ -196,20 +206,14 @@ img{display:block;max-width:100%}
       const items=await res.json();
       return items.filter(it=>it.type==="file")
         .filter(it=>/\.(png|jpe?g|webp|gif)$/i.test(it.name))
-        .filter(it=>!containsExcluded(it.name) && !containsExcluded(it.path))
+        .filter(it=>!containsExcluded(it.name)&&!containsExcluded(it.path))
         .map(it=>it.download_url);
     }catch(e){return []}
   }
-
   async function listFromManifest(){
     try{
       const res=await fetch("images/manifest.json",{cache:"no-store"});
       if(!res.ok) throw 0;
       const arr=await res.json();
-      return arr.filter(x=>/\.(png|jpe?g|webp|gif)$/i.test(x) && !containsExcluded(x));
-    }catch(e){return []}
-  }
-
-  (async()=>{
-    let urls=await listFromGitHub();
-    if(!urls.length) urls=await listFromManifest();
+      return arr.filter(x=>/\.(png|jpe?g|webp|gif)$/i.test(x)&&!containsExcluded(x));
+    }catch(e)
