@@ -3,33 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Frankiemoji — A World of Expressions</title>
-  <meta name="description" content="Turn your selfie into handcrafted, likeness-preserving emojis. Born with a Pencil. Evolved with AI.">
-
-  <!-- Fonts -->
+  <title>A World of Expressions – Frankiemoji</title>
+  <meta name="description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated. Turn your selfie into handcrafted emojis.">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Styles (cache-busted) -->
-  <link rel="stylesheet" href="style-v7.css?v=7.3">
+  <link rel="stylesheet" href="style-v7.css?v=7.5" />
 </head>
-<body>
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="brand">Frankiemoji</div>
-      <nav class="nav">
-        <a href="#pricing">Pricing</a>
-        <a href="#start" class="btn primary">Start My Pack</a>
-      </nav>
-    </div>
-  </header>
 
-  <!-- Gallery hero -->
+<body>
+
+  <!-- Hero (clean header only) -->
   <section class="hero">
     <h1 class="hero-title">A World of Expressions.</h1>
     <p class="hero-sub">Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
 
-    <!-- Two opposing marquee rows -->
+    <!-- Emoji rows -->
     <div class="marquee-wrap">
       <div id="marquee-top" class="marquee track-left" aria-label="Emoji gallery row 1"></div>
       <div id="marquee-btm" class="marquee track-right" aria-label="Emoji gallery row 2"></div>
@@ -55,7 +42,7 @@
           <div class="tier">Starter</div>
           <div class="price">$5</div>
           <div class="desc">3 custom emojis</div>
-          <button class="btn">Get Starter</button>
+          <button class="btn primary">Get Starter</button>
         </div>
 
         <div class="price-card popular">
@@ -70,12 +57,23 @@
           <div class="tier">Premium</div>
           <div class="price">$25</div>
           <div class="desc">18 custom emojis</div>
-          <button class="btn">Get Premium</button>
+          <button class="btn primary">Get Premium</button>
         </div>
       </div>
       <p class="pricing-note">Instant download. Email included.</p>
     </div>
   </section>
+
+  <!-- Sticky bottom bar -->
+  <nav class="bottom-bar">
+    <div class="container bottom-inner">
+      <div class="bottom-links">
+        <a href="#story">Our Story</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <button class="btn primary" onclick="location.href='#start'">Start My Pack</button>
+    </div>
+  </nav>
 
   <!-- Footer -->
   <footer class="site-footer">
@@ -89,19 +87,17 @@
     </div>
   </footer>
 
-  <!-- Config for JS -->
+  <!-- Config -->
   <script>
-    // If you rename owner/repo/branch, update here:
     window.FJ_CONF = {
-      owner:  "martinez-frank",
-      repo:   "Emoji1",
+      owner: "martinez-frank",
+      repo:  "Emoji1",
       branch: "main",
-      // files containing these substrings are excluded from carousel (case-insensitive)
       exclude: ["starter","standard","premium"]
     };
   </script>
 
-  <!-- Script (cache-busted) -->
-  <script src="script-v7.js?v=7.3" defer></script>
+  <!-- Script -->
+  <script src="script-v7.js?v=7.4" defer></script>
 </body>
 </html>
