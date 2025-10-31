@@ -6,118 +6,74 @@
   <title>A World of Expressions — Frankiemoji</title>
   <meta name="description" content="Hand-drawn, likeness-true emojis made from your real expressions. Instant delivery.">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Primary stylesheet (correct filename) -->
-  <link rel="stylesheet" href="style-v8.0.css?v=8.0.2">
-  <!-- Fallback that only applies after it loads -->
-  <link rel="stylesheet" href="style.css?v=8.0.2" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="style.css?v=8.0.2"></noscript>
-
-  <!-- Tiny critical CSS so layout isn't naked if both links fail (safety net) -->
-  <style>
-    :root{--cream:#FAF3E0;--espresso:#2C2419;}
-    html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--espresso);background:#FCF6E8}
-    .site-header,.site-footer{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 18px}
-    .brand{font-weight:700;text-decoration:none;color:var(--espresso)}
-    .site-nav a{margin-left:16px;text-decoration:none;color:var(--espresso);font-size:14px}
-    .btn{display:inline-block;padding:10px 16px;border-radius:10px;background:#E7782F;color:#fff;text-decoration:none;font-weight:600}
-    .btn.ghost{background:#fff;color:var(--espresso);border:1px solid #e5d7c2}
-    .center{text-align:center}
-    .container{max-width:1100px;margin:0 auto;padding:0 16px}
-    .hero{padding:28px 0 8px}
-    .hero h1{font-family:"DM Serif Display",serif;font-size:38px;margin:6px 0 4px}
-    .hero .subtle{opacity:.8;font-size:14px;margin:0 0 14px}
-    .upload-pill{display:inline-block;margin:14px auto;padding:14px 16px;border-radius:14px;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.06)}
-    .pricing{padding:22px 0}
-    .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-    .price-card{background:#fff;border-radius:16px;box-shadow:0 3px 12px rgba(0,0,0,.08);padding:10px;text-align:center}
-    .price-card img{max-width:100%;height:auto;border-radius:12px}
-    .badge{margin:8px 0 2px;font-size:12px;letter-spacing:.08em}
-    .trust{opacity:.8;font-size:13px;margin:0}
-    .cta-row{padding:18px 0 28px}
-    .site-footer p{margin:0;font-size:13px;opacity:.9}
-    .footer-nav a{margin-left:14px;text-decoration:none;color:var(--espresso);font-size:13px}
-    @media (max-width:800px){.cards{grid-template-columns:1fr;}.site-nav{display:none}.hero h1{font-size:30px}}
-  </style>
-
-  <!-- Guard: if primary stylesheet 404s, try again and ensure at least one stylesheet is applied -->
-  <script>
-    (function(){
-      function sheetLoadedContains(name){
-        return Array.from(document.styleSheets).some(s=>s.href && s.href.indexOf(name)!==-1);
-      }
-      // After a short delay, if neither file is present, inject style.css as last resort
-      window.addEventListener('load', function(){
-        setTimeout(function(){
-          if(!sheetLoadedContains('style-v8.0.css') && !sheetLoadedContains('style.css')){
-            var l=document.createElement('link');
-            l.rel='stylesheet'; l.href='style.css?v=8.0.2&lastresort=1';
-            document.head.appendChild(l);
-          }
-        }, 400);
-      });
-    })();
-  </script>
+  <!-- Use the proven stylesheet -->
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body class="cream">
-  <header class="site-header container">
+  <!-- Header -->
+  <header class="site-header">
     <a href="index.html" class="brand">Frankiemoji</a>
     <nav class="site-nav">
       <a href="#pricing">Pricing</a>
       <a href="our-story.html">Our Story</a>
-      <a class="btn" href="upload.html">Start my pack</a>
+      <a class="btn primary" href="upload.html">Start My Pack</a>
     </nav>
   </header>
 
   <main>
     <!-- HERO -->
-    <section class="hero center container">
+    <section class="hero center">
       <h1>A World of Expressions.</h1>
       <p class="subtle">Each emoji, handcrafted. Every face, emotion, unique. Your expressions — elevated.</p>
 
-      <!-- (Optional) your two-row carousel lives here; images via HTML/CSS; JS animates in script-v8.js -->
+      <!-- Top strips (two rows; your CSS/JS animates them) -->
       <div class="strips" aria-hidden="true">
         <div class="strip top"></div>
         <div class="strip bottom"></div>
       </div>
 
+      <!-- Upload CTA -->
       <div class="upload-pill">
-        <p style="margin:0 0 8px">Upload a selfie to start your pack</p>
-        <a class="btn" href="upload.html">Start my pack</a>
+        <p>Upload your selfie to start your pack</p>
+        <a class="btn primary" href="upload.html">Start My Pack</a>
       </div>
     </section>
 
     <!-- PRICING -->
     <section id="pricing" class="pricing container">
       <div class="cards">
+        <!-- STARTER -->
         <article class="price-card">
           <img src="images/price-starter.png" alt="Starter pack card" loading="lazy">
-          <a class="btn" href="upload.html?pack=starter">Get Starter</a>
+          <a class="btn primary block" href="upload.html?pack=starter">Get Starter</a>
         </article>
 
-        <article class="price-card">
+        <!-- STANDARD -->
+        <article class="price-card popular">
           <img src="images/price-standard.png" alt="Standard pack card — Most Popular" loading="lazy">
-          <a class="btn" href="upload.html?pack=standard">Get Standard</a>
+          <a class="btn primary block" href="upload.html?pack=standard">Get Standard</a>
         </article>
 
+        <!-- PREMIUM -->
         <article class="price-card">
           <img src="images/price-premium.png" alt="Premium pack card" loading="lazy">
-          <a class="btn" href="upload.html?pack=premium">Get Premium</a>
+          <a class="btn primary block" href="upload.html?pack=premium">Get Premium</a>
         </article>
       </div>
 
-      <p class="badge center">MOST POPULAR</p>
-      <p class="trust center">Instant delivery to your inbox.</p>
+      <p class="badge">MOST POPULAR</p>
+      <p class="trust subtle">Instant delivery to your inbox.</p>
     </section>
 
+    <!-- Bottom CTAs -->
     <section class="cta-row center">
       <a class="btn ghost" href="our-story.html">Our Story</a>
-      <a class="btn" href="upload.html">Start my pack</a>
+      <a class="btn primary" href="upload.html">Start My Pack</a>
     </section>
   </main>
 
-  <footer class="site-footer container">
+  <!-- Footer -->
+  <footer class="site-footer">
     <p>Born with a Pencil. Evolved with Technology.</p>
     <nav class="footer-nav">
       <a href="privacy.html">Privacy</a>
@@ -126,7 +82,7 @@
     </nav>
   </footer>
 
-  <!-- Your JS (carousel, etc.) -->
+  <!-- Scripts -->
   <script src="script-v8.js" defer></script>
 </body>
 </html>
