@@ -1,0 +1,71 @@
+:root{
+  --cream:#FAF3E0;
+  --espresso:#2C2419;
+  --graphite:#5F5B53;
+  --amber:#F0C06C;
+  --accent:#D8742B;
+  --paper:#F8EED1;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--cream);color:var(--espresso);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+h1,h2,h3,.brand,.tier{font-family:"DM Serif Display",Georgia,serif}
+
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* Header */
+.site-header{position:sticky;top:0;background:var(--cream);border-bottom:1px solid #eee;z-index:50}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-size:20px;letter-spacing:.2px}
+.nav a{margin-left:16px;color:var(--espresso);text-decoration:none}
+.btn{display:inline-block;border:1px solid transparent;padding:12px 18px;border-radius:12px;background:#fff;color:var(--espresso);font-weight:600;cursor:pointer}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--accent);color:#fff}
+
+/* Hero / gallery */
+.hero{text-align:center;padding:48px 0 8px}
+.hero-title{font-size:56px;line-height:1.05;margin:0}
+.hero-sub{color:var(--graphite);margin:10px 0 24px}
+
+.marquee-wrap{overflow:hidden}
+.marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
+.marquee img{height:128px;width:128px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff}
+
+/* keyframes */
+@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+
+.track-left{animation:scrollLeft 12s linear infinite}
+.track-right{animation:scrollRight 12s linear infinite}
+
+/* Upload teaser */
+.upload-teaser{padding:28px 0}
+.upload-card{margin:0 auto;max-width:640px;background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.06);text-align:center;padding:28px}
+.upload-card h3{margin:0 0 10px}
+.muted{color:var(--graphite);font-size:14px}
+
+/* Pricing */
+.pricing{background:var(--paper);padding:48px 0}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.price-card{background:#fff;border-radius:20px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.06);text-align:center;position:relative}
+.price-card .tier{font-size:22px;margin-bottom:6px}
+.price-card .price{font-size:40px;margin:2px 0}
+.price-card .desc{color:var(--graphite);margin:8px 0 16px}
+.price-card .btn{width:100%}
+.price-card.popular{outline:2px solid var(--amber)}
+.price-card .badge{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:var(--amber);color:#432;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.4px}
+
+.pricing-note{text-align:center;margin-top:14px;color:var(--graphite)}
+
+/* Footer */
+.site-footer{padding:28px 0}
+.site-footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #eee;padding-top:16px}
+.site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
+.links{display:flex;align-items:center}
+
+/* Responsive */
+@media (max-width:900px){
+  .hero-title{font-size:42px}
+  .marquee img{height:96px;width:96px}
+  .pricing-grid{grid-template-columns:1fr}
+}
