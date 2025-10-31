@@ -6,8 +6,36 @@
   <title>A World of Expressions — Frankiemoji</title>
   <meta name="description" content="Hand-drawn, likeness-true emojis made from your real expressions. Instant delivery.">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Use the proven stylesheet -->
-  <link rel="stylesheet" href="style.css?v=10">
+
+  <!-- Primary stylesheet + safe fallback -->
+  <link rel="stylesheet" href="style-v8.0.css?v=10" id="primary-css">
+  <link rel="stylesheet" href="style.css?v=10" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="style.css?v=10"></noscript>
+
+  <script>
+    // ---------- SINGLE SOURCE OF TRUTH (edit here only) ----------
+    window.CONFIG = {
+      imagesBase: "images/",
+      pricing: {
+        starter:  "price-starter.png",   // change here if your file name differs
+        standard: "price-standard.png",
+        premium:  "price-premium.png"
+      }
+    };
+    // If the new theme fails to load, try again + rely on style.css fallback.
+    (function ensureCSS(){
+      function has(h){return Array.from(document.styleSheets).some(s=>s.href&&s.href.includes(h));}
+      window.addEventListener('load', function(){
+        setTimeout(function(){
+          if(!has('style-v8.0.css') && !has('style.css')){
+            var l=document.createElement('link');
+            l.rel='stylesheet'; l.href='style.css?v=10&lastresort=1';
+            document.head.appendChild(l);
+          }
+        }, 400);
+      });
+    })();
+  </script>
 </head>
 <body class="cream">
   <!-- Header -->
@@ -26,13 +54,11 @@
       <h1>A World of Expressions.</h1>
       <p class="subtle">Each emoji, handcrafted. Every face, emotion, unique. Your expressions — elevated.</p>
 
-      <!-- Top strips (two rows; your CSS/JS animates them) -->
       <div class="strips" aria-hidden="true">
         <div class="strip top"></div>
         <div class="strip bottom"></div>
       </div>
 
-      <!-- Upload CTA -->
       <div class="upload-pill">
         <p>Upload your selfie to start your pack</p>
         <a class="btn primary" href="upload.html">Start My Pack</a>
@@ -42,21 +68,18 @@
     <!-- PRICING -->
     <section id="pricing" class="pricing container">
       <div class="cards">
-        <!-- STARTER -->
         <article class="price-card">
-          <img src="images/price-starter.png" alt="Starter pack card" loading="lazy">
+          <img id="img-starter" alt="Starter pack card" loading="lazy">
           <a class="btn primary block" href="upload.html?pack=starter">Get Starter</a>
         </article>
 
-        <!-- STANDARD -->
         <article class="price-card popular">
-          <img src="images/price-standard.png" alt="Standard pack card — Most Popular" loading="lazy">
+          <img id="img-standard" alt="Standard pack card — Most Popular" loading="lazy">
           <a class="btn primary block" href="upload.html?pack=standard">Get Standard</a>
         </article>
 
-        <!-- PREMIUM -->
         <article class="price-card">
-          <img src="images/price-premium.png" alt="Premium pack card" loading="lazy">
+          <img id="img-premium" alt="Premium pack card" loading="lazy">
           <a class="btn primary block" href="upload.html?pack=premium">Get Premium</a>
         </article>
       </div>
@@ -82,7 +105,31 @@
     </nav>
   </footer>
 
-  <!-- Scripts -->
+  <!-- Assign pricing images safely from CONFIG -->
+  <script>
+    (function setPricingImages(cfg){
+      function setImg(id, file){
+        var el = document.getElementById(id);
+        if(!el) return;
+        var src = (cfg.imagesBase || "") + file;
+        // Probe to avoid broken images if filename is wrong
+        var probe = new Image();
+        probe.onload  = ()=> el.src = src + "?v=10";
+        probe.onerror = ()=> {
+          // tiny inline placeholder so layout never breaks
+          el.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+            '<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"560\" height=\"340\"><rect width=\"100%\" height=\"100%\" fill=\"#f3e7d2\"/><text x=\"50%\" y=\"50%\" font-size=\"18\" text-anchor=\"middle\" dominant-baseline=\"middle\" fill=\"#7a6b57\">Image not found: '+file+'</text></svg>'
+          );
+        };
+        probe.src = src + "?v=10";
+      }
+      setImg("img-starter",  cfg.pricing.starter);
+      setImg("img-standard", cfg.pricing.standard);
+      setImg("img-premium",  cfg.pricing.premium);
+    })(window.CONFIG || {pricing:{}});
+  </script>
+
+  <!-- Your animations / carousel -->
   <script src="script-v8.js" defer></script>
 </body>
 </html>
