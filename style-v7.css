@@ -35,8 +35,9 @@ h1,h2,h3,.brand,.tier{font-family:"DM Serif Display",Georgia,serif}
 @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
 
-.track-left{animation:scrollLeft 12s linear infinite}
-.track-right{animation:scrollRight 12s linear infinite}
+/* default speeds (JS overrides for slight variance) */
+.track-left  { animation: scrollLeft 18s linear infinite; }
+.track-right { animation: scrollRight 18s linear infinite; }
 
 /* Upload teaser */
 .upload-teaser{padding:28px 0}
