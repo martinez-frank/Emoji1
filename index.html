@@ -2,82 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Frankiemoji™ — A World of Expressions</title>
-  <meta name="description" content="Hand-drawn, likeness-preserving emoji. Your expressions — elevated.">
-  <link rel="stylesheet" href="style-v6.css" />
-</head>
-<body class="theme-canvas">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Frankiemoji — A World of Expressions</title>
 
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- New styles -->
+  <link rel="stylesheet" href="style-v7.css" />
+
+  <meta name="description" content="Turn your selfie into handcrafted, likeness-preserving emojis. Born with a Pencil. Evolved with AI." />
+</head>
+<body>
+
+  <!-- Header -->
   <header class="site-header">
-    <a class="brand" href="/">Frankiemoji™</a>
-    <nav class="nav">
-      <a href="#gallery">Gallery</a>
-      <a href="#pricing">Pricing</a>
-      <a class="btn primary" href="#get">Get your emoji</a>
-    </nav>
+    <div class="container header-inner">
+      <div class="brand">Frankiemoji</div>
+      <nav class="nav">
+        <a href="#pricing">Pricing</a>
+        <a href="#start" class="btn primary">Start My Pack</a>
+      </nav>
+    </div>
   </header>
 
-  <main id="content">
-    <!-- HERO: two rolling rows, opposite directions -->
-    <section id="gallery" class="panel hero-rows" aria-label="Examples">
-      <div class="panel-inner">
-        <h1 class="hero-title">A World of Expressions.</h1>
-        <p class="hero-lede">Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
+  <!-- Gallery hero (no hero icon) -->
+  <section class="hero">
+    <h1 class="hero-title">A World of Expressions.</h1>
+    <p class="hero-sub">Each emotion, handcrafted. Every face, unique. Your expressions — elevated.</p>
 
-        <div class="rows">
-          <!-- Row A -->
-          <div class="row row-a" aria-hidden="false">
-            <ul id="rowA" class="track" role="list"></ul>
-          </div>
-          <!-- Row B -->
-          <div class="row row-b" aria-hidden="false">
-            <ul id="rowB" class="track" role="list"></ul>
-          </div>
+    <!-- Two opposing marquee rows -->
+    <div class="marquee-wrap">
+      <div id="marquee-top"   class="marquee track-left"  aria-label="Emoji gallery row 1"></div>
+      <div id="marquee-btm"   class="marquee track-right" aria-label="Emoji gallery row 2"></div>
+    </div>
+  </section>
+
+  <!-- Upload teaser -->
+  <section id="start" class="upload-teaser">
+    <div class="container">
+      <div class="card upload-card">
+        <h3>Upload your selfie to start your pack</h3>
+        <button class="btn primary" onclick="window.location.hash='#pricing'">Start My Pack</button>
+        <p class="muted">Photos auto-delete after 24 hours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing across the screen -->
+  <section id="pricing" class="pricing">
+    <div class="container">
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="tier">Starter</div>
+          <div class="price">$5</div>
+          <div class="desc">3 custom emojis</div>
+          <button class="btn">Get Starter</button>
         </div>
 
-        <p class="hint">Hover or touch & hold to pause • Swipe to skim</p>
+        <div class="price-card popular">
+          <div class="badge">MOST POPULAR</div>
+          <div class="tier">Standard</div>
+          <div class="price">$15</div>
+          <div class="desc">9 custom emojis</div>
+          <button class="btn primary">Get Standard</button>
+        </div>
+
+        <div class="price-card">
+          <div class="tier">Premium</div>
+          <div class="price">$25</div>
+          <div class="desc">18 custom emojis</div>
+          <button class="btn">Get Premium</button>
+        </div>
       </div>
-    </section>
+      <p class="pricing-note">Instant download. Email included.</p>
+    </div>
+  </section>
 
-    <!-- PRICING: image + button only -->
-    <section id="pricing" class="panel pricing">
-      <h2>Pick the perfect pack</h2>
-      <div class="plans">
-        <article class="plan">
-          <img data-price-icon="starter" src="images/starter.png" alt="Starter pack" />
-          <a class="btn primary" href="#get">Get Starter</a>
-        </article>
-
-        <article class="plan featured" aria-label="Most popular">
-          <span class="badge">Most Popular</span>
-          <img data-price-icon="standard" src="images/standard.png" alt="Standard pack" />
-          <a class="btn primary" href="#get">Get Standard</a>
-        </article>
-
-        <article class="plan">
-          <img data-price-icon="premium" src="images/premium.png" alt="Premium pack" />
-          <a class="btn primary" href="#get">Get Premium</a>
-        </article>
-      </div>
-      <p class="fine">Personal usage included. Business &amp; brand work available on request.</p>
-    </section>
-
-    <!-- CTA -->
-    <section id="get" class="panel get">
-      <div class="cta">
-        <h2>Ready to see your expression?</h2>
-        <a class="btn xl primary" href="#get">Start → Upload</a>
-        <p class="fine">Good lighting, front-facing photo works best.</p>
-      </div>
-    </section>
-  </main>
-
+  <!-- Footer -->
   <footer class="site-footer">
-    <p>© <span id="year"></span> Frankiemoji™</p>
-    <a href="https://github.com/martinez-frank/Emoji1" target="_blank" rel="noopener">GitHub</a>
+    <div class="container">
+      <p>Born with a Pencil. Evolved with AI.</p>
+      <div class="links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="mailto:hello@example.com">Contact</a>
+      </div>
+    </div>
   </footer>
 
-  <script src="script-v6.js" defer></script>
+  <!-- New script (auto-loads ALL emoji images from /images via GitHub API) -->
+  <script>
+    // Configure this once; used to fetch image list dynamically.
+    window.GITHUB_OWNER = "martinez-frank";
+    window.GITHUB_REPO  = "Emoji1";
+    window.GITHUB_BRANCH = "main";
+  </script>
+  <script src="script-v7.js" defer></script>
 </body>
 </html>
