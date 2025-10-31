@@ -6,7 +6,7 @@
   <title>A World of Expressions – Frankiemoji</title>
   <meta name="description" content="Each emotion, handcrafted. Every face, unique. Your expressions — elevated. Turn your selfie into handcrafted emojis.">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style-v7.css?v=7.6" />
+  <link rel="stylesheet" href="style-v7.css?v=7.7" />
 </head>
 
 <body>
@@ -33,77 +33,22 @@
     </div>
   </section>
 
-  <!-- Pricing -->
+  <!-- Pricing (images as cards + orange CTAs) -->
   <section id="pricing" class="pricing">
     <div class="container">
       <div class="pricing-grid">
+        <!-- Starter -->
         <div class="price-card">
-          <div class="tier">Starter</div>
-          <div class="price">$5</div>
-          <div class="desc">3 custom emojis</div>
-          <button class="btn primary">Get Starter</button>
+          <img class="price-img" src="images/starter.png" alt="Starter pack pricing" loading="lazy" width="640" height="820" />
+          <button class="btn primary" aria-label="Get Starter">Get Starter</button>
         </div>
 
+        <!-- Standard -->
         <div class="price-card" id="standard-card">
-          <div class="tier">Standard</div>
-          <div class="price">$15</div>
-          <div class="desc">9 custom emojis</div>
-          <button class="btn primary">Get Standard</button>
+          <img class="price-img" src="images/standard.png" alt="Standard pack pricing" loading="lazy" width="640" height="820" />
+          <button class="btn primary" aria-label="Get Standard">Get Standard</button>
         </div>
 
+        <!-- Premium -->
         <div class="price-card">
-          <div class="tier">Premium</div>
-          <div class="price">$25</div>
-          <div class="desc">18 custom emojis</div>
-          <button class="btn primary">Get Premium</button>
-        </div>
-      </div>
-
-      <!-- MOST POPULAR moved below, centered under the middle card -->
-      <div class="popular-note" aria-hidden="true">
-        <span class="badge">MOST POPULAR</span>
-      </div>
-
-      <p class="pricing-note">Instant download. Email included.</p>
-    </div>
-  </section>
-
-  <!-- Sticky bottom bar (centered buttons, no Pricing) -->
-  <nav class="bottom-bar">
-    <div class="container bottom-inner bottom-inner--center">
-      <div class="bottom-actions">
-        <button class="btn primary" onclick="location.href='#story'">Our Story</button>
-        <button class="btn primary" onclick="location.href='#start'">Start My Pack</button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- (Optional future) Story anchor target so the button scrolls somewhere -->
-  <section id="story" class="story-anchor" aria-hidden="true"></section>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      <p>Born with a Pencil. Evolved with AI.</p>
-      <div class="links">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="mailto:hello@example.com">Contact</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Config -->
-  <script>
-    window.FJ_CONF = {
-      owner: "martinez-frank",
-      repo:  "Emoji1",
-      branch: "main",
-      exclude: ["starter","standard","premium"]
-    };
-  </script>
-
-  <!-- Script -->
-  <script src="script-v7.js?v=7.4" defer></script>
-</body>
-</html>
+          <img class="price-img" src="images/prem
