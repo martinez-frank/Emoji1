@@ -1,5 +1,5 @@
 /* =========================
-   Frankiemoji Styles v7.7
+   Frankiemoji Styles v7.6
    ========================= */
 
 /* Palette */
@@ -23,7 +23,7 @@ html,body{
 h1,h2,h3,.tier{font-family:"DM Serif Display",Georgia,serif}
 img{display:block}
 
-/* Layout helper */
+/* Layout helpers */
 .container{max-width:1200px;margin:0 auto;padding:0 24px}
 
 /* Buttons */
@@ -84,7 +84,7 @@ img{display:block}
 }
 .upload-card h3{margin:0 0 10px}
 
-/* ---------- Pricing (images as cards) ---------- */
+/* ---------- Pricing ---------- */
 .pricing{
   background:var(--paper);
   padding:48px 0;
@@ -95,26 +95,19 @@ img{display:block}
   gap:18px;
 }
 .price-card{
-  background:transparent;     /* image is the card visual */
-  box-shadow:none;
-  padding:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-.price-card .price-img{
-  width:100%;
+  background:#fff;
   border-radius:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,.08);
-  background:#fff;            /* clean edges on cream bg */
+  padding:22px;
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
+  text-align:center;
+  position:relative;
 }
-.price-card .btn{
-  width:100%;
-  margin-top:12px;
-  border-radius:12px;
-}
+.price-card .tier{font-size:22px;margin-bottom:6px}
+.price-card .price{font-size:40px;margin:2px 0}
+.price-card .desc{color:var(--graphite);margin:8px 0 16px}
+.price-card .btn{width:100%}
 
-/* Popular badge under the grid */
+/* Popular badge moved BELOW grid */
 .popular-note{
   display:grid;
   place-items:center;
@@ -138,7 +131,7 @@ img{display:block}
   color:var(--graphite);
 }
 
-/* ---------- Bottom bar (sticky, centered buttons) ---------- */
+/* ---------- Bottom bar (sticky) ---------- */
 .bottom-bar{
   position:sticky;
   bottom:0;
@@ -158,4 +151,25 @@ img{display:block}
 .bottom-actions{display:flex;gap:12px}
 
 /* ---------- Footer ---------- */
-.site-
+.site-footer{padding:28px 0}
+.site-footer .container{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  border-top:1px solid #eee;
+  padding-top:16px;
+}
+.site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
+.links{display:flex;align-items:center}
+
+/* ---------- Story anchor (placeholder) ---------- */
+.story-anchor{height:1px}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px){
+  .hero-title{font-size:42px}
+  .marquee img{height:96px;width:96px}
+  .pricing-grid{grid-template-columns:1fr}
+  .bottom-actions{gap:10px}
+}
