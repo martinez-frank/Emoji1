@@ -32,11 +32,15 @@ img{display:block;max-width:100%}
 @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
 .track-left{animation:scrollLeft 54s linear infinite}
 .track-right{animation:scrollRight 57s linear infinite}
+/* Cushion below the emoji carousel now that the teaser is gone */
+.marquee-wrap {
+  margin-bottom: 36px; /* adds clean breathing space before pricing cards */
+}
 
-/* Upload teaser */
-.upload-teaser{padding:28px 0}
-.card.upload-card{margin:0 auto;max-width:640px;background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.06);text-align:center;padding:28px 28px 22px}
-.upload-card h3{margin:0 0 10px}
+/* Subtle divider to separate carousel and pricing visually */
+.pricing {
+  border-top: 1px solid #e8dfcc;
+}
 
 /* Pricing (images as cards) */
 .pricing{background:var(--paper);padding:48px 0}
