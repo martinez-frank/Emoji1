@@ -14,7 +14,26 @@
 h1,h2,h3{font-family:"DM Serif Display",Georgia,serif}
 img{display:block;max-width:100%}
 .container{max-width:1100px;margin:0 auto;padding:0 24px}
+/* expression chips */
+.expr-chip{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:8px 12px;border:1px solid #eadfca;border-radius:999px;
+  background:#fff;font-weight:600;cursor:pointer;font-size:13px;
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.expr-chip:hover{ transform:translateY(-1px); }
+.expr-chip.selected{
+  background:#D8742B;color:#fff;border-color:#D8742B;
+  box-shadow:0 2px 8px rgba(0,0,0,.10);
+}
 
+/* tiny round thumbnails for selected labels */
+.expr-thumb{
+  font-size:11px;background:#fff;border:1px solid #eadfca;
+  border-radius:14px;padding:4px 8px;line-height:1; color:#2C2419;
+}
+
+  
 /* Top bar */
 /* Top bar */
 .topbar{
@@ -152,6 +171,21 @@ label.small{font-size:12px;color:var(--graphite)}
         <button class="btn" id="uc-open">Import from… (Google Photos, Instagram, etc.)</button>
       </div>
       <label class="small">Clear, front-facing, good lighting works best.</label>
+<!-- Expressions picker -->
+<div id="expr-wrap" style="margin:10px 0 6px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+    <strong style="font-size:14px;">Pick your expressions</strong>
+    <span id="expr-count" style="font-size:12px;color:#5F5B53;">0 / 0 selected</span>
+  </div>
+
+  <div id="expr-chips" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+
+  <!-- tiny thumbnails of selected -->
+  <div id="expr-thumbs" style="display:flex;gap:6px;margin-top:8px;"></div>
+
+  <!-- store selections (CSV) for submission -->
+  <input type="hidden" id="expressions" value="">
+</div>
 
       <div class="row">
         <input id="email" type="email" placeholder="Email for delivery  •  you@example.com" />
@@ -255,5 +289,71 @@ label.small{font-size:12px;color:var(--graphite)}
   // Save it quietly in the hidden input
   const hidden = document.getElementById('pack');
   if (hidden) hidden.value = pack;
+    <script>
+// ------- Expressions Picker (compact) -------
+(function(){
+  const EXPRESSIONS = [
+    "Happy","Laughing","Wink","Big Grin","Smirk",
+    "Thumbs Up","Heart Eyes","Surprised","Face Palm","Eye Roll",
+    "Tired","Sad","Tearful","Angry","Mind Blown",
+    "Cool (Sunglasses)","Confident","Skeptical","Thinking","Cheeky Tongue",
+    "Shy","Kiss","Celebrating","Coffee","Handshake"
+  ];
+
+  const pack = (document.getElementById('pack')?.value || 'starter').toLowerCase();
+  const MAX = {starter:3, standard:9, premium:18}[pack] || 3;
+
+  const countEl = document.getElementById('expr-count');
+  if (countEl) countEl.textContent = `0 / ${MAX} selected`;
+
+  const chipsEl = document.getElementById('expr-chips');
+  const thumbsEl = document.getElementById('expr-thumbs');
+  const hiddenEl = document.getElementById('expressions');
+  if(!chipsEl || !thumbsEl || !hiddenEl) return;
+
+  const selected = new Set();
+
+  function render(){
+    hiddenEl.value = Array.from(selected).join(',');
+    if (countEl) countEl.textContent = `${selected.size} / ${MAX} selected`;
+    thumbsEl.innerHTML = '';
+    Array.from(selected).forEach(name=>{
+      const t=document.createElement('span');
+      t.className='expr-thumb';
+      t.textContent=name;
+      thumbsEl.appendChild(t);
+    });
+  }
+
+  function toggle(name, chip){
+    if (selected.has(name)){
+      selected.delete(name);
+      chip.classList.remove('selected');
+    } else {
+      if (selected.size >= MAX){
+        chip.style.transform='translateY(-1px) scale(0.98)';
+        setTimeout(()=>chip.style.transform='',150);
+        return;
+      }
+      selected.add(name);
+      chip.classList.add('selected');
+    }
+    render();
+  }
+
+  EXPRESSIONS.forEach(name=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='expr-chip';
+    b.textContent=name;
+    b.addEventListener('click',()=>toggle(name,b));
+    chipsEl.appendChild(b);
+  });
+
+  render();
+})();
+</script>
+</html>
+
 </script>
 </html>
