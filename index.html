@@ -47,6 +47,9 @@ img{display:block;max-width:100%}
 .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;justify-items:center;max-width:900px;margin:0 auto}
 .price-card{background:transparent;box-shadow:none;padding:0;display:flex;flex-direction:column;align-items:center;max-width:360px}
 .price-card .price-img{width:100%;height:auto;aspect-ratio:auto;object-fit:contain;background:#fff;padding:10px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+/* Lift card image on hover (shadow only) */
+.price-card .price-img{ transition: box-shadow .18s ease; }
+.price-card:hover .price-img{ box-shadow: 0 16px 44px rgba(0,0,0,.14); }
 .price-card .btn{width:100%;margin-top:12px;border-radius:12px}
 
 .popular-note{display:grid;place-items:center;margin-top:10px}
