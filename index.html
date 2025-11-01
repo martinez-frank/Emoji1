@@ -55,6 +55,7 @@ img{display:block;max-width:100%}
 .bottom-actions{display:flex;gap:12px}
 
 /* Footer */
+
 .site-footer{padding:28px 0}
 .site-footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #eee;padding-top:16px}
 .site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
@@ -100,21 +101,20 @@ img{display:block;max-width:100%}
     <div class="pricing-grid">
   <div class="price-card">
     <img class="price-img" src="images/starter.png" alt="Starter pack pricing" loading="lazy" />
-    <button class="btn primary" onclick="location.href='upload.html'">Get Starter</button>
+    <button class="btn primary" onclick="location.href='upload.html?pack=starter'">Get Starter</button>
   </div>
 
   <div class="price-card">
     <img class="price-img" src="images/standard.png" alt="Standard pack pricing" loading="lazy" />
-    <button class="btn primary" onclick="location.href='upload.html'">Get Standard</button>
+    <button class="btn primary" onclick="location.href='upload.html?pack=standard'">Get Standard</button>
   </div>
 
   <div class="price-card">
     <img class="price-img" src="images/premium.png" alt="Premium pack pricing" loading="lazy" />
-    <button class="btn primary" onclick="location.href='upload.html'">Get Premium</button>
+    <button class="btn primary" onclick="location.href='upload.html?pack=premium'">Get Premium</button>  
   </div>
 </div>
     
-  </nav>
   
   <section id="story" class="story-anchor" aria-hidden="true"></section>
 
