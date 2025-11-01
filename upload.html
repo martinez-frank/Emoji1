@@ -206,9 +206,10 @@ label.small{font-size:12px;color:var(--graphite)}
     </div>
   </div>
 </footer>
+</footer>
 
+<!-- Emoji marquee (reuse from index with a lightweight fetch) -->
 <script>
-/* Emoji marquee (reuse from index with a lightweight fetch) */
 (function(){
   const OWNER="martinez-frank", REPO="Emoji1", BRANCH="main";
   const EXCLUDE=["starter","standard","premium"];
@@ -239,17 +240,16 @@ label.small{font-size:12px;color:var(--graphite)}
     mq2.style.animationDuration=(53+Math.random()*2).toFixed(2)+"s";
   })();
 })();
+</script>
 
-/* Progressive Uploadcare (optional) */
+<!-- Progressive Uploadcare (optional) -->
+<script>
 (function(){
-  // If you later add Uploadcare, set your public key below and the button appears.
-  // window.UPLOADCARE_PUBLIC_KEY = "YOUR_PUBLIC_KEY";
   function ready(fn){document.readyState!=="loading"?fn():document.addEventListener("DOMContentLoaded",fn);}
   ready(()=>{
     if(window.UPLOADCARE_PUBLIC_KEY){
       const row=document.getElementById("uc-row"); row.style.display="flex";
       const btn=document.getElementById("uc-open");
-      // Inject Uploadcare widget if not present
       if(!document.getElementById("uc-script")){
         const s=document.createElement("script");
         s.id="uc-script"; s.src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"; s.async=true;
@@ -258,12 +258,10 @@ label.small{font-size:12px;color:var(--graphite)}
       btn.addEventListener("click",()=>{
         const dialog=uploadcare.openDialog(null,{publicKey:window.UPLOADCARE_PUBLIC_KEY, imagesOnly:true});
         dialog.done(function(file){ file.done(function(fileInfo){
-          // Stash the chosen file URL as if it were uploaded
           alert("Imported: "+fileInfo.cdnUrl);
         });});
       });
     }
-    // Hook native inputs to show simple confirmations
     const dev=document.getElementById("device-file");
     const cam=document.getElementById("camera-file");
     [dev,cam].forEach(inp=>inp.addEventListener("change",()=>{ if(inp.files && inp.files[0]) alert("Selected: "+inp.files[0].name); }));
@@ -276,21 +274,19 @@ label.small{font-size:12px;color:var(--graphite)}
   });
 })();
 </script>
-</body>
-  <script>
-  // --- Detect which pack was chosen from the homepage ---
-  const pack = new URLSearchParams(location.search).get('pack') || 'starter';
-  const pretty = {starter:'Starter', standard:'Standard', premium:'Premium'}[pack] || 'Starter';
 
-  // Update the orange text under the title
-  const note = document.getElementById('pack-note');
-  if (note) note.textContent = `Selected: ${pretty} Pack`;
+<!-- Detect which pack was chosen from the homepage -->
+<script>
+const pack = new URLSearchParams(location.search).get('pack') || 'starter';
+const pretty = {starter:'Starter', standard:'Standard', premium:'Premium'}[pack] || 'Starter';
+const note = document.getElementById('pack-note');
+if (note) note.textContent = `Selected: ${pretty} Pack`;
+const hidden = document.getElementById('pack');
+if (hidden) hidden.value = pack;
+</script>
 
-  // Save it quietly in the hidden input
-  const hidden = document.getElementById('pack');
-  if (hidden) hidden.value = pack;
-    <script>
-// ------- Expressions Picker (compact) -------
+<!-- Expressions Picker (compact, waits for pack) -->
+<script>
 (function(){
   const EXPRESSIONS = [
     "Happy","Laughing","Wink","Big Grin","Smirk",
@@ -300,60 +296,65 @@ label.small{font-size:12px;color:var(--graphite)}
     "Shy","Kiss","Celebrating","Coffee","Handshake"
   ];
 
-  const pack = (document.getElementById('pack')?.value || 'starter').toLowerCase();
-  const MAX = {starter:3, standard:9, premium:18}[pack] || 3;
+  function initPicker() {
+    const packInput = document.getElementById('pack');
+    if (!packInput || !packInput.value) return setTimeout(initPicker, 200);
 
-  const countEl = document.getElementById('expr-count');
-  if (countEl) countEl.textContent = `0 / ${MAX} selected`;
+    const tier = packInput.value.toLowerCase();
+    const MAX = {starter:3, standard:9, premium:18}[tier] || 3;
 
-  const chipsEl = document.getElementById('expr-chips');
-  const thumbsEl = document.getElementById('expr-thumbs');
-  const hiddenEl = document.getElementById('expressions');
-  if(!chipsEl || !thumbsEl || !hiddenEl) return;
+    const countEl = document.getElementById('expr-count');
+    const chipsEl = document.getElementById('expr-chips');
+    const thumbsEl = document.getElementById('expr-thumbs');
+    const hiddenEl = document.getElementById('expressions');
+    if(!chipsEl || !thumbsEl || !hiddenEl) return;
 
-  const selected = new Set();
+    if (countEl) countEl.textContent = `0 / ${MAX} selected`;
+    const selected = new Set();
 
-  function render(){
-    hiddenEl.value = Array.from(selected).join(',');
-    if (countEl) countEl.textContent = `${selected.size} / ${MAX} selected`;
-    thumbsEl.innerHTML = '';
-    Array.from(selected).forEach(name=>{
-      const t=document.createElement('span');
-      t.className='expr-thumb';
-      t.textContent=name;
-      thumbsEl.appendChild(t);
-    });
-  }
-
-  function toggle(name, chip){
-    if (selected.has(name)){
-      selected.delete(name);
-      chip.classList.remove('selected');
-    } else {
-      if (selected.size >= MAX){
-        chip.style.transform='translateY(-1px) scale(0.98)';
-        setTimeout(()=>chip.style.transform='',150);
-        return;
-      }
-      selected.add(name);
-      chip.classList.add('selected');
+    function render(){
+      hiddenEl.value = Array.from(selected).join(',');
+      if (countEl) countEl.textContent = `${selected.size} / ${MAX} selected`;
+      thumbsEl.innerHTML = '';
+      Array.from(selected).forEach(name=>{
+        const t=document.createElement('span');
+        t.className='expr-thumb';
+        t.textContent=name;
+        thumbsEl.appendChild(t);
+      });
     }
+
+    function toggle(name, chip){
+      if (selected.has(name)){
+        selected.delete(name);
+        chip.classList.remove('selected');
+      } else {
+        if (selected.size >= MAX){
+          chip.style.transform='translateY(-1px) scale(0.98)';
+          setTimeout(()=>chip.style.transform='',150);
+          return;
+        }
+        selected.add(name);
+        chip.classList.add('selected');
+      }
+      render();
+    }
+
+    EXPRESSIONS.forEach(name=>{
+      const b=document.createElement('button');
+      b.type='button';
+      b.className='expr-chip';
+      b.textContent=name;
+      b.addEventListener('click',()=>toggle(name,b));
+      chipsEl.appendChild(b);
+    });
+
     render();
   }
 
-  EXPRESSIONS.forEach(name=>{
-    const b=document.createElement('button');
-    b.type='button';
-    b.className='expr-chip';
-    b.textContent=name;
-    b.addEventListener('click',()=>toggle(name,b));
-    chipsEl.appendChild(b);
-  });
-
-  render();
+  document.addEventListener('DOMContentLoaded', initPicker);
 })();
 </script>
-</html>
 
-</script>
+</body>
 </html>
