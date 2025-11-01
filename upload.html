@@ -18,8 +18,21 @@ img{display:block;max-width:100%}
 /* Top bar */
 .topbar{position:sticky;top:0;z-index:50;background:rgba(250,243,224,.97);backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc}
 .topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
-.home-btn{appearance:none;border:1px solid #e8dfcc;background:#fff;padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer}
-.home-btn:hover{transform:translateY(-1px)}
+.home-btn {
+  background: #D8742B;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.home-btn:hover {
+  background: #b85f22;
+  transform: translateY(-1px);
+}
+
 .top-links{display:flex;gap:16px}
 .top-links a {
   color: var(--accent);
