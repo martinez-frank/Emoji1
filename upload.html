@@ -1,91 +1,203 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Start Your Pack — Frankiemoji</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style-v8.0.css?v=8.0.1">
-  <link rel="stylesheet" href="style.css?v=8.0.1" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="style.css?v=8.0.1"></noscript>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Start your pack — Frankiemoji</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- build: v8.4.0 -->
+
+<style>
+:root{--cream:#FAF3E0;--espresso:#2C2419;--graphite:#5F5B53;--amber:#F0C06C;--accent:#D8742B;--paper:#F8EED1;}
+*{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--cream);color:var(--espresso);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif}
+h1,h2,h3{font-family:"DM Serif Display",Georgia,serif}
+img{display:block;max-width:100%}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* Top bar */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(250,243,224,.97);backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
+.home-btn{appearance:none;border:1px solid #e8dfcc;background:#fff;padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer}
+.home-btn:hover{transform:translateY(-1px)}
+.top-links{display:flex;gap:16px}
+.top-links a{color:var(--espresso);text-decoration:none}
+
+/* Head + helper */
+.hero{padding:28px 0 8px}
+.hero h1{margin:0 0 6px;font-size:42px}
+.hero-sub{color:var(--graphite);max-width:520px}
+
+/* Upload card */
+.upload-wrap{padding:20px 0 36px}
+.card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+.card.upload{margin:0 auto;max-width:560px;padding:20px}
+.row{display:flex;gap:12px;align-items:center;margin:8px 0}
+label.small{font-size:12px;color:var(--graphite)}
+input[type="file"], input[type="email"]{width:100%;padding:10px;border:1px solid #e6e0cf;border-radius:10px}
+.btn{display:inline-block;border:1px solid transparent;padding:12px 18px;border-radius:12px;background:#fff;color:var(--espresso);font-weight:600;cursor:pointer;transition:transform .12s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.ghost{background:#fff;border:1px solid #eadfca}
+
+/* Emoji marquee */
+.marquee-wrap{overflow:hidden;margin:10px 0 22px}
+.marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
+.marq-img{width:110px;height:110px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
+@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+.track-left{animation:scrollLeft 50s linear infinite}
+.track-right{animation:scrollRight 53s linear infinite}
+
+/* Footer */
+.site-footer{padding:28px 0}
+.site-footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #eee;padding-top:16px}
+.site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
+
+@media (max-width:900px){
+  .hero h1{font-size:34px}
+  .marq-img{width:96px;height:96px}
+}
+</style>
 </head>
-<body class="cream">
-  <header class="site-header">
-    <a href="index.html" class="brand">Frankiemoji</a>
-    <nav class="site-nav">
+
+<body>
+
+<!-- Top bar with Home button -->
+<header class="topbar">
+  <div class="container topbar-inner">
+    <button class="home-btn" onclick="location.href='index.html'">Home</button>
+    <nav class="top-links">
       <a href="index.html#pricing">Pricing</a>
       <a href="our-story.html">Our Story</a>
-      <a class="btn primary" href="upload.html">Start my pack</a>
+      <a href="upload.html" aria-current="page">Start my pack</a>
     </nav>
-  </header>
+  </div>
+</header>
 
-  <main class="container upload-flow">
-    <section class="hero center">
-      <h1>Start your pack</h1>
-      <p class="subtle">Upload a selfie, add your email, and we’ll get your hand-drawn emojis started.</p>
-    </section>
+<!-- Fun emoji marquee -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div id="mq1" class="marquee track-left"></div>
+  <div id="mq2" class="marquee track-right"></div>
+</div>
 
-    <section class="card upload-card">
-      <form id="startForm" novalidate>
-        <div class="field">
-          <label for="photo">Selfie (JPG/PNG)</label>
-          <input id="photo" name="photo" type="file" accept="image/png,image/jpeg" required>
-          <small class="hint">Clear, front-facing, good lighting works best.</small>
-        </div>
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1>Start your pack</h1>
+    <p class="hero-sub">Upload a selfie, add your email, and we’ll get your hand-drawn emojis started.</p>
+  </div>
+</section>
 
-        <div id="previewWrap" class="preview hidden">
-          <img id="previewImg" alt="Preview" />
-        </div>
+<!-- Upload card -->
+<section class="upload-wrap">
+  <div class="container">
+    <div class="card upload">
+      <!-- Native options -->
+      <div class="row">
+        <button class="btn ghost" onclick="document.getElementById('device-file').click()">Choose from device</button>
+        <!-- On mobile, this opens the camera directly -->
+        <button class="btn ghost" onclick="document.getElementById('camera-file').click()">Use camera</button>
+      </div>
 
-        <div class="field">
-          <label for="email">Email for delivery</label>
-          <input id="email" name="email" type="email" placeholder="you@example.com" required>
-        </div>
+      <div class="row">
+        <input id="device-file" type="file" accept="image/*" hidden />
+        <input id="camera-file" type="file" accept="image/*" capture="environment" hidden />
+      </div>
 
-        <div class="field checkbox">
-          <label>
-            <input id="consent" type="checkbox" required>
-            I’m okay receiving my emojis and status updates by email.
-          </label>
-        </div>
+      <!-- Optional: Social imports via Uploadcare (auto-hidden if key not set) -->
+      <div id="uc-row" class="row" style="display:none">
+        <button class="btn" id="uc-open">Import from… (Google Photos, Instagram, etc.)</button>
+      </div>
+      <label class="small">Clear, front-facing, good lighting works best.</label>
 
-        <button class="btn primary" type="submit">Continue</button>
-        <p id="formMsg" class="form-msg subtle" role="status" aria-live="polite"></p>
-      </form>
-    </section>
-  </main>
+      <div class="row">
+        <input id="email" type="email" placeholder="Email for delivery  •  you@example.com" />
+      </div>
+      <div class="row" style="justify-content:flex-end">
+        <button class="btn primary" id="continue">Continue</button>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <footer class="site-footer">
-    <p>Born with a Pencil. Evolved with Technology.</p>
-    <nav class="footer-nav">
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-  </footer>
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="container">
+    <p>Born with a Pan and Pencil. Evolved with Technology.</p>
+    <div class="links">
+      <a href="index.html#">Privacy</a><a href="index.html#">Terms</a><a href="mailto:hello@example.com">Contact</a>
+    </div>
+  </div>
+</footer>
 
-  <script>
-    const photo = document.getElementById('photo');
-    const previewWrap = document.getElementById('previewWrap');
-    const previewImg = document.getElementById('previewImg');
-    const form = document.getElementById('startForm');
-    const msg = document.getElementById('formMsg');
+<script>
+/* Emoji marquee (reuse from index with a lightweight fetch) */
+(function(){
+  const OWNER="martinez-frank", REPO="Emoji1", BRANCH="main";
+  const EXCLUDE=["starter","standard","premium"];
+  const EXTRA=[/\.ds_store/i,/manifest/i,/%20/];
+  const out=s=>{s=(s||"").toLowerCase();return EXCLUDE.some(x=>s.includes(x))||EXTRA.some(rx=>rx.test(s));};
+  const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const build=(urls)=>{const f=document.createDocumentFragment();urls.concat(urls).forEach(src=>{const im=new Image();im.className="marq-img";im.loading="lazy";im.alt="Frankiemoji face";im.src=src;im.onerror=()=>im.remove();f.appendChild(im);});return f;};
+  async function fromGit(){
+    try{
+      const url=`https://api.github.com/repos/${OWNER}/${REPO}/contents/images?ref=${BRANCH}`;
+      const r=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
+      if(!r.ok) throw 0;
+      const items=await r.json();
+      return items.filter(it=>it.type==="file")
+                  .filter(it=>/\.(png|jpe?g|webp|gif)$/i.test(it.name))
+                  .filter(it=>!out(it.name)&&!out(it.path))
+                  .map(it=>it.download_url);
+    }catch{return []}
+  }
+  (async()=>{
+    let urls=await fromGit();
+    if(!urls.length) urls=["images/e01.png","images/e02.png","images/e03.png","images/e04.png"];
+    urls=shuffle([...new Set(urls)]);
+    const mq1=document.getElementById("mq1"), mq2=document.getElementById("mq2");
+    mq1.appendChild(build(urls));
+    mq2.appendChild(build([...urls].reverse()));
+    mq1.style.animationDuration=(50+Math.random()*2).toFixed(2)+"s";
+    mq2.style.animationDuration=(53+Math.random()*2).toFixed(2)+"s";
+  })();
+})();
 
-    photo.addEventListener('change', () => {
-      const file = photo.files?.[0];
-      if (!file) return;
-      previewImg.src = URL.createObjectURL(file);
-      previewWrap.classList.remove('hidden');
+/* Progressive Uploadcare (optional) */
+(function(){
+  // If you later add Uploadcare, set your public key below and the button appears.
+  // window.UPLOADCARE_PUBLIC_KEY = "YOUR_PUBLIC_KEY";
+  function ready(fn){document.readyState!=="loading"?fn():document.addEventListener("DOMContentLoaded",fn);}
+  ready(()=>{
+    if(window.UPLOADCARE_PUBLIC_KEY){
+      const row=document.getElementById("uc-row"); row.style.display="flex";
+      const btn=document.getElementById("uc-open");
+      // Inject Uploadcare widget if not present
+      if(!document.getElementById("uc-script")){
+        const s=document.createElement("script");
+        s.id="uc-script"; s.src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"; s.async=true;
+        document.head.appendChild(s);
+      }
+      btn.addEventListener("click",()=>{
+        const dialog=uploadcare.openDialog(null,{publicKey:window.UPLOADCARE_PUBLIC_KEY, imagesOnly:true});
+        dialog.done(function(file){ file.done(function(fileInfo){
+          // Stash the chosen file URL as if it were uploaded
+          alert("Imported: "+fileInfo.cdnUrl);
+        });});
+      });
+    }
+    // Hook native inputs to show simple confirmations
+    const dev=document.getElementById("device-file");
+    const cam=document.getElementById("camera-file");
+    [dev,cam].forEach(inp=>inp.addEventListener("change",()=>{ if(inp.files && inp.files[0]) alert("Selected: "+inp.files[0].name); }));
+    document.getElementById("continue").addEventListener("click",()=>{
+      const email=document.getElementById("email").value.trim();
+      if(!email){ alert("Please enter an email so we can deliver your emojis."); return;}
+      alert("Thanks! We’ll start your pack and email you at: "+email);
+      location.href="index.html#pricing";
     });
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!photo.files[0]) { msg.textContent = 'Please add a selfie.'; return; }
-      if (!form.email.value) { msg.textContent = 'Please add an email.'; return; }
-      if (!document.getElementById('consent').checked) { msg.textContent = 'Please accept email updates.'; return; }
-      msg.textContent = 'Great! Your pack is starting. Check your inbox.';
-      form.querySelector('button').disabled = true;
-    });
-  </script>
+  });
+})();
+</script>
 </body>
 </html>
