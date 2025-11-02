@@ -21,20 +21,48 @@ img{display:block;max-width:100%}
 .btn:hover{transform:translateY(-1px)}
 .btn.primary{background:var(--accent);color:#fff}
 
-/* Page */
-.header{padding:20px 0}
+/* Header */
+.header{position:sticky;top:0;z-index:40;background:rgba(250,243,224,.97);backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc;padding:10px 0}
 .header .container{display:flex;justify-content:space-between;align-items:center}
 .header a{color:var(--espresso);text-decoration:none;font-weight:600}
-.main{padding:24px 0 48px}
+
+/* Hero + marquee (match index) */
+.hero{text-align:center;padding:64px 0 12px}
+.hero-title{font-size:56px;line-height:1.05;margin:0}
+.hero-sub{color:var(--graphite);margin:10px 0 24px}
+.marquee-wrap{overflow:hidden;margin-top:8px}
+.marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
+.marq-img{width:128px;height:128px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
+@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+.track-left{animation:scrollLeft 54s linear infinite}
+.track-right{animation:scrollRight 57s linear infinite}
+
+/* Card to match index look */
+.card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06);padding:20px;max-width:560px;margin:0 auto}
 .meta{background:#fff7e6;border:1px solid #eee;padding:12px 14px;border-radius:12px;margin-bottom:16px}
+
+/* Footer */
 .footer{padding:28px 0;border-top:1px solid #eee}
 .footer .container{display:flex;align-items:center;justify-content:space-between}
 .links a{color:var(--espresso);text-decoration:none;margin-left:16px}
+
+/* Uploadcare brand alignment */
+.uploadcare--widget__button_type_open{
+  background:var(--accent) !important;color:#fff !important;border:none !important;
+  border-radius:12px !important;font-weight:600 !important;padding:12px 18px !important;
+}
+.uploadcare--widget__text{display:none !important}
+
+@media (max-width:900px){
+  .hero-title{font-size:42px}
+  .marq-img{width:96px;height:96px}
+}
 </style>
 </head>
 
 <body>
-  <!-- Simple header -->
+  <!-- Header -->
   <header class="header">
     <div class="container">
       <a href="index.html">← Back to home</a>
@@ -42,20 +70,39 @@ img{display:block;max-width:100%}
     </div>
   </header>
 
-  <main class="main">
-    <section id="u-root" class="container" style="max-width:560px;">
-      <h1 style="margin:0 0 8px;">Upload your selfie</h1>
-      <p style="opacity:.8;margin:0 0 16px;">Clear, front-facing, good lighting works best.</p>
+  <main>
+    <!-- Marquee like the homepage -->
+    <div class="marquee-wrap" aria-hidden="true">
+      <div id="marquee-top" class="marquee track-left"></div>
+      <div id="marquee-btm" class="marquee track-right"></div>
+    </div>
 
-      <div class="meta">
-        <div><strong>Selected pack:</strong> <span id="u-pack">—</span></div>
-        <div><strong>Email:</strong> <span id="u-email">—</span></div>
+    <!-- Title like the homepage -->
+    <section class="hero">
+      <div class="container" style="max-width:720px;margin:0 auto;">
+        <h1 class="hero-title">Start your pack</h1>
+        <p class="hero-sub">Upload a selfie, add your email, and we’ll get your hand-drawn inspired emojis started.</p>
       </div>
+    </section>
 
-      <div id="u-form">
-        <label style="display:block;margin-bottom:8px;font-weight:600;">Choose a photo</label>
+    <!-- Upload card -->
+    <section class="container" style="padding-bottom:32px;">
+      <div class="card" id="u-root">
+        <h2 style="margin:0 0 8px;font-size:22px;">Upload your selfie</h2>
+        <p style="opacity:.8;margin:0 0 16px;">Clear, front-facing, good lighting works best.</p>
 
-        <!-- Uploadcare picker -->
+        <div class="meta">
+          <div><strong>Selected pack:</strong> <span id="u-pack">—</span></div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <strong>Email:</strong>
+            <span id="u-email" style="opacity:.9">—</span>
+            <!-- small fallback email box (prefills if we have one) -->
+            <input id="u-email-input" type="email" placeholder="you@example.com"
+                   style="flex:1;min-width:220px;padding:10px;border:1px solid #e6e0cf;border-radius:10px;display:none;">
+          </div>
+        </div>
+
+        <!-- Uploadcare widget -->
         <input
           id="u-file"
           type="hidden"
@@ -65,26 +112,26 @@ img{display:block;max-width:100%}
           data-images-only="true"
           data-multiple="false"
           data-preview-step="true"
-          style="margin-bottom:14px;"
         />
 
-        <!-- Live preview -->
-        <div id="u-preview-wrap" style="display:none;margin:10px 0 16px;">
+        <!-- Preview -->
+        <div id="u-preview-wrap" style="display:none;margin:14px 0 16px;">
           <img id="u-preview" alt="preview" style="max-width:100%;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);" />
         </div>
 
-        <div style="display:flex;gap:10px;">
+        <div style="display:flex;gap:10px;margin-top:8px;">
           <a class="btn" href="index.html" style="flex:1;text-align:center;">Back</a>
           <button id="u-submit" class="btn primary" style="flex:1;">Send</button>
         </div>
-      </div>
 
-      <div id="u-done" style="display:none;text-align:center;padding:24px 12px;">
-        <h2 style="margin:0 0 8px;">All set 🎉</h2>
-        <p style="opacity:.85;margin:0 0 12px;">We saved your details and selfie. You’ll hear from us soon.</p>
-        <div style="display:flex;gap:10px;justify-content:center;">
-          <a class="btn" href="index.html">Make another pack</a>
-          <a class="btn" href="our-story.html">About Frankiemoji</a>
+        <!-- Success state -->
+        <div id="u-done" style="display:none;text-align:center;padding:24px 12px;">
+          <h2 style="margin:0 0 8px;">All set 🎉</h2>
+          <p style="opacity:.85;margin:0 0 12px;">We saved your details and selfie. You’ll hear from us soon.</p>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <a class="btn" href="index.html">Make another pack</a>
+            <a class="btn" href="our-story.html">About Frankiemoji</a>
+          </div>
         </div>
       </div>
     </section>
@@ -94,17 +141,57 @@ img{display:block;max-width:100%}
     <div class="container">
       <p>Born with Paper and Pencil. Evolved with Technology.</p>
       <div class="links">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="mailto:hello@example.com">Contact</a>
+        <a href="#">Privacy</a><a href="#">Terms</a><a href="mailto:hello@example.com">Contact</a>
       </div>
     </div>
   </footer>
 
-  <!-- Uploadcare widget (demo key; replace with your real public key later) -->
+  <!-- Marquee builder (same data source as index) -->
+  <script>
+  (function(){
+    const CONF={owner:"martinez-frank",repo:"Emoji1",branch:"main",exclude:["starter","standard","premium"]};
+    const topEl=document.getElementById("marquee-top");
+    const btmEl=document.getElementById("marquee-btm");
+    if(!topEl||!btmEl) return;
+
+    const EXCLUDE=(CONF.exclude||[]).map(s=>s.toLowerCase());
+    const EXTRA=[/\.ds_store/i,/manifest/i,/%20/];
+    const isOut=s=>{s=(s||"").toLowerCase();return EXCLUDE.some(x=>s.includes(x))||EXTRA.some(rx=>rx.test(s));};
+    const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+    const build=urls=>{const frag=document.createDocumentFragment();urls.concat(urls).forEach(src=>{const img=new Image();img.className="marq-img";img.loading="lazy";img.decoding="async";img.alt="Frankiemoji expression";img.src=src;img.width=128;img.height=128;img.onerror=()=>img.remove();frag.appendChild(img);});return frag;};
+    async function fromGitHub(){
+      try{
+        const url=`https://api.github.com/repos/${CONF.owner}/${CONF.repo}/contents/images?ref=${CONF.branch}`;
+        const res=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
+        if(!res.ok) throw 0;
+        const items=await res.json();
+        return items.filter(it=>it.type==="file")
+                    .filter(it=>/\.(png|jpe?g|webp|gif)$/i.test(it.name))
+                    .filter(it=>!isOut(it.name)&&!isOut(it.path))
+                    .map(it=>it.download_url);
+      }catch{ return []; }
+    }
+    (async()=>{
+      let urls=await fromGitHub();
+      if(!urls.length) urls=["images/e01.png","images/e02.png","images/e03.png","images/e04.png"];
+      urls=shuffle([...new Set(urls)]);
+      topEl.appendChild(build(urls));
+      btmEl.appendChild(build([...urls].reverse()));
+      topEl.style.animationDuration=(54+Math.random()*2).toFixed(2)+"s";
+      btmEl.style.animationDuration=(57+Math.random()*2).toFixed(2)+"s";
+      document.querySelectorAll(".marquee").forEach(m=>{
+        m.addEventListener("mouseenter",()=>m.style.animationPlayState="paused");
+        m.addEventListener("mouseleave",()=>m.style.animationPlayState="running");
+      });
+    })();
+  })();
+  </script>
+
+  <!-- Uploadcare (demo key; swap with your real public key later) -->
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
   <script>window.UPLOADCARE_PUBLIC_KEY='demopublickey';</script>
 
+  <!-- Upload logic -->
   <script>
   (function () {
     function qs(sel){ return document.querySelector(sel); }
@@ -113,71 +200,84 @@ img{display:block;max-width:100%}
       return (p && ['starter','standard','premium'].includes(p)) ? p : 'standard';
     }
 
-    const root   = qs('#u-root');
-    const emailEl= qs('#u-email');
+    const emailSpan = qs('#u-email');
+    const emailInput = qs('#u-email-input');
     const packEl = qs('#u-pack');
-    const prevW  = qs('#u-preview-wrap');
-    const prev   = qs('#u-preview');
-    const submit = qs('#u-submit');
-    const formUI = qs('#u-form');
-    const doneUI = qs('#u-done');
+    const prevW = qs('#u-preview-wrap');
+    const prev  = qs('#u-preview');
+    const submit= qs('#u-submit');
+    const form  = qs('#u-root');
+    const done  = qs('#u-done');
 
-    // read data saved on index (email)
+    // read email from index if present
     let start = {};
     try { start = JSON.parse(localStorage.getItem('franki:start') || '{}'); } catch (_) {}
+
+    // show pack + email
     const pack = getPack();
-    packEl.textContent  = pack.charAt(0).toUpperCase() + pack.slice(1);
-    emailEl.textContent = start?.email ? start.email : 'Not provided';
+    packEl.textContent = pack.charAt(0).toUpperCase() + pack.slice(1);
+
+    // always show an input (prefilled if we already have an email)
+    emailInput.style.display = 'inline-block';
+    emailInput.value = start.email || '';
+    emailSpan.textContent = start.email ? start.email : 'Not provided';
 
     // Uploadcare widget hookup
-    const input = qs('#u-file');
+    const widget = uploadcare.Widget('#u-file');
     let filePromise = null;
 
-    function showPreviewFromCdn(cdnUrl){
-      if (!cdnUrl) { prevW.style.display = 'none'; return; }
+    function showPreview(cdnUrl){
+      if (!cdnUrl){ prevW.style.display='none'; return; }
       prev.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
-      prevW.style.display = 'block';
+      prevW.style.display='block';
     }
 
-    function boot(){
-      if (typeof uploadcare === 'undefined') return;
-      const widget = uploadcare.Widget(input);
-
-      widget.onChange(function (file) {
-        filePromise = file || null;
-        if (!file) { showPreviewFromCdn(''); return; }
-        file.done(function (info) {
-          showPreviewFromCdn(info.cdnUrl);
-          try {
-            localStorage.setItem('franki:upload', JSON.stringify({
-              email: start.email || '',
-              pack,
-              cdnUrl: info.cdnUrl,
-              uuid: info.uuid,
-              size: info.size,
-              name: info.name,
-              mime: info.mimeType
-            }));
-          } catch (_) {}
-        });
+    widget.onChange(function(file){
+      filePromise = file || null;
+      if (!file){ showPreview(''); return; }
+      file.done(function(info){
+        showPreview(info.cdnUrl);
+        // stash minimal info for later
+        try {
+          localStorage.setItem('franki:upload', JSON.stringify({
+            email: emailInput.value.trim() || start.email || '',
+            pack,
+            cdnUrl: info.cdnUrl,
+            uuid: info.uuid,
+            size: info.size,
+            name: info.name,
+            mime: info.mimeType
+          }));
+        } catch(_) {}
       });
-    }
+    });
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', boot);
-    } else {
-      boot();
-    }
-
-    // Send button
-    submit.addEventListener('click', function (e) {
+    // Send
+    submit.addEventListener('click', function(e){
       e.preventDefault();
-      if (!filePromise) { alert('Please choose a photo first.'); return; }
-      filePromise.done(function (info) {
-        if (!info || !info.cdnUrl) { alert('Upload is still processing.'); return; }
-        formUI.style.display = 'none';
-        doneUI.style.display = 'block';
-        root.scrollIntoView({behavior: 'smooth'});
+
+      const email = (emailInput.value || '').trim();
+      if (!email){ alert('Please enter your email.'); emailInput.focus(); return; }
+      // keep email for next steps
+      try { localStorage.setItem('franki:start', JSON.stringify({ email })); } catch(_) {}
+
+      if (!filePromise){ alert('Please choose a photo first.'); return; }
+
+      filePromise.done(function(info){
+        if (!info || !info.cdnUrl){ alert('Upload is still processing.'); return; }
+        // success screen
+        form.querySelector('#u-submit').disabled = true;
+        form.querySelector('#u-file').disabled = true;
+        form.querySelector('#u-email-input').disabled = true;
+        form.querySelector('#u-preview')?.scrollIntoView({behavior:'smooth'});
+        form.querySelector('#u-root'); // keep reference
+        form.querySelector('#u-done').style.display = 'block';
+        form.querySelector('#u-submit').closest('.card'); // no-op for clarity
+        document.getElementById('u-done').style.display='block';
+        // hide input area
+        form.querySelector('#u-preview-wrap').style.display='block';
+        // simple swap
+        document.getElementById('u-submit').parentElement.style.display='none';
       });
     });
   })();
