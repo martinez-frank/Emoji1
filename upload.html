@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Start your pack — Frankiemoji</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<!-- build: v8.4.1 -->
+<!-- build: v8.5.0 -->
 
 <style>
 :root{--cream:#FAF3E0;--espresso:#2C2419;--graphite:#5F5B53;--amber:#F0C06C;--accent:#D8742B;--paper:#F8EED1;}
@@ -21,7 +21,7 @@ img{display:block;max-width:100%}
 .nav-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:12px;font-weight:600;cursor:pointer;transition:all .2s}
 .nav-btn:hover{background:#b85f22;transform:translateY(-1px)}
 
-/* Hero + marquee (match index) */
+/* Hero + marquee */
 .hero{text-align:center;padding:32px 0 8px}
 .hero h1{margin:0 0 6px;font-size:42px}
 .hero-sub{color:var(--graphite);max-width:520px;margin:0 auto}
@@ -49,7 +49,7 @@ label.small{font-size:12px;color:var(--graphite)}
 /* Inputs */
 input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #e6e0cf;border-radius:10px}
 
-/* Expression chips (exact look & feel you had) */
+/* Expression chips */
 .expr-chip{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border:1px solid #eadfca;border-radius:999px;background:#fff;font-weight:600;cursor:pointer;font-size:13px;transition:transform .12s, box-shadow .12s, background .12s}
 .expr-chip:hover{transform:translateY(-1px)}
 .expr-chip.selected{background:#D8742B;color:#fff;border-color:#D8742B;box-shadow:0 2px 8px rgba(0,0,0,.10)}
@@ -79,7 +79,7 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     </div>
   </header>
 
-  <!-- Marquee (same visual as index) -->
+  <!-- Marquee -->
   <div class="marquee-wrap" aria-hidden="true">
     <div id="mq1" class="marquee track-left"></div>
     <div id="mq2" class="marquee track-right"></div>
@@ -174,34 +174,76 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     </div>
   </footer>
 
-  <!-- Marquee (pulls images from /images and GitHub fallback) -->
+  <!-- Marquee loader (manifest → GitHub → hard fallback) -->
   <script>
-  (function(){
-    const OWNER="martinez-frank", REPO="Emoji1", BRANCH="main";
-    const EXCLUDE=["starter","standard","premium"];
-    const EXTRA=[/\\.ds_store/i,/manifest/i,/%20/];
-    const out=s=>{s=(s||"").toLowerCase();return EXCLUDE.some(x=>s.includes(x))||EXTRA.some(rx=>rx.test(s));};
-    const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
-    const build=(urls)=>{const f=document.createDocumentFragment();urls.concat(urls).forEach(src=>{const im=new Image();im.className="marq-img";im.loading="lazy";im.alt="Frankiemoji face";im.src=src;im.onerror=()=>im.remove();f.appendChild(im);});return f;};
-    async function fromGit(){
+  (function () {
+    const GH = { owner:"martinez-frank", repo:"Emoji1", branch:"main" };
+    const EXCLUDE = ["starter","standard","premium"];
+    const EXTRA = [/\.ds_store/i, /%20/];
+
+    const q = (s)=>document.querySelector(s);
+    const row1 = q("#mq1"), row2 = q("#mq2");
+    if (!row1 || !row2) return;
+
+    const isOut = (s)=>{ s=(s||"").toLowerCase(); return EXCLUDE.some(x=>s.includes(x)) || EXTRA.some(rx=>rx.test(s)); };
+    const shuffle = (a)=>{ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+    const build = (urls)=>{
+      const f=document.createDocumentFragment();
+      urls.concat(urls).forEach(src=>{
+        const im=new Image();
+        im.className="marq-img"; im.loading="lazy"; im.decoding="async"; im.alt="Frankiemoji";
+        im.src=src; im.onerror=()=>im.remove();
+        f.appendChild(im);
+      });
+      return f;
+    };
+
+    async function fromManifest(){
+      // support: array OR {stickers:[…]}
       try{
-        const url=`https://api.github.com/repos/${OWNER}/${REPO}/contents/images?ref=${BRANCH}`;
-        const r=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
-        if(!r.ok) throw 0;
-        const items=await r.json();
-        return items.filter(it=>it.type==="file")
-                    .filter(it=>/\\.(png|jpe?g|webp|gif)$/i.test(it.name))
-                    .filter(it=>!out(it.name)&&!out(it.path))
-                    .map(it=>it.download_url);
-      }catch{return []}
+        const res = await fetch("images/manifest.json?cb="+Date.now(), {cache:"no-store"});
+        if(!res.ok) throw 0;
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (Array.isArray(data.stickers) ? data.stickers : []);
+        return list.map(s => String(s).startsWith("images/") ? s : `images/${s}`)
+                   .filter(s => /\.(png|jpe?g|webp|gif)$/i.test(s) && !isOut(s));
+      }catch{ return []; }
     }
-    (async()=>{
-      let urls=await fromGit();
-      if(!urls.length) urls=["images/e01.png","images/e02.png","images/e03.png","images/e04.png"];
-      urls=shuffle([...new Set(urls)]);
-      const mq1=document.getElementById("mq1"), mq2=document.getElementById("mq2");
-      mq1.appendChild(build(urls));
-      mq2.appendChild(build([...urls].reverse()));
+
+    async function fromGitHub(){
+      try{
+        const url = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/images?ref=${GH.branch}`;
+        const r = await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
+        if(!r.ok) throw 0;
+        const items = await r.json();
+        return items.filter(it=>it.type==="file")
+                    .filter(it=>/\.(png|jpe?g|webp|gif)$/i.test(it.name))
+                    .filter(it=>!isOut(it.name)&&!isOut(it.path))
+                    .map(it=>it.download_url);
+      }catch{ return []; }
+    }
+
+    (async ()=>{
+      let urls = await fromManifest();
+      if (!urls.length) {
+        const gh = await fromGitHub();
+        urls = gh;
+      }
+      if (!urls.length) {
+        urls = ["images/wink.png","images/laugh.png","images/smirk.png","images/ohno.png"];
+      }
+
+      urls = shuffle([...new Set(urls)]);
+      row1.appendChild(build(urls));
+      row2.appendChild(build([...urls].reverse()));
+      row1.style.animationDuration = (50 + Math.random()*2).toFixed(2) + "s";
+      row2.style.animationDuration = (53 + Math.random()*2).toFixed(2) + "s";
+
+      // pause on hover
+      document.querySelectorAll(".marquee").forEach(m=>{
+        m.addEventListener("mouseenter", ()=> m.style.animationPlayState="paused");
+        m.addEventListener("mouseleave", ()=> m.style.animationPlayState="running");
+      });
     })();
   })();
   </script>
@@ -213,28 +255,24 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
   <!-- Page logic: pack, expressions, email/sms, upload, send -->
   <script>
   (function(){
-    // ----- helpers
     const qs = (s)=>document.querySelector(s);
     const pack = new URLSearchParams(location.search).get('pack') || 'starter';
     const PRETTY = {starter:'Starter', standard:'Standard', premium:'Premium'};
     const MAX_BY_PACK = {starter:3, standard:9, premium:18};
 
-    // ----- pack note
-    const note = qs('#pack-note');
-    if (note) note.textContent = `Selected: ${PRETTY[pack] || 'Starter'} Pack`;
+    // pack note
+    const note = qs('#pack-note'); if (note) note.textContent = `Selected: ${PRETTY[pack] || 'Starter'} Pack`;
 
-    // ----- prefill email from index step if present
+    // prefill email
     let start = {};
     try { start = JSON.parse(localStorage.getItem('franki:start') || '{}'); } catch(_) {}
     if (start.email) qs('#email').value = start.email;
 
-    // ----- SMS toggle
+    // SMS toggle
     const optin = qs('#sms-optin'), smsRow = qs('#sms-row');
-    if (optin && smsRow){
-      optin.addEventListener('change', ()=> smsRow.style.display = optin.checked ? 'flex' : 'none');
-    }
+    if (optin && smsRow){ optin.addEventListener('change', ()=> smsRow.style.display = optin.checked ? 'flex' : 'none'); }
 
-    // ----- expression chips (restored)
+    // expression chips
     const EXPRESSIONS = [
       "Happy","Laughing","Wink","Big Grin","Smirk",
       "Thumbs Up","Heart Eyes","Surprised","Face Palm","Eye Roll",
@@ -260,21 +298,18 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
       render();
     }
     EXPRESSIONS.forEach(name=>{
-      const b=document.createElement('button');
-      b.type='button'; b.className='expr-chip'; b.textContent=name;
-      b.addEventListener('click',()=>toggle(name,b));
-      chipsEl.appendChild(b);
+      const b=document.createElement('button'); b.type='button'; b.className='expr-chip'; b.textContent=name;
+      b.addEventListener('click',()=>toggle(name,b)); chipsEl.appendChild(b);
     });
     render();
 
-    // ----- Uploadcare widget + preview
+    // Uploadcare widget + preview
     const widget = uploadcare.Widget('#u-file');
     let filePromise = null;
     function showPreview(cdnUrl){
       const wrap = qs('#u-preview-wrap'), img = qs('#u-preview');
       if (!cdnUrl){ wrap.style.display='none'; return; }
-      img.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
-      wrap.style.display='block';
+      img.src = cdnUrl + '-/preview/800x800/-/quality/smart/'; wrap.style.display='block';
     }
     widget.onChange(function(file){
       filePromise = file || null;
@@ -282,17 +317,15 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
       file.done(function(info){ showPreview(info.cdnUrl); });
     });
 
-    // ----- Send
+    // Send
     qs('#send-btn').addEventListener('click', function(e){
       e.preventDefault();
       const email = (qs('#email').value||'').trim();
       if (!email){ alert('Please enter your email.'); qs('#email').focus(); return; }
 
-      // persist latest email back to start payload for future steps
       try { localStorage.setItem('franki:start', JSON.stringify({ email })); } catch(_){}
 
-      // sms validation
-      let phone = '', sms_optin=false;
+      let phone='', sms_optin=false;
       if (optin && optin.checked){
         sms_optin = true;
         phone = (qs('#phone').value||'').trim();
@@ -300,21 +333,18 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
         if (!d || d.length < 10 || d.length > 15){ alert('Please enter a valid mobile number (10–15 digits) or uncheck SMS.'); return; }
       }
 
-      // selfie required
       if (!filePromise){ alert('Please choose a photo first.'); return; }
 
       filePromise.done(function(info){
         if (!info || !info.cdnUrl){ alert('Upload is still processing.'); return; }
 
-        // store a compact order handoff
         const order = {
           email, sms_optin, phone,
-          pack, expressions: hiddenEl.value.split(',').filter(Boolean),
+          pack, expressions: (qs('#expressions').value||'').split(',').filter(Boolean),
           upload: { cdnUrl: info.cdnUrl, uuid: info.uuid, size: info.size, name: info.name, mime: info.mimeType }
         };
         try { localStorage.setItem('franki:order', JSON.stringify(order)); } catch(_){}
 
-        // success UI
         qs('#success').style.display='block';
         this.closest('.row').style.display='none';
         qs('#success').scrollIntoView({behavior:'smooth'});
