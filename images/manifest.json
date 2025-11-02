@@ -1,24 +1,21 @@
-{
-  "pricing": {
-    "starter": "starter.png",
-    "standard": "standard.png",
-    "premium": "premium.png"
-  },
-  "stickers": [
-    "wink.png",
-    "laugh.png",
-    "ohno.png",
-    "smirk.png",
-    "candikiss.png",
-    "candithumbsup.png",
-    "franklaugh.png",
-    "frankcrazy.png",
-    "aaronono.png",
-    "corifrown.png",
-    "donnyprofessional.png",
-    "dennissunglasses.png",
-    "dennishappy.png",
-    "missangel.png",
-    "misssmile.png"
-  ]
-}
+[
+  "images/wink.png",
+  "images/laugh.png",
+  "images/ohno.png",
+  "images/smirk.png",
+  "images/candikiss.png",
+  "images/candithumbsup.png",
+  "images/franklaugh.png",
+  "images/frankupset.png",
+  "images/aaronohno.png",
+  "images/coricoffee.png",
+  "images/corifrown.png",
+  "images/donnyprofessional.png",
+  "images/dennissunglasses.png",
+  "images/dennishappy.png",
+  "images/missangel.png",
+  "images/misssmile.png",
+  "images/funnyface.png",
+  "images/halo.png",
+  "images/sleep.png"
+]
