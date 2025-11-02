@@ -21,10 +21,11 @@ img{display:block;max-width:100%}
 .btn:hover{transform:translateY(-1px)}
 .btn.primary{background:var(--accent);color:#fff}
 
-/* Header */
-.header{position:sticky;top:0;z-index:40;background:rgba(250,243,224,.97);backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc;padding:10px 0}
-.header .container{display:flex;justify-content:space-between;align-items:center}
-.header a{color:var(--espresso);text-decoration:none;font-weight:600}
+/* Top bar (orange buttons) */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(250,243,224,.97);backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc}
+.topbar-inner{display:flex;justify-content:center;align-items:center;gap:14px;padding:10px 0}
+.nav-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:12px;font-weight:600;cursor:pointer;transition:transform .2s ease,background .2s ease}
+.nav-btn:hover{background:#b85f22;transform:translateY(-1px)}
 
 /* Hero + marquee (match index) */
 .hero{text-align:center;padding:64px 0 12px}
@@ -38,7 +39,7 @@ img{display:block;max-width:100%}
 .track-left{animation:scrollLeft 54s linear infinite}
 .track-right{animation:scrollRight 57s linear infinite}
 
-/* Card to match index look */
+/* Card */
 .card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06);padding:20px;max-width:560px;margin:0 auto}
 .meta{background:#fff7e6;border:1px solid #eee;padding:12px 14px;border-radius:12px;margin-bottom:16px}
 
@@ -62,22 +63,22 @@ img{display:block;max-width:100%}
 </head>
 
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="container">
-      <a href="index.html">← Back to home</a>
-      <strong>Frankiemoji</strong>
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <button class="nav-btn" onclick="location.href='index.html'">Home</button>
+      <button class="nav-btn" onclick="location.href='our-story.html'">About</button>
     </div>
   </header>
 
   <main>
-    <!-- Marquee like the homepage -->
+    <!-- Marquee (same as index) -->
     <div class="marquee-wrap" aria-hidden="true">
       <div id="marquee-top" class="marquee track-left"></div>
       <div id="marquee-btm" class="marquee track-right"></div>
     </div>
 
-    <!-- Title like the homepage -->
+    <!-- Hero -->
     <section class="hero">
       <div class="container" style="max-width:720px;margin:0 auto;">
         <h1 class="hero-title">Start your pack</h1>
@@ -87,22 +88,35 @@ img{display:block;max-width:100%}
 
     <!-- Upload card -->
     <section class="container" style="padding-bottom:32px;">
-      <div class="card" id="u-root">
+      <div class="card" id="u-card">
         <h2 style="margin:0 0 8px;font-size:22px;">Upload your selfie</h2>
         <p style="opacity:.8;margin:0 0 16px;">Clear, front-facing, good lighting works best.</p>
 
         <div class="meta">
           <div><strong>Selected pack:</strong> <span id="u-pack">—</span></div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;">
             <strong>Email:</strong>
-            <span id="u-email" style="opacity:.9">—</span>
-            <!-- small fallback email box (prefills if we have one) -->
+            <span id="u-email" style="opacity:.9">Not provided</span>
             <input id="u-email-input" type="email" placeholder="you@example.com"
-                   style="flex:1;min-width:220px;padding:10px;border:1px solid #e6e0cf;border-radius:10px;display:none;">
+                   style="flex:1;min-width:220px;padding:10px;border:1px solid #e6e0cf;border-radius:10px;">
           </div>
         </div>
 
-        <!-- Uploadcare widget -->
+        <!-- SMS opt-in -->
+        <div style="display:flex;align-items:center;gap:10px;margin:6px 0 4px;">
+          <input id="sms-optin" type="checkbox" style="transform:scale(1.1);" />
+          <label for="sms-optin" style="font-weight:600;">Also text my emoji pack</label>
+        </div>
+        <div id="sms-row" style="display:none;margin:6px 0 0;">
+          <input id="sms-phone" type="tel" inputmode="tel" placeholder="Mobile number (optional)"
+                 style="width:100%;padding:10px;border:1px solid #e6e0cf;border-radius:10px;">
+        </div>
+        <p style="font-size:12px;color:#5F5B53;margin:8px 0 10px;">
+          By providing your number, you agree to receive a one-time text message from Frankiemoji to deliver your emoji pack.
+          Standard message rates may apply.
+        </p>
+
+        <!-- Uploadcare picker -->
         <input
           id="u-file"
           type="hidden"
@@ -119,12 +133,12 @@ img{display:block;max-width:100%}
           <img id="u-preview" alt="preview" style="max-width:100%;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);" />
         </div>
 
-        <div style="display:flex;gap:10px;margin-top:8px;">
+        <div id="u-actions" style="display:flex;gap:10px;margin-top:8px;">
           <a class="btn" href="index.html" style="flex:1;text-align:center;">Back</a>
           <button id="u-submit" class="btn primary" style="flex:1;">Send</button>
         </div>
 
-        <!-- Success state -->
+        <!-- Success -->
         <div id="u-done" style="display:none;text-align:center;padding:24px 12px;">
           <h2 style="margin:0 0 8px;">All set 🎉</h2>
           <p style="opacity:.85;margin:0 0 12px;">We saved your details and selfie. You’ll hear from us soon.</p>
@@ -146,7 +160,7 @@ img{display:block;max-width:100%}
     </div>
   </footer>
 
-  <!-- Marquee builder (same data source as index) -->
+  <!-- Marquee builder (same source as index) -->
   <script>
   (function(){
     const CONF={owner:"martinez-frank",repo:"Emoji1",branch:"main",exclude:["starter","standard","premium"]};
@@ -155,10 +169,11 @@ img{display:block;max-width:100%}
     if(!topEl||!btmEl) return;
 
     const EXCLUDE=(CONF.exclude||[]).map(s=>s.toLowerCase());
-    const EXTRA=[/\.ds_store/i,/manifest/i,/%20/];
+    const EXTRA=[/\\.ds_store/i,/manifest/i,/%20/];
     const isOut=s=>{s=(s||"").toLowerCase();return EXCLUDE.some(x=>s.includes(x))||EXTRA.some(rx=>rx.test(s));};
     const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
     const build=urls=>{const frag=document.createDocumentFragment();urls.concat(urls).forEach(src=>{const img=new Image();img.className="marq-img";img.loading="lazy";img.decoding="async";img.alt="Frankiemoji expression";img.src=src;img.width=128;img.height=128;img.onerror=()=>img.remove();frag.appendChild(img);});return frag;};
+
     async function fromGitHub(){
       try{
         const url=`https://api.github.com/repos/${CONF.owner}/${CONF.repo}/contents/images?ref=${CONF.branch}`;
@@ -166,11 +181,12 @@ img{display:block;max-width:100%}
         if(!res.ok) throw 0;
         const items=await res.json();
         return items.filter(it=>it.type==="file")
-                    .filter(it=>/\.(png|jpe?g|webp|gif)$/i.test(it.name))
+                    .filter(it=>/\\.(png|jpe?g|webp|gif)$/i.test(it.name))
                     .filter(it=>!isOut(it.name)&&!isOut(it.path))
                     .map(it=>it.download_url);
       }catch{ return []; }
     }
+
     (async()=>{
       let urls=await fromGitHub();
       if(!urls.length) urls=["images/e01.png","images/e02.png","images/e03.png","images/e04.png"];
@@ -187,49 +203,52 @@ img{display:block;max-width:100%}
   })();
   </script>
 
-  <!-- Uploadcare (demo key; swap with your real public key later) -->
+  <!-- Uploadcare (demo key — replace with your real public key later) -->
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
   <script>window.UPLOADCARE_PUBLIC_KEY='demopublickey';</script>
 
-  <!-- Upload logic -->
+  <!-- Upload flow -->
   <script>
   (function () {
-    function qs(sel){ return document.querySelector(sel); }
+    function qs(s){return document.querySelector(s);}
     function getPack(){
       const p = new URLSearchParams(location.search).get('pack');
       return (p && ['starter','standard','premium'].includes(p)) ? p : 'standard';
     }
 
+    const pack = getPack();
     const emailSpan = qs('#u-email');
     const emailInput = qs('#u-email-input');
     const packEl = qs('#u-pack');
-    const prevW = qs('#u-preview-wrap');
-    const prev  = qs('#u-preview');
-    const submit= qs('#u-submit');
-    const form  = qs('#u-root');
-    const done  = qs('#u-done');
+    const previewWrap = qs('#u-preview-wrap');
+    const previewImg  = qs('#u-preview');
+    const smsOpt = qs('#sms-optin');
+    const smsRow = qs('#sms-row');
+    const phoneEl = qs('#sms-phone');
+    const actions = qs('#u-actions');
+    const submit  = qs('#u-submit');
+    const done    = qs('#u-done');
 
-    // read email from index if present
+    packEl.textContent = pack.charAt(0).toUpperCase()+pack.slice(1);
+
+    // Prefill email from index if present
     let start = {};
-    try { start = JSON.parse(localStorage.getItem('franki:start') || '{}'); } catch (_) {}
+    try { start = JSON.parse(localStorage.getItem('franki:start')||'{}'); } catch(_){}
+    if (start.email){ emailSpan.textContent = start.email; emailInput.value = start.email; }
 
-    // show pack + email
-    const pack = getPack();
-    packEl.textContent = pack.charAt(0).toUpperCase() + pack.slice(1);
+    // SMS toggle
+    if (smsOpt && smsRow){
+      smsOpt.addEventListener('change', ()=>{ smsRow.style.display = smsOpt.checked ? 'block' : 'none'; });
+    }
 
-    // always show an input (prefilled if we already have an email)
-    emailInput.style.display = 'inline-block';
-    emailInput.value = start.email || '';
-    emailSpan.textContent = start.email ? start.email : 'Not provided';
-
-    // Uploadcare widget hookup
+    // Uploadcare widget
     const widget = uploadcare.Widget('#u-file');
     let filePromise = null;
 
     function showPreview(cdnUrl){
-      if (!cdnUrl){ prevW.style.display='none'; return; }
-      prev.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
-      prevW.style.display='block';
+      if (!cdnUrl){ previewWrap.style.display='none'; return; }
+      previewImg.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
+      previewWrap.style.display='block';
     }
 
     widget.onChange(function(file){
@@ -237,18 +256,13 @@ img{display:block;max-width:100%}
       if (!file){ showPreview(''); return; }
       file.done(function(info){
         showPreview(info.cdnUrl);
-        // stash minimal info for later
+        // lightweight stash
         try {
           localStorage.setItem('franki:upload', JSON.stringify({
             email: emailInput.value.trim() || start.email || '',
-            pack,
-            cdnUrl: info.cdnUrl,
-            uuid: info.uuid,
-            size: info.size,
-            name: info.name,
-            mime: info.mimeType
+            pack, cdnUrl: info.cdnUrl, uuid: info.uuid, size: info.size, name: info.name, mime: info.mimeType
           }));
-        } catch(_) {}
+        } catch(_){}
       });
     });
 
@@ -256,28 +270,38 @@ img{display:block;max-width:100%}
     submit.addEventListener('click', function(e){
       e.preventDefault();
 
-      const email = (emailInput.value || '').trim();
+      const email = (emailInput.value||'').trim();
       if (!email){ alert('Please enter your email.'); emailInput.focus(); return; }
-      // keep email for next steps
-      try { localStorage.setItem('franki:start', JSON.stringify({ email })); } catch(_) {}
+      try { localStorage.setItem('franki:start', JSON.stringify({ email })); } catch(_){}
+
+      let phone = '', sms_optin = false;
+      if (smsOpt && smsOpt.checked){
+        sms_optin = true;
+        phone = (phoneEl.value||'').trim();
+        const digits = phone.replace(/\\D/g,'');
+        if (!digits || digits.length < 10 || digits.length > 15){
+          alert('Please enter a valid mobile number (10–15 digits) or uncheck SMS.'); phoneEl.focus(); return;
+        }
+      }
 
       if (!filePromise){ alert('Please choose a photo first.'); return; }
 
       filePromise.done(function(info){
         if (!info || !info.cdnUrl){ alert('Upload is still processing.'); return; }
-        // success screen
-        form.querySelector('#u-submit').disabled = true;
-        form.querySelector('#u-file').disabled = true;
-        form.querySelector('#u-email-input').disabled = true;
-        form.querySelector('#u-preview')?.scrollIntoView({behavior:'smooth'});
-        form.querySelector('#u-root'); // keep reference
-        form.querySelector('#u-done').style.display = 'block';
-        form.querySelector('#u-submit').closest('.card'); // no-op for clarity
-        document.getElementById('u-done').style.display='block';
-        // hide input area
-        form.querySelector('#u-preview-wrap').style.display='block';
-        // simple swap
-        document.getElementById('u-submit').parentElement.style.display='none';
+
+        // final stash
+        try {
+          localStorage.setItem('franki:upload', JSON.stringify({
+            email, pack,
+            cdnUrl: info.cdnUrl, uuid: info.uuid, size: info.size, name: info.name, mime: info.mimeType,
+            sms_optin, phone
+          }));
+        } catch(_){}
+
+        // success UI
+        actions.style.display='none';
+        done.style.display='block';
+        done.scrollIntoView({behavior:'smooth'});
       });
     });
   })();
