@@ -1,85 +1,111 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Our Story — Frankiemoji</title>
-  <meta name="description" content="Hand-drawn, likeness-true emojis. Born with paper and pencil, evolved with technology.">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Our Story — Frankiemoji</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --cream:#FAF3E0; --espresso:#2C2419; --graphite:#5F5B53;
-      --amber:#F0C06C; --accent:#D8742B; --paper:#F8EED1;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--cream);color:var(--espresso);
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif}
-    h1,h2,h3{font-family:"DM Serif Display",Georgia,serif;margin:0 0 8px}
-    img{display:block;max-width:100%}
-    .container{max-width:1100px;margin:0 auto;padding:0 24px}
+<style>
+:root{
+  --cream:#FAF3E0; --paper:#F8EED1; --espresso:#2C2419; --graphite:#5F5B53;
+  --accent:#D8742B; --amber:#F0C06C;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--cream);color:var(--espresso);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif}
+h1,h2,h3{font-family:"DM Serif Display",Georgia,serif}
+img{display:block;max-width:100%}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
 
-    /* Top bar (same as start page) */
-    .topbar{position:sticky;top:0;z-index:50;background:rgba(250,243,224,.97);
-      backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc}
-    .topbar-inner{display:flex;justify-content:center;gap:16px;padding:10px 0}
-    .nav-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:12px;
-      font-weight:600;cursor:pointer;transition:all .2s}
-    .nav-btn:hover{background:#b85f22;transform:translateY(-1px)}
+/* Top bar */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(250,243,224,.97);
+  backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc}
+.topbar-inner{display:flex;justify-content:center;gap:16px;padding:10px 0}
+.nav-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:12px;
+  font-weight:600;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:#b85f22;transform:translateY(-1px)}
 
-    /* Marquee (identical tokens) */
-    .marquee-wrap{overflow:hidden;margin:10px 0 22px}
-    .marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
-    .marq-img{width:110px;height:110px;object-fit:contain;border-radius:16px;
-      box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
-    @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-    .track-left{animation:scrollLeft 50s linear infinite}
-    .track-right{animation:scrollRight 53s linear infinite}
+/* Marquee */
+.marquee-wrap{overflow:hidden;margin:10px 0 6px}
+.marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
+.marq-img{width:110px;height:110px;object-fit:contain;border-radius:16px;background:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);flex:0 0 auto}
+@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+.track-left{animation:scrollLeft 50s linear infinite}
+.track-right{animation:scrollRight 53s linear infinite}
 
-    /* Hero + lead */
-    .hero{padding:28px 0 12px;text-align:center}
-    .hero h1{font-size:42px}
-    .lead{color:var(--graphite);max-width:760px;margin:0 auto 8px;line-height:1.55}
+/* Hero */
+.hero{padding:18px 0 6px;text-align:center}
+.hero h1{margin:0 0 6px;font-size:42px}
+.hero p{color:var(--graphite);max-width:720px;margin:0 auto}
+.hero .cta-row{margin-top:14px;display:flex;gap:10px;justify-content:center}
 
-    /* Content cards */
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
-    .card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06);padding:20px}
-    .card h3{margin-bottom:6px}
-    .list{margin:6px 0 0 18px;padding:0}
-    .list li{margin:6px 0}
+/* Buttons */
+.btn{display:inline-block;border:none;padding:12px 20px;border-radius:12px;background:var(--accent);
+  color:#fff;font-weight:600;cursor:pointer;transition:all .2s}
+.btn:hover{background:#b85f22;transform:translateY(-1px)}
+.btn.ghost{background:#fff;color:var(--espresso);border:1px solid #eadfca}
+.btn.small{padding:8px 12px;border-radius:10px}
 
-    /* CTA button */
-    .btn{display:inline-block;border:none;padding:12px 20px;border-radius:12px;background:var(--accent);
-      color:#fff;font-weight:600;cursor:pointer;transition:all .2s}
-    .btn:hover{background:#b85f22;transform:translateY(-1px)}
-    .btn:active{transform:scale(.97)}
+/* Maker strip (your emoji as “mascot”) */
+.maker{margin:8px 0 18px}
+.maker-strip{list-style:none;margin:0 auto;padding:0;display:flex;gap:18px;justify-content:center;flex-wrap:wrap;max-width:960px}
+.maker-strip li{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #eadfca;
+  border-radius:999px;padding:8px 12px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.maker-strip img{width:36px;height:36px;object-fit:contain}
+.maker-strip span{font-weight:600;font-size:14px}
 
-    /* Footer */
-    .site-footer{padding:28px 0;margin-top:24px}
-    .site-footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px;
-      border-top:1px solid #eee;padding-top:16px}
-    .site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
+/* Story sections */
+.section{padding:14px 0}
+.section h2{margin:0 0 6px;font-size:28px}
+.section .lede{color:var(--graphite);max-width:820px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.card{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06);border:1px solid #eee}
 
-    /* Sections spacing */
-    .section{padding:8px 0 6px}
-    .center{text-align:center}
+/* Why + What cards */
+.two-up{margin-top:12px}
+.card-copy{padding:16px}
+.card-copy h3{margin:0 0 6px;font-size:18px}
+.card-copy ul{margin:8px 0 0 18px;padding:0}
 
-    @media (max-width:900px){
-      .hero h1{font-size:34px}
-      .marq-img{width:96px;height:96px}
-      .grid{grid-template-columns:1fr}
-    }
-  </style>
+/* Sketch -> Emoji pairs */
+.pairs{margin-top:12px}
+.pairs .tile{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.pairs .side{padding:12px}
+.pairs .side h4{margin:0 0 6px;font-size:14px;color:var(--graphite)}
+.pairs img{width:100%;height:auto;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.05)}
+.pairs figcaption{grid-column:1/-1;text-align:center;color:var(--graphite);font-size:14px;padding:6px 0}
+
+/* Chat demo */
+.chat-demo{margin-top:12px}
+.chat-bubbles{display:grid;gap:8px;padding:16px}
+.bubble{max-width:70%;padding:10px 12px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.bubble.me{margin-left:auto;background:#fff}
+.bubble.them{background:#fff;border:1px dashed #eadfca}
+.bubble img{width:36px;height:36px;object-fit:contain;display:inline-block;vertical-align:middle;margin-right:6px}
+
+/* Pledge / footer */
+.note{max-width:860px;margin:10px auto 0;color:var(--graphite)}
+.site-footer{padding:28px 0}
+.site-footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #eee;padding-top:16px}
+.site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
+
+@media (max-width:900px){
+  .hero h1{font-size:34px}
+  .marq-img{width:96px;height:96px}
+  .pairs .tile{grid-template-columns:1fr}
+}
+</style>
 </head>
-<body>
 
+<body>
   <!-- Top bar -->
   <header class="topbar">
     <div class="container topbar-inner">
       <button class="nav-btn" onclick="location.href='index.html'">Home</button>
-      <!-- If your start page filename differs, adjust the href below -->
-      <button class="nav-btn" onclick="location.href='start.html'">Start your pack</button>
+      <button class="nav-btn" onclick="location.href='start-your-pack.html?pack=starter'">Start your pack</button>
     </div>
   </header>
 
@@ -92,53 +118,70 @@
   <!-- Hero -->
   <section class="hero container">
     <h1>Hand-drawn, likeness-true emojis</h1>
-    <p class="lead">
+    <p class="lede">
       Frankiemoji began with a pencil and a question: what if your texts could show your <em>real</em> smile?
-      We hand-draw every face using warm texture, clean lines, and artist judgement to capture you—exactly how friends know you.
+      I hand-draw every face using warm texture, clean lines, and artist judgement to capture you—exactly how friends know you.
     </p>
-    <div style="margin-top:10px">
-      <button class="btn" onclick="location.href='start.html'">Start my pack</button>
+    <div class="cta-row">
+      <a class="btn" href="start-your-pack.html">Start my pack</a>
+      <a class="btn ghost" href="index.html#pricing">Pricing</a>
     </div>
   </section>
 
-  <!-- Why + What you get -->
+  <!-- Maker strip (your emoji as steps) -->
+  <section class="container maker">
+    <ul class="maker-strip" id="maker-strip"></ul>
+  </section>
+
+  <!-- Why it feels different + What you get -->
   <section class="section container">
-    <div class="grid">
-      <div class="card">
+    <div class="grid two-up">
+      <article class="card card-copy" style="grid-column: span 6;">
         <h3>Why it feels different</h3>
-        <ul class="list">
+        <ul>
           <li><strong>Human craft.</strong> Artists first, tools second.</li>
           <li><strong>Likeness matters.</strong> Your features, your vibe—preserved.</li>
           <li><strong>Fast delivery.</strong> Clear directions, quick turnaround.</li>
         </ul>
-      </div>
-      <div class="card">
+      </article>
+      <article class="card card-copy" style="grid-column: span 6;">
         <h3>What you get</h3>
-        <p style="margin:0 0 6px">
-          Custom emoji files sized for phones and chat apps—ready to drop into iMessage, WhatsApp, Instagram DMs, and more.
-        </p>
-        <ul class="list">
+        <ul>
           <li>Starter, Standard, and Premium packs</li>
           <li>Clean PNGs with transparent backgrounds</li>
           <li>Simple email (and optional SMS) delivery</li>
         </ul>
-      </div>
+      </article>
     </div>
   </section>
 
-  <!-- Process -->
+  <!-- From pencil to pixels (pairs) -->
   <section class="section container">
-    <div class="card">
-      <h3>Our process</h3>
-      <ol class="list" style="margin-left:18px">
-        <li><strong>Upload:</strong> Front-facing selfie, good light.</li>
-        <li><strong>Pick expressions:</strong> Happy, Laughing, Wink… your vibe set.</li>
-        <li><strong>We draw:</strong> Hand-drawn, likeness-true artwork.</li>
-        <li><strong>Delivery:</strong> Email + optional SMS with your pack.</li>
-      </ol>
-      <div class="center" style="margin-top:10px">
-        <button class="btn" onclick="location.href='start.html'">Get started</button>
-      </div>
+    <h2>From pencil to pixels</h2>
+    <p class="lede">
+      Every pack starts the same way: paper, pencil, and time. The final emoji keeps the likeness—and the
+      feeling—that made the sketch special.
+    </p>
+    <div class="grid pairs" id="pair-grid"></div>
+  </section>
+
+  <!-- Tiny chat demo -->
+  <section class="section container chat-demo">
+    <h2>How it plays in real chats</h2>
+    <div class="card chat-bubbles" id="chat">
+      <!-- Filled by JS -->
+    </div>
+  </section>
+
+  <!-- Personal pledge -->
+  <section class="section container">
+    <div class="card card-copy note">
+      <p><strong>It’s just me, Frank.</strong> No big team—just a person who loves drawing people the way their friends see them.</p>
+      <p>A portion of proceeds supports inner-city arts programs. Thanks for helping me put a few more smiles into the world.</p>
+    </div>
+    <div class="cta-row" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+      <a class="btn" href="start-your-pack.html">Start my pack</a>
+      <a class="btn ghost" href="index.html#pricing">Pricing</a>
     </div>
   </section>
 
@@ -147,70 +190,132 @@
     <div class="container">
       <p>Born with a Pencil. Evolved with Technology.</p>
       <div class="links">
-        <a href="#">Privacy</a><a href="#">Terms</a><a href="mailto:hello@example.com">Contact</a>
+        <a href="index.html#">Privacy</a><a href="index.html#">Terms</a><a href="mailto:hello@example.com">Contact</a>
       </div>
     </div>
   </footer>
 
-  <!-- Marquee builder (reads images/manifest.json → array of paths) -->
-  <script>
-    (function(){
-      const manifestPath = 'images/manifest.json'; // flat array of image paths
+<script>
+/* ---------------------------- CONFIG -------------------------------- */
+const CFG = {
+  owner: "martinez-frank",
+  repo:  "Emoji1",
+  branch:"main",
+  marqueeDir: "images",                  // where the big set of faces lives
+  makerSteps: [                          // your emoji as “maker” steps (optional)
+    {src:"images/maker/frank-drawing.png",  label:"Hand-drawing"},
+    {src:"images/maker/frank-computer.png", label:"Digitizing"},
+    {src:"images/maker/frank-coffee.png",   label:"Polishing"},
+    {src:"images/maker/frank-shipping.png", label:"Delivery"}
+  ],
+  pairs: [                               // sketch ↔ emoji pairs (remove/extend freely)
+    {sketch:"images/story/wink-sketch.jpg",   emoji:"images/emoji/wink.png",   cap:"Still Frank, now sticker-ready."},
+    {sketch:"images/story/laugh-sketch.jpg",  emoji:"images/emoji/laugh.png",  cap:"That exact laugh—captured."},
+    {sketch:"images/story/angel-sketch.jpg",  emoji:"images/emoji/missangel.png", cap:"Soft lines, same spirit."},
+    {sketch:"images/story/ohno-sketch.jpg",   emoji:"images/emoji/ohno.png",   cap:"Drama, but make it cute."},
+    {sketch:"images/story/shock-sketch.jpg",  emoji:"images/emoji/shock.png",  cap:"Big feeling, small file."}
+  ],
+  chat: {                                 // playful fake chat w/ your emoji
+    me:   ["images/emoji/wink.png","images/emoji/laugh.png"],
+    them: ["Got it!","No way, that looks just like you 😂"]
+  }
+};
+/* ------------------------ SMALL UTILITIES --------------------------- */
+const EXCLUDE = ["starter","standard","premium"];
+const EXTRA   = [/\.ds_store/i,/manifest/i,/%20/];
+const out = s => {
+  s = (s||"").toLowerCase();
+  return EXCLUDE.some(x=>s.includes(x)) || EXTRA.some(rx=>rx.test(s));
+};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 
-      function shuffle(a){
-        for (let i=a.length-1;i>0;i--){
-          const j = Math.floor(Math.random()*(i+1));
-          [a[i],a[j]] = [a[j],a[i]];
-        }
-        return a;
-      }
+/* ----------------------------- MARQUEE ------------------------------ */
+(async function buildMarquee(){
+  const {owner, repo, branch, marqueeDir} = CFG;
+  async function fromGit(){
+    try{
+      const url = `https://api.github.com/repos/${owner}/${repo}/contents/${marqueeDir}?ref=${branch}`;
+      const r = await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
+      if(!r.ok) throw 0;
+      const items = await r.json();
+      return items.filter(it=>it.type==="file")
+        .filter(it=>/\.(png|jpe?g|webp|gif)$/i.test(it.name))
+        .filter(it=>!out(it.name)&&!out(it.path))
+        .map(it=>it.download_url);
+    }catch{return []}
+  }
+  const urls = shuffle([...new Set(await fromGit())]);
+  const fallback = ["images/wink.png","images/laugh.png","images/smirk.png","images/ohno.png"].filter(Boolean);
+  const list = urls.length ? urls : fallback;
+  const mq1 = document.getElementById("mq1");
+  const mq2 = document.getElementById("mq2");
+  function build(set){
+    const frag = document.createDocumentFragment();
+    set.concat(set).forEach(src=>{
+      const im = new Image();
+      im.className="marq-img"; im.loading="lazy"; im.alt="Frankiemoji face"; im.src=src;
+      im.onerror = ()=> im.remove();
+      frag.appendChild(im);
+    });
+    return frag;
+  }
+  mq1.appendChild(build(list));
+  mq2.appendChild(build([...list].reverse()));
+})();
 
-      function build(urls){
-        const frag = document.createDocumentFragment();
-        urls.concat(urls).forEach(src=>{
-          const im = new Image();
-          im.className = 'marq-img';
-          im.loading = 'lazy';
-          im.alt = 'Frankiemoji face';
-          im.src = src;
-          im.onerror = () => im.remove();
-          frag.appendChild(im);
-        });
-        return frag;
-      }
+/* ---------------------------- MAKER STRIP --------------------------- */
+(function makerStrip(){
+  const ul = document.getElementById("maker-strip");
+  if (!ul) return;
+  (CFG.makerSteps||[]).forEach(s=>{
+    const li = document.createElement('li');
+    const im = new Image(); im.src = s.src; im.alt = s.label; im.loading="lazy";
+    im.onerror = ()=> li.remove();
+    const t = document.createElement('span'); t.textContent = s.label;
+    li.appendChild(im); li.appendChild(t); ul.appendChild(li);
+  });
+})();
 
-      async function loadList(){
-        try{
-          const res = await fetch(manifestPath, {cache:'no-cache'});
-          if(!res.ok) throw 0;
-          const data = await res.json();
-          // Allow either an array (recommended) or {stickers:[...]}
-          const list = Array.isArray(data) ? data : (Array.isArray(data.stickers) ? data.stickers : []);
-          return list.filter(Boolean);
-        }catch{
-          return [];
-        }
-      }
+/* -------------------------- SKETCH → EMOJI -------------------------- */
+(function pairs(){
+  const grid = document.getElementById("pair-grid");
+  if (!grid) return;
+  (CFG.pairs||[]).forEach(p=>{
+    const tile = document.createElement('figure'); tile.className="card tile";
+    const left = document.createElement('div'); left.className="side";
+    const right= document.createElement('div'); right.className="side";
+    const sk = new Image(); sk.loading="lazy"; sk.alt="Original drawing"; sk.src=p.sketch;
+    const em = new Image(); em.loading="lazy"; em.alt="Finished emoji";  em.src=p.emoji;
+    let failed=false;
+    sk.onerror = ()=>{failed=true; tile.remove();};
+    em.onerror = ()=>{failed=true; tile.remove();};
+    left.innerHTML  = `<h4>Pencil</h4>`;  left.appendChild(sk);
+    right.innerHTML = `<h4>Emoji</h4>`;   right.appendChild(em);
+    const cap = document.createElement('figcaption'); cap.textContent = p.cap||"";
+    tile.appendChild(left); tile.appendChild(right); tile.appendChild(cap);
+    grid.appendChild(tile);
+  });
+})();
 
-      (async ()=>{
-        let urls = await loadList();
-        if (!urls.length){
-          // last-ditch local fallbacks (tiny set so the bar still shows)
-          urls = [
-            'images/wink.png','images/laugh.png','images/smirk.png',
-            'images/halo.png','images/ohno.png','images/sleep.png'
-          ];
-        }
-        urls = shuffle([...new Set(urls)]);
-        const mq1 = document.getElementById('mq1');
-        const mq2 = document.getElementById('mq2');
-        mq1.appendChild(build(urls));
-        mq2.appendChild(build([...urls].reverse()));
-        // tiny natural variance each load
-        mq1.style.animationDuration = (50 + Math.random()*2).toFixed(2) + 's';
-        mq2.style.animationDuration = (53 + Math.random()*2).toFixed(2) + 's';
-      })();
-    })();
-  </script>
+/* ------------------------------ CHAT -------------------------------- */
+(function chat(){
+  const mount = document.getElementById("chat");
+  if (!mount) return;
+  function bubble(html, who){
+    const div = document.createElement('div');
+    div.className = `bubble ${who}`;
+    div.innerHTML = html;
+    mount.appendChild(div);
+  }
+  // me sends emojis
+  (CFG.chat.me||[]).forEach(src=>{
+    const im = new Image(); im.src = src; im.alt="My emoji"; im.loading="lazy";
+    im.onerror = ()=>{};
+    bubble(`<img src="${src}" alt="emoji" /> “This is exactly my face.”`, "me");
+  });
+  // them replies
+  (CFG.chat.them||[]).forEach(t => bubble(t, "them"));
+})();
+</script>
 </body>
 </html>
