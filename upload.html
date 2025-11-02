@@ -320,7 +320,81 @@ input[type="tel"]{
   }
 
   // redirect to home page (pricing section)
-  location.href = "index.html#pricing";
+ <!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Thanks — Frankiemoji</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style-v8.0.css">
+
+<style>
+  body{background:#FAF3E0;color:#2C2419}
+  .wrap{max-width:720px;margin:64px auto;padding:0 24px;text-align:center}
+  .card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06);padding:28px;margin-top:18px}
+  .title{font-family:"DM Serif Display",Georgia,serif;font-size:44px;margin:0 0 8px}
+  .sub{color:#5F5B53;margin:0 0 14px}
+  .pill{display:inline-block;background:#F0C06C;color:#2C2419;border-radius:999px;padding:6px 12px;font-weight:600;margin:4px}
+  .btn{display:inline-block;margin-top:18px;background:#D8742B;color:#fff;border:none;border-radius:12px;padding:12px 18px;font-weight:600;cursor:pointer}
+  .btn:hover{background:#b85f22;transform:translateY(-1px)}
+  .muted{font-size:12px;color:#5F5B53;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1 class="title">You’re all set 🎉</h1>
+  <p class="sub" id="summary">We’re preparing your pack now…</p>
+
+  <div class="card">
+    <h3 style="margin:0 0 10px;">Selected expressions</h3>
+    <div id="expr" style="margin-top:6px;"></div>
+
+    <button class="btn" onclick="location.href='index.html#pricing'">Back to pricing</button>
+    <div class="muted">Need help? <a href="mailto:hello@example.com">Contact us</a>.</div>
+  </div>
+</div>
+
+<script>
+  // Simple query parser
+  const q = new URLSearchParams(location.search);
+  const email = q.get('email') || '';
+  const phone = q.get('phone') || '';
+  const pack  = (q.get('pack') || 'starter').replace(/\b\w/g, m=>m.toUpperCase());
+  const exprs = (q.get('expr') || '').split(',').filter(Boolean);
+
+  // Mask phone if present
+  function maskPhone(p){
+    const d = p.replace(/\D/g,'');
+    if(d.length < 4) return '';
+    return d.length > 6
+      ? `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`
+      : d;
+  }
+
+  // Summary line
+  const parts = [`emailed to <strong>${email}</strong>`];
+  if (phone) parts.push(`texted to <strong>${maskPhone(phone)}</strong>`);
+  document.getElementById('summary').innerHTML =
+    `Your <strong>${pack} Pack</strong> will be ${parts.join(' and ')}.`;
+
+  // Expression pills
+  const exprDiv = document.getElementById('expr');
+  if(exprs.length){
+    exprs.forEach(e=>{
+      const span = document.createElement('span');
+      span.className = 'pill';
+      span.textContent = e;
+      exprDiv.appendChild(span);
+    });
+  } else {
+    exprDiv.textContent = 'No expressions were selected.';
+  }
+</script>
+</body>
+</html>
+
 });
   });
 })();
