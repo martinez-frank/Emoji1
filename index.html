@@ -207,6 +207,31 @@ img{display:block;max-width:100%}
     document.querySelectorAll(".marquee").forEach(m=>{
       m.addEventListener("mouseenter",()=>m.style.animationPlayState="paused");
       m.addEventListener("mouseleave",()=>m.style.animationPlayState="running");
+<script>
+/* Works even if we can't find the form markup.
+   Listens for any button labeled "Continue" or with data-continue. */
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+
+  const isContinue =
+    btn.hasAttribute('data-continue') ||
+    (btn.textContent && btn.textContent.trim().toLowerCase() === 'continue');
+
+  if (!isContinue) return;
+
+  e.preventDefault();
+
+  // OPTIONAL: if you have an email box with id="email", we’ll save it for later
+  const emailEl = document.querySelector('#email');
+  const email = emailEl ? (emailEl.value || '').trim() : '';
+
+  try { localStorage.setItem('franki:start', JSON.stringify({ email })); } catch (_) {}
+
+  // 👉 change this if your next page is different (e.g., 'upload.html', 'camera.html')
+  window.location.href = 'upload.html';
+});
+</script>
 
 </script>
 <!-- EOF v8.3.2 -->
