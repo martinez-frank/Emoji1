@@ -4,9 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Start your pack — Frankiemoji</title>
-<meta name="description" content="Upload a selfie, pick your expressions, and start your hand-drawn emoji pack.">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<!-- build: v8.3.2 -->
+<!-- build: v8.4.1 -->
 
 <style>
 :root{--cream:#FAF3E0;--espresso:#2C2419;--graphite:#5F5B53;--amber:#F0C06C;--accent:#D8742B;--paper:#F8EED1;}
@@ -14,49 +13,58 @@
 html,body{margin:0;padding:0;background:var(--cream);color:var(--espresso);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif}
 h1,h2,h3{font-family:"DM Serif Display",Georgia,serif}
 img{display:block;max-width:100%}
-.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
 
-/* Buttons */
-.btn{display:inline-block;border:1px solid transparent;padding:12px 18px;border-radius:12px;background:#fff;color:var(--espresso);font-weight:600;cursor:pointer;transition:transform .12s ease}
-.btn:hover{transform:translateY(-1px)}
-.btn.primary{background:var(--accent);color:#fff}
-
-/* Top bar (orange buttons) */
+/* Top bar */
 .topbar{position:sticky;top:0;z-index:50;background:rgba(250,243,224,.97);backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc}
-.topbar-inner{display:flex;justify-content:center;align-items:center;gap:14px;padding:10px 0}
-.nav-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:12px;font-weight:600;cursor:pointer;transition:transform .2s ease,background .2s ease}
+.topbar-inner{display:flex;justify-content:center;gap:16px;padding:10px 0}
+.nav-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:12px;font-weight:600;cursor:pointer;transition:all .2s}
 .nav-btn:hover{background:#b85f22;transform:translateY(-1px)}
 
 /* Hero + marquee (match index) */
-.hero{text-align:center;padding:64px 0 12px}
-.hero-title{font-size:56px;line-height:1.05;margin:0}
-.hero-sub{color:var(--graphite);margin:10px 0 24px}
-.marquee-wrap{overflow:hidden;margin-top:8px}
+.hero{text-align:center;padding:32px 0 8px}
+.hero h1{margin:0 0 6px;font-size:42px}
+.hero-sub{color:var(--graphite);max-width:520px;margin:0 auto}
+.marquee-wrap{overflow:hidden;margin:10px 0 22px}
 .marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
-.marq-img{width:128px;height:128px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
+.marq-img{width:110px;height:110px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
 @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-.track-left{animation:scrollLeft 54s linear infinite}
-.track-right{animation:scrollRight 57s linear infinite}
+.track-left{animation:scrollLeft 50s linear infinite}
+.track-right{animation:scrollRight 53s linear infinite}
 
-/* Card */
-.card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06);padding:20px;max-width:560px;margin:0 auto}
-.meta{background:#fff7e6;border:1px solid #eee;padding:12px 14px;border-radius:12px;margin-bottom:16px}
+/* Buttons */
+.btn{display:inline-block;border:none;padding:12px 20px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;transition:all .2s}
+.btn:hover{background:#b85f22;transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--accent);color:#fff}
+
+/* Card + rows */
+.upload-wrap{padding:10px 0 36px}
+.card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+.card.upload{margin:0 auto;max-width:560px;padding:20px}
+.row{display:flex;gap:12px;align-items:center;margin:8px 0}
+label.small{font-size:12px;color:var(--graphite)}
+
+/* Inputs */
+input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #e6e0cf;border-radius:10px}
+
+/* Expression chips (exact look & feel you had) */
+.expr-chip{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border:1px solid #eadfca;border-radius:999px;background:#fff;font-weight:600;cursor:pointer;font-size:13px;transition:transform .12s, box-shadow .12s, background .12s}
+.expr-chip:hover{transform:translateY(-1px)}
+.expr-chip.selected{background:#D8742B;color:#fff;border-color:#D8742B;box-shadow:0 2px 8px rgba(0,0,0,.10)}
+.expr-thumb{font-size:11px;background:#fff;border:1px solid #eadfca;border-radius:14px;padding:4px 8px;line-height:1;color:#2C2419}
+
+/* Success state */
+.success{display:none;text-align:center;padding:24px 12px}
 
 /* Footer */
-.footer{padding:28px 0;border-top:1px solid #eee}
-.footer .container{display:flex;align-items:center;justify-content:space-between}
-.links a{color:var(--espresso);text-decoration:none;margin-left:16px}
-
-/* Uploadcare brand alignment */
-.uploadcare--widget__button_type_open{
-  background:var(--accent) !important;color:#fff !important;border:none !important;
-  border-radius:12px !important;font-weight:600 !important;padding:12px 18px !important;
-}
-.uploadcare--widget__text{display:none !important}
+.site-footer{padding:28px 0}
+.site-footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #eee;padding-top:16px}
+.site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
 
 @media (max-width:900px){
-  .hero-title{font-size:42px}
+  .hero h1{font-size:34px}
   .marq-img{width:96px;height:96px}
 }
 </style>
@@ -71,87 +79,93 @@ img{display:block;max-width:100%}
     </div>
   </header>
 
-  <main>
-    <!-- Marquee (same as index) -->
-    <div class="marquee-wrap" aria-hidden="true">
-      <div id="marquee-top" class="marquee track-left"></div>
-      <div id="marquee-btm" class="marquee track-right"></div>
+  <!-- Marquee (same visual as index) -->
+  <div class="marquee-wrap" aria-hidden="true">
+    <div id="mq1" class="marquee track-left"></div>
+    <div id="mq2" class="marquee track-right"></div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container" style="max-width:620px;margin:0 auto;">
+      <h1>Start your pack</h1>
+      <p class="hero-sub">Upload a selfie, add your email, and we’ll get your <strong>hand-drawn inspired emojis</strong> started.</p>
+      <p id="pack-note" style="color:#D8742B;font-weight:600;margin-top:8px;">Selected: —</p>
     </div>
+  </section>
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="container" style="max-width:720px;margin:0 auto;">
-        <h1 class="hero-title">Start your pack</h1>
-        <p class="hero-sub">Upload a selfie, add your email, and we’ll get your hand-drawn inspired emojis started.</p>
-      </div>
-    </section>
-
-    <!-- Upload card -->
-    <section class="container" style="padding-bottom:32px;">
-      <div class="card" id="u-card">
-        <h2 style="margin:0 0 8px;font-size:22px;">Upload your selfie</h2>
-        <p style="opacity:.8;margin:0 0 16px;">Clear, front-facing, good lighting works best.</p>
-
-        <div class="meta">
-          <div><strong>Selected pack:</strong> <span id="u-pack">—</span></div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;">
-            <strong>Email:</strong>
-            <span id="u-email" style="opacity:.9">Not provided</span>
-            <input id="u-email-input" type="email" placeholder="you@example.com"
-                   style="flex:1;min-width:220px;padding:10px;border:1px solid #e6e0cf;border-radius:10px;">
+  <!-- Upload + Expressions card -->
+  <section class="upload-wrap">
+    <div class="container">
+      <div class="card upload">
+        <!-- Expressions -->
+        <div id="expr-wrap" style="margin:6px 0 6px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <strong style="font-size:14px;">Pick your expressions</strong>
+            <span id="expr-count" style="font-size:12px;color:#5F5B53;">0 / 0 selected</span>
           </div>
+          <div id="expr-chips" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+          <div id="expr-thumbs" style="display:flex;gap:6px;margin-top:8px;"></div>
+          <input type="hidden" id="expressions" value="">
         </div>
 
-        <!-- SMS opt-in -->
-        <div style="display:flex;align-items:center;gap:10px;margin:6px 0 4px;">
-          <input id="sms-optin" type="checkbox" style="transform:scale(1.1);" />
-          <label for="sms-optin" style="font-weight:600;">Also text my emoji pack</label>
-        </div>
-        <div id="sms-row" style="display:none;margin:6px 0 0;">
-          <input id="sms-phone" type="tel" inputmode="tel" placeholder="Mobile number (optional)"
-                 style="width:100%;padding:10px;border:1px solid #e6e0cf;border-radius:10px;">
-        </div>
-        <p style="font-size:12px;color:#5F5B53;margin:8px 0 10px;">
-          By providing your number, you agree to receive a one-time text message from Frankiemoji to deliver your emoji pack.
-          Standard message rates may apply.
-        </p>
+        <!-- Email + SMS -->
+        <div class="row"><input id="email" type="email" placeholder="Email for delivery  •  you@example.com" /></div>
 
-        <!-- Uploadcare picker -->
-        <input
-          id="u-file"
-          type="hidden"
-          role="uploadcare-uploader"
-          data-clearable=""
-          data-tabs="file camera"
-          data-images-only="true"
-          data-multiple="false"
-          data-preview-step="true"
-        />
+        <div class="row">
+          <label class="small" style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" id="sms-optin" style="transform:scale(1.2);" />
+            Also text my emoji pack
+          </label>
+        </div>
+        <div class="row" id="sms-row" style="display:none;">
+          <input id="phone" type="tel" placeholder="Mobile number (optional)" />
+        </div>
+        <div class="row">
+          <label class="small" style="font-size:11px;color:#5F5B53;">
+            By providing your number, you agree to receive a one-time text message from Frankiemoji to deliver your emoji pack.
+            Standard message rates may apply.
+          </label>
+        </div>
 
-        <!-- Preview -->
-        <div id="u-preview-wrap" style="display:none;margin:14px 0 16px;">
+        <!-- Uploadcare picker + preview -->
+        <div class="row">
+          <input
+            id="u-file"
+            type="hidden"
+            role="uploadcare-uploader"
+            data-clearable=""
+            data-tabs="file camera"
+            data-images-only="true"
+            data-multiple="false"
+            data-preview-step="true"
+          />
+        </div>
+        <div id="u-preview-wrap" style="display:none;margin:10px 0 16px;">
           <img id="u-preview" alt="preview" style="max-width:100%;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);" />
         </div>
 
-        <div id="u-actions" style="display:flex;gap:10px;margin-top:8px;">
-          <a class="btn" href="index.html" style="flex:1;text-align:center;">Back</a>
-          <button id="u-submit" class="btn primary" style="flex:1;">Send</button>
+        <!-- Actions -->
+        <div class="row" style="justify-content:flex-end">
+          <a class="btn" href="index.html" style="background:#fff;color:var(--espresso);border:1px solid #eadfca;">Back</a>
+          <button class="btn" id="send-btn">Send</button>
         </div>
 
         <!-- Success -->
-        <div id="u-done" style="display:none;text-align:center;padding:24px 12px;">
+        <div class="success" id="success">
           <h2 style="margin:0 0 8px;">All set 🎉</h2>
           <p style="opacity:.85;margin:0 0 12px;">We saved your details and selfie. You’ll hear from us soon.</p>
           <div style="display:flex;gap:10px;justify-content:center;">
-            <a class="btn" href="index.html">Make another pack</a>
+            <a class="btn" href="index.html#pricing">Back to pricing</a>
             <a class="btn" href="our-story.html">About Frankiemoji</a>
           </div>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer class="footer">
+  <!-- Footer -->
+  <footer class="site-footer">
     <div class="container">
       <p>Born with Paper and Pencil. Evolved with Technology.</p>
       <div class="links">
@@ -160,148 +174,150 @@ img{display:block;max-width:100%}
     </div>
   </footer>
 
-  <!-- Marquee builder (same source as index) -->
+  <!-- Marquee (pulls images from /images and GitHub fallback) -->
   <script>
   (function(){
-    const CONF={owner:"martinez-frank",repo:"Emoji1",branch:"main",exclude:["starter","standard","premium"]};
-    const topEl=document.getElementById("marquee-top");
-    const btmEl=document.getElementById("marquee-btm");
-    if(!topEl||!btmEl) return;
-
-    const EXCLUDE=(CONF.exclude||[]).map(s=>s.toLowerCase());
+    const OWNER="martinez-frank", REPO="Emoji1", BRANCH="main";
+    const EXCLUDE=["starter","standard","premium"];
     const EXTRA=[/\\.ds_store/i,/manifest/i,/%20/];
-    const isOut=s=>{s=(s||"").toLowerCase();return EXCLUDE.some(x=>s.includes(x))||EXTRA.some(rx=>rx.test(s));};
+    const out=s=>{s=(s||"").toLowerCase();return EXCLUDE.some(x=>s.includes(x))||EXTRA.some(rx=>rx.test(s));};
     const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
-    const build=urls=>{const frag=document.createDocumentFragment();urls.concat(urls).forEach(src=>{const img=new Image();img.className="marq-img";img.loading="lazy";img.decoding="async";img.alt="Frankiemoji expression";img.src=src;img.width=128;img.height=128;img.onerror=()=>img.remove();frag.appendChild(img);});return frag;};
-
-    async function fromGitHub(){
+    const build=(urls)=>{const f=document.createDocumentFragment();urls.concat(urls).forEach(src=>{const im=new Image();im.className="marq-img";im.loading="lazy";im.alt="Frankiemoji face";im.src=src;im.onerror=()=>im.remove();f.appendChild(im);});return f;};
+    async function fromGit(){
       try{
-        const url=`https://api.github.com/repos/${CONF.owner}/${CONF.repo}/contents/images?ref=${CONF.branch}`;
-        const res=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
-        if(!res.ok) throw 0;
-        const items=await res.json();
+        const url=`https://api.github.com/repos/${OWNER}/${REPO}/contents/images?ref=${BRANCH}`;
+        const r=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
+        if(!r.ok) throw 0;
+        const items=await r.json();
         return items.filter(it=>it.type==="file")
                     .filter(it=>/\\.(png|jpe?g|webp|gif)$/i.test(it.name))
-                    .filter(it=>!isOut(it.name)&&!isOut(it.path))
+                    .filter(it=>!out(it.name)&&!out(it.path))
                     .map(it=>it.download_url);
-      }catch{ return []; }
+      }catch{return []}
     }
-
     (async()=>{
-      let urls=await fromGitHub();
+      let urls=await fromGit();
       if(!urls.length) urls=["images/e01.png","images/e02.png","images/e03.png","images/e04.png"];
       urls=shuffle([...new Set(urls)]);
-      topEl.appendChild(build(urls));
-      btmEl.appendChild(build([...urls].reverse()));
-      topEl.style.animationDuration=(54+Math.random()*2).toFixed(2)+"s";
-      btmEl.style.animationDuration=(57+Math.random()*2).toFixed(2)+"s";
-      document.querySelectorAll(".marquee").forEach(m=>{
-        m.addEventListener("mouseenter",()=>m.style.animationPlayState="paused");
-        m.addEventListener("mouseleave",()=>m.style.animationPlayState="running");
-      });
+      const mq1=document.getElementById("mq1"), mq2=document.getElementById("mq2");
+      mq1.appendChild(build(urls));
+      mq2.appendChild(build([...urls].reverse()));
     })();
   })();
   </script>
 
-  <!-- Uploadcare (demo key — replace with your real public key later) -->
+  <!-- Uploadcare -->
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
   <script>window.UPLOADCARE_PUBLIC_KEY='demopublickey';</script>
 
-  <!-- Upload flow -->
+  <!-- Page logic: pack, expressions, email/sms, upload, send -->
   <script>
-  (function () {
-    function qs(s){return document.querySelector(s);}
-    function getPack(){
-      const p = new URLSearchParams(location.search).get('pack');
-      return (p && ['starter','standard','premium'].includes(p)) ? p : 'standard';
-    }
+  (function(){
+    // ----- helpers
+    const qs = (s)=>document.querySelector(s);
+    const pack = new URLSearchParams(location.search).get('pack') || 'starter';
+    const PRETTY = {starter:'Starter', standard:'Standard', premium:'Premium'};
+    const MAX_BY_PACK = {starter:3, standard:9, premium:18};
 
-    const pack = getPack();
-    const emailSpan = qs('#u-email');
-    const emailInput = qs('#u-email-input');
-    const packEl = qs('#u-pack');
-    const previewWrap = qs('#u-preview-wrap');
-    const previewImg  = qs('#u-preview');
-    const smsOpt = qs('#sms-optin');
-    const smsRow = qs('#sms-row');
-    const phoneEl = qs('#sms-phone');
-    const actions = qs('#u-actions');
-    const submit  = qs('#u-submit');
-    const done    = qs('#u-done');
+    // ----- pack note
+    const note = qs('#pack-note');
+    if (note) note.textContent = `Selected: ${PRETTY[pack] || 'Starter'} Pack`;
 
-    packEl.textContent = pack.charAt(0).toUpperCase()+pack.slice(1);
-
-    // Prefill email from index if present
+    // ----- prefill email from index step if present
     let start = {};
-    try { start = JSON.parse(localStorage.getItem('franki:start')||'{}'); } catch(_){}
-    if (start.email){ emailSpan.textContent = start.email; emailInput.value = start.email; }
+    try { start = JSON.parse(localStorage.getItem('franki:start') || '{}'); } catch(_) {}
+    if (start.email) qs('#email').value = start.email;
 
-    // SMS toggle
-    if (smsOpt && smsRow){
-      smsOpt.addEventListener('change', ()=>{ smsRow.style.display = smsOpt.checked ? 'block' : 'none'; });
+    // ----- SMS toggle
+    const optin = qs('#sms-optin'), smsRow = qs('#sms-row');
+    if (optin && smsRow){
+      optin.addEventListener('change', ()=> smsRow.style.display = optin.checked ? 'flex' : 'none');
     }
 
-    // Uploadcare widget
+    // ----- expression chips (restored)
+    const EXPRESSIONS = [
+      "Happy","Laughing","Wink","Big Grin","Smirk",
+      "Thumbs Up","Heart Eyes","Surprised","Face Palm","Eye Roll",
+      "Tired","Sad","Tearful","Angry","Mind Blown",
+      "Cool (Sunglasses)","Confident","Skeptical","Thinking","Cheeky Tongue",
+      "Shy","Kiss","Celebrating","Coffee","Prayer Hands"
+    ];
+    const MAX = MAX_BY_PACK[pack] || 3;
+    const chipsEl = qs('#expr-chips'), thumbsEl = qs('#expr-thumbs'), hiddenEl = qs('#expressions'), countEl = qs('#expr-count');
+    const selected = new Set();
+    function render(){
+      hiddenEl.value = Array.from(selected).join(',');
+      if (countEl) countEl.textContent = `${selected.size} / ${MAX} selected`;
+      thumbsEl.innerHTML = '';
+      selected.forEach(n=>{ const t=document.createElement('span'); t.className='expr-thumb'; t.textContent=n; thumbsEl.appendChild(t); });
+    }
+    function toggle(name, chip){
+      if (selected.has(name)){ selected.delete(name); chip.classList.remove('selected'); }
+      else {
+        if (selected.size >= MAX){ chip.style.transform='translateY(-1px) scale(0.98)'; setTimeout(()=>chip.style.transform='',150); return; }
+        selected.add(name); chip.classList.add('selected');
+      }
+      render();
+    }
+    EXPRESSIONS.forEach(name=>{
+      const b=document.createElement('button');
+      b.type='button'; b.className='expr-chip'; b.textContent=name;
+      b.addEventListener('click',()=>toggle(name,b));
+      chipsEl.appendChild(b);
+    });
+    render();
+
+    // ----- Uploadcare widget + preview
     const widget = uploadcare.Widget('#u-file');
     let filePromise = null;
-
     function showPreview(cdnUrl){
-      if (!cdnUrl){ previewWrap.style.display='none'; return; }
-      previewImg.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
-      previewWrap.style.display='block';
+      const wrap = qs('#u-preview-wrap'), img = qs('#u-preview');
+      if (!cdnUrl){ wrap.style.display='none'; return; }
+      img.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
+      wrap.style.display='block';
     }
-
     widget.onChange(function(file){
       filePromise = file || null;
       if (!file){ showPreview(''); return; }
-      file.done(function(info){
-        showPreview(info.cdnUrl);
-        // lightweight stash
-        try {
-          localStorage.setItem('franki:upload', JSON.stringify({
-            email: emailInput.value.trim() || start.email || '',
-            pack, cdnUrl: info.cdnUrl, uuid: info.uuid, size: info.size, name: info.name, mime: info.mimeType
-          }));
-        } catch(_){}
-      });
+      file.done(function(info){ showPreview(info.cdnUrl); });
     });
 
-    // Send
-    submit.addEventListener('click', function(e){
+    // ----- Send
+    qs('#send-btn').addEventListener('click', function(e){
       e.preventDefault();
+      const email = (qs('#email').value||'').trim();
+      if (!email){ alert('Please enter your email.'); qs('#email').focus(); return; }
 
-      const email = (emailInput.value||'').trim();
-      if (!email){ alert('Please enter your email.'); emailInput.focus(); return; }
+      // persist latest email back to start payload for future steps
       try { localStorage.setItem('franki:start', JSON.stringify({ email })); } catch(_){}
 
-      let phone = '', sms_optin = false;
-      if (smsOpt && smsOpt.checked){
+      // sms validation
+      let phone = '', sms_optin=false;
+      if (optin && optin.checked){
         sms_optin = true;
-        phone = (phoneEl.value||'').trim();
-        const digits = phone.replace(/\\D/g,'');
-        if (!digits || digits.length < 10 || digits.length > 15){
-          alert('Please enter a valid mobile number (10–15 digits) or uncheck SMS.'); phoneEl.focus(); return;
-        }
+        phone = (qs('#phone').value||'').trim();
+        const d = phone.replace(/\D/g,'');
+        if (!d || d.length < 10 || d.length > 15){ alert('Please enter a valid mobile number (10–15 digits) or uncheck SMS.'); return; }
       }
 
+      // selfie required
       if (!filePromise){ alert('Please choose a photo first.'); return; }
 
       filePromise.done(function(info){
         if (!info || !info.cdnUrl){ alert('Upload is still processing.'); return; }
 
-        // final stash
-        try {
-          localStorage.setItem('franki:upload', JSON.stringify({
-            email, pack,
-            cdnUrl: info.cdnUrl, uuid: info.uuid, size: info.size, name: info.name, mime: info.mimeType,
-            sms_optin, phone
-          }));
-        } catch(_){}
+        // store a compact order handoff
+        const order = {
+          email, sms_optin, phone,
+          pack, expressions: hiddenEl.value.split(',').filter(Boolean),
+          upload: { cdnUrl: info.cdnUrl, uuid: info.uuid, size: info.size, name: info.name, mime: info.mimeType }
+        };
+        try { localStorage.setItem('franki:order', JSON.stringify(order)); } catch(_){}
 
         // success UI
-        actions.style.display='none';
-        done.style.display='block';
-        done.scrollIntoView({behavior:'smooth'});
+        qs('#success').style.display='block';
+        this.closest('.row').style.display='none';
+        qs('#success').scrollIntoView({behavior:'smooth'});
       });
     });
   })();
