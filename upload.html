@@ -100,8 +100,14 @@ img{display:block;max-width:100%}
 .row{display:flex;gap:12px;align-items:center;margin:8px 0}
 label.small{font-size:12px;color:var(--graphite)}
 /* style only the visible email field */ input[type="email"]{   width:100%;   padding:10px;   border:1px solid #e6e0cf;   border-radius:10px; }  /* keep hidden file inputs hidden no matter what */ input[type="file"][hidden]{ display:none !important; }
+/* match phone input styling to email */
+input[type="tel"]{
+  width:100%;
+  padding:10px;
+  border:1px solid #e6e0cf;
+  border-radius:10px;
+}
   
-
 /* Emoji marquee */
 .marquee-wrap{overflow:hidden;margin:10px 0 22px}
 .marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
@@ -190,9 +196,30 @@ label.small{font-size:12px;color:var(--graphite)}
   <input type="hidden" id="expressions" value="">
 </div>
 
-      <div class="row">
-        <input id="email" type="email" placeholder="Email for delivery  •  you@example.com" />
-      </div>
+      <!-- Email -->
+<div class="row">
+  <input id="email" type="email" placeholder="Email for delivery  •  you@example.com" />
+</div>
+
+<!-- SMS delivery option -->
+<div class="row">
+  <label class="small" style="display:flex;align-items:center;gap:8px;">
+    <input type="checkbox" id="sms-optin" style="transform:scale(1.2);" />
+    Also text my emoji pack 📱
+  </label>
+</div>
+
+<div class="row" id="sms-row" style="display:none;">
+  <input id="phone" type="tel" placeholder="Mobile number (optional)" />
+</div>
+
+<div class="row">
+  <label class="small" style="font-size:11px;color:#5F5B53;">
+    By providing your number, you agree to receive a one-time text message from Frankiemoji to deliver your emoji pack.
+    Standard message rates may apply.
+  </label>
+</div>
+
       <div class="row" style="justify-content:flex-end">
         <button class="btn primary" id="continue">Continue</button>
       </div>
@@ -268,12 +295,33 @@ label.small{font-size:12px;color:var(--graphite)}
     const dev=document.getElementById("device-file");
     const cam=document.getElementById("camera-file");
     [dev,cam].forEach(inp=>inp.addEventListener("change",()=>{ if(inp.files && inp.files[0]) alert("Selected: "+inp.files[0].name); }));
-    document.getElementById("continue").addEventListener("click",()=>{
-      const email=document.getElementById("email").value.trim();
-      if(!email){ alert("Please enter an email so we can deliver your emojis."); return;}
-      alert("Thanks! We’ll start your pack and email you at: "+email);
-      location.href="index.html#pricing";
-    });
+   document.getElementById("continue").addEventListener("click",()=>{
+  const email = document.getElementById("email").value.trim();
+  if (!email) {
+    alert("Please enter an email so we can deliver your emojis.");
+    return;
+  }
+
+  // check if user opted for SMS
+  const smsOptIn = document.getElementById("sms-optin")?.checked;
+  const phone = document.getElementById("phone")?.value.trim();
+
+  // validate phone number if SMS option is checked
+  if (smsOptIn && !phone) {
+    alert("Please add your mobile number or uncheck the text option.");
+    return;
+  }
+
+  // friendly confirmation message
+  if (smsOptIn) {
+    alert(`Thanks! We’ll email your pack to ${email} and text it to ${phone}.`);
+  } else {
+    alert(`Thanks! We’ll email your pack to ${email}.`);
+  }
+
+  // redirect to home page (pricing section)
+  location.href = "index.html#pricing";
+});
   });
 })();
 </script>
@@ -357,6 +405,17 @@ const EXPRESSIONS = [
 
   document.addEventListener('DOMContentLoaded', initPicker);
 })();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+  const optin = document.getElementById('sms-optin');
+  const smsRow = document.getElementById('sms-row');
+  if (optin && smsRow){
+    optin.addEventListener('change', ()=>{
+      smsRow.style.display = optin.checked ? 'flex' : 'none';
+    });
+  }
+});
 </script>
 
 </body>
