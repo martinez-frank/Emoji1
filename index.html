@@ -98,17 +98,17 @@ img{display:block;max-width:100%}
   <section id="pricing" class="pricing">
     <div class="pricing-grid">
   <div class="price-card">
-    <img class="price-img" src="images/starter.png" alt="Starter pack pricing" loading="lazy" />
+    <img class="price-img" src="images/starter.webp" alt="Starter pack pricing" loading="lazy" />
     <button class="btn primary" onclick="location.href='upload.html?pack=starter'">Get Starter</button>
   </div>
 
   <div class="price-card">
-    <img class="price-img" src="images/standard.png" alt="Standard pack pricing" loading="lazy" />
+    <img class="price-img" src="images/standard.webp" alt="Standard pack pricing" loading="lazy" />
     <button class="btn primary" onclick="location.href='upload.html?pack=standard'">Get Standard</button>
   </div>
 
   <div class="price-card">
-    <img class="price-img" src="images/premium.png" alt="Premium pack pricing" loading="lazy" />
+    <img class="price-img" src="images/premium.webp" alt="Premium pack pricing" loading="lazy" />
     <button class="btn primary" onclick="location.href='upload.html?pack=premium'">Get Premium</button>  
   </div>
 </div>
@@ -198,7 +198,7 @@ img{display:block;max-width:100%}
   (async()=>{
     let urls=await fromGitHub();
     if(!urls.length) urls=await fromManifest();
-    if(!urls.length) urls=["images/e01.png","images/e02.png","images/e03.png","images/e04.png"];
+    if(!urls.length) urls=["images/e01.webp","images/e02.webp","images/e03.webp","images/e04.webp"];
     urls=shuffle([...new Set(urls)]);
     topEl.appendChild(build(urls));
     btmEl.appendChild(build([...urls].reverse()));
