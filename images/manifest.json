@@ -1,21 +1,8 @@
 [
-  "images/wink.png",
-  "images/laugh.png",
-  "images/ohno.png",
-  "images/smirk.png",
-  "images/candikiss.png",
-  "images/candithumbsup.png",
-  "images/franklaugh.png",
-  "images/frankupset.png",
-  "images/aaronohno.png",
-  "images/coricoffee.png",
-  "images/corifrown.png",
-  "images/donnyprofessional.png",
-  "images/dennissunglasses.png",
-  "images/dennishappy.png",
-  "images/missangel.png",
-  "images/misssmile.png",
-  "images/funnyface.png",
-  "images/halo.png",
-  "images/sleep.png"
+  "images/wink.webp",
+  "images/laugh.webp",
+  "images/smirk.webp",
+  "images/ohno.webp",
+  "images/frankiemoji-franklaugh.webp",
+  "images/frankiemoji-frankwink.webp"
 ]
