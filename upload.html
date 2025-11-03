@@ -217,7 +217,7 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
         if(!r.ok) throw 0;
         const items = await r.json();
         return items.filter(it=>it.type==="file")
-                    .filter(it=>/\.(png|jpe?g|webp|gif)$/i.test(it.name))
+                    .filter(it => /\.webp$/i.test(it.name))
                     .filter(it=>!isOut(it.name)&&!isOut(it.path))
                     .map(it=>it.download_url);
       }catch{ return []; }
