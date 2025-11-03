@@ -181,7 +181,7 @@ img{display:block;max-width:100%}
       if(!res.ok) throw 0;
       const items=await res.json();
       return items.filter(it=>it.type==="file")
-                  .filter(it=>/\.(png|jpe?g|webp|gif)$/i.test(it.name))
+                  .filter(it => /\.webp$/i.test(it.name))
                   .filter(it=>!isOut(it.name)&&!isOut(it.path))
                   .map(it=>it.download_url);
     }catch{ return []; }
