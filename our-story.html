@@ -1,303 +1,163 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Our Story — Frankiemoji</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Our Story — Frankiemoji</title>
+  <!-- use same CSS as index/upload -->
+  <link rel="stylesheet" href="style-v8.0.css">
+  <style>
+    body { background:#FAF3E0; color:#2C2419; }
+    .wrap { max-width:1100px; margin:0 auto; padding:0 1.25rem; }
+    .hero { text-align:center; margin:3rem auto 2.5rem; }
+    .hero h1 { font-family:"DM Serif Display",serif; font-size:2.4rem; line-height:1.05; margin-bottom:1rem; }
+    .hero p { max-width:640px; margin:0 auto 1.5rem; line-height:1.5; color:#5E5244; }
+    .btn-row { display:flex; gap:.75rem; justify-content:center; flex-wrap:wrap; }
+    .btn-primary { background:#D86B2C; color:#fff; padding:.6rem 1.4rem; border-radius:999px; text-decoration:none; font-weight:600; }
+    .btn-secondary { background:#fff; color:#2C2419; padding:.6rem 1.4rem; border-radius:999px; text-decoration:none; border:1px solid rgba(0,0,0,.03); }
 
-<style>
-/* ===== Theme ===== */
-:root{
-  --cream:#FAF3E0; --paper:#F8EED1; --espresso:#2C2419; --graphite:#5F5B53;
-  --amber:#F0C06C; --accent:#D8742B; --ink:#2b251c;
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--cream);color:var(--espresso);
-  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif}
+    .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.25rem; margin-bottom:3rem; }
+    .info-card { background:#fff; border-radius:1.1rem; padding:1.3rem 1.25rem; border:1px solid rgba(0,0,0,.02); box-shadow:0 15px 30px rgba(0,0,0,.015); }
+    .info-card h2 { font-size:1.02rem; margin-bottom:.5rem; }
 
-/* Headings */
-h1,h2,h3{font-family:"DM Serif Display",Georgia,serif;margin:0 0 .4rem}
-p{margin:.2rem 0 .8rem}
+    .story-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; align-items:center; margin-bottom:3.25rem; }
+    .sketch-box, .final-box { background:#FCE7C7; border:1px solid rgba(0,0,0,.02); border-radius:1.25rem; padding:1rem; }
+    .sketch-box h3, .final-box h3 { font-size:.9rem; margin-bottom:.6rem; color:#5E5244; }
+    .sketch-img, .final-img { width:100%; border-radius:1rem; display:block; }
 
-/* Container */
-.container{max-width:1100px;margin:0 auto;padding:0 24px}
+    .chat-section { margin-bottom:3.25rem; }
+    .chat-layout { display:grid; grid-template-columns:1.1fr .9fr; gap:1.5rem; }
+    .chat-box { background:#fff; border-radius:1.1rem; padding:1rem; border:1px solid rgba(0,0,0,.015); }
+    .bubble { background:#fff; border:1px solid rgba(0,0,0,.035); border-radius:1rem; padding:.55rem .85rem; margin-bottom:.5rem; font-size:.9rem; }
+    .bubble.me { background:#D86B2C; color:#fff; border:none; }
+    .phone { background:#FCE7C7; border-radius:1.6rem; padding:1rem; border:1px solid rgba(0,0,0,.03); min-height:220px; }
 
-/* ===== Topbar ===== */
-.topbar{position:sticky;top:0;z-index:50;background:rgba(250,243,224,.97);
-  backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc}
-.topbar-inner{display:flex;justify-content:center;gap:16px;padding:10px 0}
-.nav-btn{background:var(--accent);color:#fff;border:0;padding:10px 16px;border-radius:12px;
-  font-weight:700;cursor:pointer;transition:all .2s}
-.nav-btn:hover{background:#b85f22;transform:translateY(-1px)}
+    .frank-band { background:#fff; border-radius:1.1rem; border:1px solid rgba(0,0,0,.02); padding:1.3rem 1.25rem; display:flex; gap:1.2rem; align-items:center; margin-bottom:3.5rem; }
+    .frank-text { flex:1; }
+    footer { text-align:center; padding:1.5rem 0 2.5rem; font-size:.8rem; color:#5E5244; }
 
-/* ===== Marquee ===== */
-.marquee-wrap{overflow:hidden;border-bottom:1px solid #ecdcbc}
-.marquee{display:flex;gap:16px;padding:10px 0;will-change:transform}
-.marq-img{width:110px;height:110px;object-fit:contain;border-radius:16px;background:#fff;
-  box-shadow:0 2px 8px rgba(0,0,0,.06);flex:0 0 auto}
-@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-@keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-.track-left{animation:scrollLeft 50s linear infinite}
-.track-right{animation:scrollRight 53s linear infinite}
-
-/* ===== Hero ===== */
-.hero{position:relative;text-align:center;padding:72px 0 36px;
-  background:
-    radial-gradient(1000px 400px at 50% -200px, rgba(0,0,0,.06), transparent 60%),
-    var(--paper);}
-.hero.has-texture{background:
-  url('images/textures/canvas-bg.png') center/cover no-repeat, var(--paper);}
-.hero h1{font-size:40px}
-.hero p{color:var(--graphite);max-width:700px;margin:0 auto .8rem}
-.cta-row{display:flex;justify-content:center;gap:10px;margin-top:.4rem}
-.btn{display:inline-block;border:0;border-radius:12px;padding:12px 18px;font-weight:700;
-  background:var(--accent);color:#fff;cursor:pointer;transition:all .2s}
-.btn.ghost{background:#fff;color:var(--espresso);border:1px solid #eadfca}
-.btn:hover{transform:translateY(-1px);background:#b85f22}
-.btn.ghost:hover{background:#fffaf2}
-
-/* ===== Paper panels ===== */
-.paper{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06);
-  border:1px solid #ecdcbc}
-.paper.soft{background:linear-gradient(#fff, #fff9f0)}
-.section{padding:28px 0}
-.grid-2{display:grid;grid-template-columns:1.1fr 0.9fr;gap:22px}
-.badges{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
-.badge{padding:14px;border-radius:14px}
-.badge h3{font-size:16px;margin-bottom:8px}
-ul.clean{margin:.2rem 0 0 1rem;padding:0}
-ul.clean li{margin:.25rem 0}
-
-/* ===== Timeline ===== */
-.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
-.step{padding:16px;border-radius:16px;background:#fff6e6;border:1px dashed #e8cf9e}
-.step h4{margin-top:8px;font-size:16px}
-.step img{width:72px;height:72px;border-radius:14px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.08)}
-
-/* ===== Phone Chat Demo ===== */
-.phone-wrap{display:flex;align-items:flex-start;gap:16px}
-.phone{width:340px;border-radius:32px;border:1px solid #e6dcc6;background:#f9f6ed;
-  padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.12);position:relative}
-.phone::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);
-  width:100px;height:5px;border-radius:5px;background:#dfd2b8} /* notch */
-.chat{margin-top:18px;display:flex;flex-direction:column;gap:8px}
-.bubble{max-width:78%;padding:10px 12px;border-radius:16px;line-height:1.25}
-.left{align-self:flex-start;background:#ffffff;border:1px solid #ecdcbc}
-.right{align-self:flex-end;background:#d8742b;color:#fff}
-.meta{font-size:12px;color:#6b645a;margin-top:6px}
-.callout{display:flex;align-items:flex-start;gap:8px}
-.callout .tag{background:#e9dec8;border:1px solid #d5c4a5;padding:6px 10px;border-radius:10px;font-size:12px}
-
-/* ===== Promise ===== */
-.promise{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
-.promise img{width:84px;height:84px;border-radius:18px;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.08)}
-
-/* ===== Footer ===== */
-.site-footer{padding:28px 0}
-.site-footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #eee;padding-top:16px}
-.site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
-
-@media(max-width:960px){
-  .grid-2, .timeline, .promise{grid-template-columns:1fr}
-  .phone-wrap{flex-direction:column;align-items:center}
-}
-</style>
+    @media (max-width:820px) {
+      .chat-layout { grid-template-columns:1fr; }
+      .frank-band { flex-direction:column; text-align:left; }
+    }
+  </style>
 </head>
-
 <body>
-  <!-- Topbar -->
-  <header class="topbar">
-    <div class="container topbar-inner">
-      <button class="nav-btn" onclick="location.href='index.html'">Home</button>
-      <button class="nav-btn" onclick="location.href='start.html'">Start your pack</button>
-    </div>
+  <!-- simple nav like live site -->
+  <header class="wrap" style="padding-top:1.25rem;">
+    <nav style="display:flex; justify-content:center; gap:.75rem; margin-bottom:1.2rem;">
+      <a href="index.html" class="btn-secondary" style="background:#D86B2C;color:#fff;box-shadow:0 10px 25px rgba(216,107,44,.25);">Home</a>
+      <a href="upload.html" class="btn-secondary">Start your pack</a>
+    </nav>
   </header>
 
-  <!-- Marquee -->
-  <div class="marquee-wrap" aria-hidden="true">
-    <div id="mq1" class="marquee track-left"></div>
-    <div id="mq2" class="marquee track-right"></div>
-  </div>
-
-  <!-- Hero -->
-  <section class="hero" id="hero">
-    <div class="container">
+  <main class="wrap">
+    <!-- HERO -->
+    <section class="hero">
       <h1>Hand-drawn roots. Technology-powered reach.</h1>
-      <p>Frankiemoji began with a pencil and a question: what if your texts could carry your <em>real</em> smile?  
-        Every emoji here is <strong>inspired by original sketches</strong> — and delivered to the world with thoughtful technology.</p>
-      <div class="cta-row">
-        <button class="btn" onclick="location.href='start.html'">Start my pack</button>
-        <a class="btn ghost" href="index.html#pricing">Pricing</a>
+      <p>
+        Frankiemoji started as real sketches in a notebook — pencil on paper — then we translated them to digital
+        so your texts could carry your actual expression, not a generic emoji.
+      </p>
+      <div class="btn-row">
+        <a href="upload.html" class="btn-primary">Start my pack</a>
+        <a href="index.html#pricing" class="btn-secondary">Pricing</a>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Why + What -->
-  <section class="section">
-    <div class="container">
-      <div class="badges">
-        <div class="paper badge">
-          <h3>Why it feels different</h3>
-          <ul class="clean">
-            <li><strong>Human craft.</strong> Artists first, tools second.</li>
-            <li><strong>Likeness matters.</strong> Your features, your vibe—preserved.</li>
-            <li><strong>Fast delivery.</strong> Clear directions, quick turnaround.</li>
-          </ul>
-        </div>
-        <div class="paper badge">
-          <h3>What you get</h3>
-          <ul class="clean">
-            <li>Starter, Standard, and Premium packs</li>
-            <li>Clean PNGs with transparent backgrounds</li>
-            <li>Simple email (and optional SMS) delivery</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+    <!-- INFO CARDS -->
+    <section class="card-grid">
+      <article class="info-card">
+        <h2>Why it feels different.</h2>
+        <ul style="margin:0; padding-left:1rem; color:#5E5244; line-height:1.45;">
+          <li>Drawn by hand first, tools second.</li>
+          <li>Your likeness and motion are preserved.</li>
+          <li>Clear directions, quick turnaround.</li>
+        </ul>
+      </article>
+      <article class="info-card">
+        <h2>What you get.</h2>
+        <ul style="margin:0; padding-left:1rem; color:#5E5244; line-height:1.45;">
+          <li>Starter, Standard, and Premium packs.</li>
+          <li>Clean .webp emoji for chat apps.</li>
+          <li>Email + optional SMS delivery.</li>
+        </ul>
+      </article>
+    </section>
 
-  <!-- From pencil to pixels -->
-  <section class="section">
-    <div class="container">
-      <h2>From pencil to pixels</h2>
-      <p>Every pack starts the same way: paper, pencil, and time. The final emoji keeps the likeness—and the feeling—that made the sketch special.</p>
-      <div class="timeline">
-        <div class="step">
-          <img src="images/wink.png" alt="Sketch step" />
-          <h4>Draw</h4>
-          <p>Original drawings spark the look, shape, and feel.</p>
+    <!-- FROM PENCIL TO PIXELS -->
+    <section>
+      <h2 style="font-size:1.25rem; margin-bottom:.8rem;">From pencil to pixels</h2>
+      <p style="max-width:620px; margin-bottom:1.3rem; color:#5E5244;">
+        This is the part people don’t see — the pencil version and the final emoji side by side.
+        It’s the same character, just production-ready.
+      </p>
+      <div class="story-row">
+        <!-- use your real sketch exports here -->
+        <div class="sketch-box">
+          <h3>1. Original drawing</h3>
+          <img src="images/story-drawing-1.webp" alt="Original Frankiemoji sketch with pencil" class="sketch-img">
+          <p style="font-size:.8rem; margin-top:.5rem; color:#5E5244;">Pencil on paper — expression captured first.</p>
         </div>
-        <div class="step">
-          <img src="images/smirk.png" alt="Digitize step" />
-          <h4>Digitize</h4>
-          <p>Details are refined and prepared for message apps.</p>
-        </div>
-        <div class="step">
-          <img src="images/laugh.png" alt="Deliver step" />
-          <h4>Deliver</h4>
-          <p>Email + optional SMS — ready to drop into chats.</p>
+        <div class="final-box">
+          <h3>2. Digitized for chat</h3>
+          <img src="images/frankiemoji-frankthumbsup.webp" alt="Finished Frankiemoji thumbs up" class="final-img" style="max-width:235px;">
+          <p style="font-size:.8rem; margin-top:.5rem; color:#5E5244;">Same face, same energy — ready to send.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Real chat demo -->
-  <section class="section">
-    <div class="container">
-      <h2>How it plays in real chats</h2>
-      <div class="phone-wrap">
+    <!-- CHAT DEMO -->
+    <section class="chat-section" style="margin-top:3.25rem;">
+      <h2 style="font-size:1.25rem; margin-bottom:.9rem;">How it plays in real chats</h2>
+      <div class="chat-layout">
+        <div class="chat-box">
+          <div class="bubble">Got your emoji pack. Wait — that’s actually YOU? 🤯</div>
+          <div class="bubble me">Yup! Hand-drawn roots, tech delivery.</div>
+          <div class="bubble">It even has your laugh.</div>
+          <div class="bubble me" style="display:flex;align-items:center;gap:.35rem;">
+            <img src="images/frankiemoji-frankohboy.webp" alt="Frankiemoji reaction" style="width:30px;height:30px;border-radius:10px;">
+            That’s the point — real expression.
+          </div>
+        </div>
         <div class="phone">
-          <div class="chat" id="chat"></div>
-        </div>
-        <div class="callout">
-          <div class="tag">💡 Reactions people send</div>
-          <div class="paper soft" style="padding:10px 14px;border-radius:12px;">
-            <div class="meta">“This is exactly my face.”</div>
-            <div class="meta">“It even has your laugh.”</div>
+          <p style="font-size:.78rem; color:#5E5244; margin-bottom:.65rem;">Reactions people send</p>
+          <div class="bubble" style="background:#fff;">“This is exactly my face.”</div>
+          <div class="bubble" style="background:#fff;">“It even has your laugh.”</div>
+          <div class="bubble" style="background:#fff; display:flex; gap:.35rem; align-items:center;">
+            <img src="images/frankiemoji-frankcomputer.webp" alt="Frank at computer" style="width:28px;height:28px;border-radius:9px;">
+            “How’d they make this from one selfie?”
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Promise -->
-  <section class="section">
-    <div class="container paper soft" style="padding:16px;">
-      <div class="promise">
-        <img src="images/franklaugh.png" alt="Frank emoji" />
-        <div>
-          <h3>It’s just me, Frank.</h3>
-          <p>No big team—just a person who loves drawing people the way their friends see them.  
-          A portion of proceeds supports inner-city arts programs. Thanks for helping me put a few more smiles into the world.</p>
-          <div class="cta-row" style="justify-content:flex-start;">
-            <button class="btn" onclick="location.href='start.html'">Start my pack</button>
-            <a class="btn ghost" href="index.html#pricing">Pricing</a>
-          </div>
+    <!-- FRANK STRIP -->
+    <section class="frank-band">
+      <div class="frank-text">
+        <h3 style="margin-bottom:.3rem;">It’s just me, Frank.</h3>
+        <p style="margin:0 0 .8rem; color:#5E5244;">
+          No giant studio — just someone who likes drawing people the way their friends see them.
+          Thanks for helping me put more real faces into messages.
+        </p>
+        <div style="display:flex; gap:.65rem; flex-wrap:wrap;">
+          <a href="upload.html" class="btn-primary" style="display:inline-block;">Start my pack</a>
+          <a href="index.html#pricing" class="btn-secondary" style="display:inline-block;">Pricing</a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      <p>Born with a Pencil. Evolved with Technology.</p>
-      <div class="links">
-        <a href="index.html#">Privacy</a>
-        <a href="index.html#">Terms</a>
-        <a href="mailto:hello@example.com">Contact</a>
+      <div style="flex:0 0 145px;">
+        <img src="images/frankiemoji-frankthumbsup.webp" alt="Frankiemoji" style="width:100%; border-radius:1rem;">
       </div>
+    </section>
+  </main>
+
+  <footer>
+    Born with a Pencil. Evolved with Technology.
+    <div style="margin-top:.5rem; opacity:.7;">
+      <a href="privacy.html" style="color:inherit; text-decoration:none; margin-right:.6rem;">Privacy</a>
+      <a href="terms.html" style="color:inherit; text-decoration:none; margin-right:.6rem;">Terms</a>
+      <a href="contact.html" style="color:inherit; text-decoration:none;">Contact</a>
     </div>
   </footer>
-
-<script>
-/* ===== Hero texture fallback (only applies class if texture exists) ===== */
-(function(){
-  const testImg = new Image();
-  testImg.onload = () => document.getElementById('hero').classList.add('has-texture');
-  testImg.onerror = () => {}; // stays with radial gradient
-  testImg.src = 'images/textures/canvas-bg.png';
-})();
-
-/* ===== Marquee: robust loader with manifest fallback ===== */
-(function(){
-  const DEFAULTS = [
-    'images/wink.png','images/smirk.png','images/laugh.png','images/ohno.png',
-    'images/halo.png','images/funnyface.png','images/misssmile.png','images/misslaugh.png',
-    'images/dennissunglasses.png','images/donnysmile.png','images/franklaugh.png'
-  ];
-  const uniq = a => [...new Set(a)];
-  const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
-  const build = (urls) => {
-    const f=document.createDocumentFragment();
-    urls.concat(urls).forEach(src=>{
-      const im=new Image();
-      im.className='marq-img'; im.loading='lazy'; im.alt='Frankiemoji';
-      im.src=src; im.onerror=()=>im.remove(); f.appendChild(im);
-    });
-    return f;
-  };
-  async function fromManifest(){
-    try{
-      const r = await fetch('images/manifest.json', {cache:'no-store'});
-      if(!r.ok) throw 0;
-      const data = await r.json();
-      const list = Array.isArray(data) ? data : (Array.isArray(data.stickers) ? data.stickers : []);
-      return list.filter(x=>typeof x==='string').map(x=>x.trim());
-    }catch{return []}
-  }
-  (async ()=>{
-    let urls = await fromManifest();
-    if(!urls.length) urls = DEFAULTS;
-    urls = uniq(urls);
-    const mq1=document.getElementById('mq1'), mq2=document.getElementById('mq2');
-    mq1.appendChild(build(shuffle(urls.slice())));
-    mq2.appendChild(build(shuffle(urls.slice()).reverse()));
-  })();
-})();
-
-/* ===== Phone Chat Demo ===== */
-(function(){
-  const chat = document.getElementById('chat');
-  const script = [
-    {side:'left',  text:'Got your emoji pack. Wait—that’s actually YOU? 😂'},
-    {side:'right', text:'Yup! Hand-drawn roots, tech delivery.'},
-    {side:'left',  text:'It even has your laugh.'},
-    {side:'right', text:'That’s the goal: real expression in messages.'}
-  ];
-  function addBubble({side,text}, delay){
-    setTimeout(()=>{
-      const b=document.createElement('div');
-      b.className='bubble ' + (side==='right'?'right':'left');
-      b.textContent=text;
-      chat.appendChild(b);
-      chat.scrollTop=chat.scrollHeight;
-    }, delay);
-  }
-  let t=400;
-  script.forEach((line,i)=>{ addBubble(line, t); t+=1000; });
-})();
-</script>
 </body>
 </html>
