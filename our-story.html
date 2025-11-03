@@ -4,11 +4,42 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Our Story — Frankiemoji</title>
-  <!-- use same CSS as other pages -->
   <link rel="stylesheet" href="style-v8.0.css">
   <style>
     body { background:#FAF3E0; color:#2C2419; }
     .wrap { max-width:1100px; margin:0 auto; padding:0 1.25rem; }
+
+    /* top nav + marquee */
+    .emoji-marquee {
+      background:#F7E4C7;
+      border-bottom:1px solid rgba(0,0,0,.03);
+    }
+    .emoji-row {
+      max-width:1100px;
+      margin:0 auto;
+      display:flex;
+      gap:.4rem;
+      padding:.85rem 1.25rem .65rem;
+      overflow-x:auto;
+    }
+    .emoji-tile {
+      width:62px; height:62px;
+      border-radius:18px;
+      background:#FDEECF;
+      display:flex; align-items:center; justify-content:center;
+      flex:0 0 auto;
+      position:relative;
+    }
+    .emoji-tile img {
+      width:100%; height:100%; object-fit:cover; border-radius:18px;
+    }
+    /* hide broken images but keep box */
+    .emoji-tile img:not([src]), .emoji-tile img[src=""] {
+      display:none;
+    }
+
+    nav.top-nav { display:flex; justify-content:center; gap:.75rem; margin-top:1rem; }
+
     .hero { text-align:center; margin:3rem auto 2.5rem; }
     .hero h1 { font-family:"DM Serif Display",serif; font-size:2.4rem; line-height:1.05; margin-bottom:1rem; }
     .hero p { max-width:640px; margin:0 auto 1.5rem; line-height:1.5; color:#5E5244; }
@@ -17,10 +48,18 @@
     .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.25rem; margin-bottom:3rem; }
     .info-card { background:#fff; border-radius:1.1rem; padding:1.3rem 1.25rem; border:1px solid rgba(0,0,0,.02); box-shadow:0 15px 30px rgba(0,0,0,.015); }
 
+    /* From pencil to pixels (leave as your good version) */
     .pencil-section { margin-bottom:3.25rem; }
     .pencil-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1.25rem; }
-    .pencil-card { background:#FAE0B8; border:1px dashed rgba(0,0,0,.08); border-radius:1.1rem; padding:1rem 1rem 1.05rem; }
+    .pencil-card {
+      background:#FAE0B8;
+      border:1px dashed rgba(0,0,0,.08);
+      border-radius:1.1rem;
+      padding:1rem 1rem 1.05rem;
+      min-height:140px;
+    }
 
+    /* chat section (keep as your good version) */
     .chat-section { margin-bottom:3.25rem; }
     .chat-layout { display:grid; grid-template-columns:1.1fr .9fr; gap:1.5rem; }
     .chat-box { background:#fff; border-radius:1.1rem; padding:1rem; border:1px solid rgba(0,0,0,.015); }
@@ -28,16 +67,29 @@
     .bubble.me { background:#D86B2C; color:#fff; border:none; }
     .reactions-box { background:#FCE7C7; border-radius:1.1rem; padding:1rem; border:1px solid rgba(0,0,0,.025); }
 
-    .frank-band { background:#fff; border-radius:1.1rem; border:1px solid rgba(0,0,0,.02); padding:1.3rem 1.25rem; display:flex; gap:1.2rem; align-items:center; margin-bottom:3.5rem; }
+    /* bottom frank bar */
+    .frank-band {
+      background:#fff;
+      border-radius:1.1rem;
+      border:1px solid rgba(0,0,0,.02);
+      padding:1.3rem 1.25rem;
+      display:flex;
+      gap:1.2rem;
+      align-items:center;
+      margin-bottom:3.5rem;
+    }
     .frank-text { flex:1; }
+    .frank-img {
+      width:110px; height:110px;
+      background:#FDEECF;
+      border-radius:1rem;
+      overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .frank-img img { width:100%; height:100%; object-fit:cover; }
+    .frank-img img:not([src]), .frank-img img[src=""] { display:none; }
+
     footer { text-align:center; padding:1.5rem 0 2.5rem; font-size:.8rem; color:#5E5244; }
-
-    /* simple marquee bar */
-    .emoji-marquee { background:#F7E4C7; border-bottom:1px solid rgba(0,0,0,.03); }
-    .emoji-row { max-width:1100px; margin:0 auto; display:flex; gap:.4rem; padding:.9rem 1.25rem .8rem; overflow-x:auto; }
-    .emoji-row img { width:62px; height:62px; border-radius:18px; flex:0 0 auto; background:#FDEECF; }
-
-    nav.top-nav { display:flex; justify-content:center; gap:.75rem; margin-top:1rem; }
 
     @media (max-width:820px) {
       .chat-layout { grid-template-columns:1fr; }
@@ -46,19 +98,20 @@
   </style>
 </head>
 <body>
-  <!-- marquee like homepage -->
+  <!-- 1) MARQUEE (safe, repeats a few faces) -->
   <div class="emoji-marquee">
     <div class="emoji-row">
-      <img src="images/frankiemoji-frankthumbsup.webp" alt="emoji">
-      <img src="images/frankiemoji-frankohboy.webp" alt="emoji">
-      <img src="images/frankiemoji-frankcomputer.webp" alt="emoji">
-      <img src="images/frankiemoji-frankthumbsup.webp" alt="emoji">
-      <img src="images/frankiemoji-frankohboy.webp" alt="emoji">
-      <img src="images/frankiemoji-frankcomputer.webp" alt="emoji">
+      <!-- swap these to actual .webp names in /images when ready -->
+      <div class="emoji-tile"><img src="images/frankiemoj-frankthumbsup.webp" alt=""></div>
+      <div class="emoji-tile"><img src="images/frankiemoj-franksquint.webp" alt=""></div>
+      <div class="emoji-tile"><img src="images/frankiemoj-franksideeye.webp" alt=""></div>
+      <div class="emoji-tile"><img src="images/frankiemoj-frankeureka.webp" alt=""></div>
+      <div class="emoji-tile"><img src="images/frankiemoj-frankthumbsup.webp" alt=""></div>
+      <div class="emoji-tile"><img src="images/frankiemoj-franksquint.webp" alt=""></div>
     </div>
   </div>
 
-  <!-- top nav -->
+  <!-- 2) TOP NAV -->
   <header class="wrap">
     <nav class="top-nav">
       <a href="index.html" style="background:#D86B2C;color:#fff;padding:.45rem 1.3rem;border-radius:999px;text-decoration:none;font-weight:600;">Home</a>
@@ -67,20 +120,18 @@
   </header>
 
   <main class="wrap">
-    <!-- HERO -->
+    <!-- 3) HERO -->
     <section class="hero">
       <h1>Hand-drawn roots. Technology-powered reach.</h1>
       <p>
         Frankiemoji began with a pencil and a question: what if your texts could carry your real smile?
         Every emoji here is inspired by original sketches — and delivered to the world with thoughtful technology.
       </p>
-      <!-- CTA: start only -->
       <a href="upload.html" class="btn-primary">Start my pack</a>
     </section>
 
-    <!-- TWO CARDS -->
+    <!-- 4) TWO WHITE CARDS -->
     <section class="card-grid">
-      <!-- CARD 1: updated bullets -->
       <article class="info-card">
         <h2>Why it feels different.</h2>
         <ul style="margin:0; padding-left:1rem; color:#5E5244; line-height:1.45;">
@@ -89,8 +140,6 @@
           <li>Fast delivery. Clear directions, quick turnaround.</li>
         </ul>
       </article>
-
-      <!-- CARD 2: unchanged -->
       <article class="info-card">
         <h2>What you get.</h2>
         <ul style="margin:0; padding-left:1rem; color:#5E5244; line-height:1.45;">
@@ -101,7 +150,7 @@
       </article>
     </section>
 
-    <!-- FROM PENCIL TO PIXELS (unchanged per your request) -->
+    <!-- 5) FROM PENCIL TO PIXELS (kept from your good version) -->
     <section class="pencil-section">
       <h2 style="font-size:1.25rem; margin-bottom:.8rem;">From pencil to pixels</h2>
       <p style="max-width:620px; margin-bottom:1.3rem; color:#5E5244;">
@@ -123,20 +172,50 @@
       </div>
     </section>
 
-    <!-- HOW IT PLAYS IN REAL CHATS (unchanged) -->
+    <!-- 6) HOW IT PLAYS IN REAL CHATS (kept) -->
     <section class="chat-section">
       <h2 style="font-size:1.25rem; margin-bottom:.9rem;">How it plays in real chats</h2>
       <div class="chat-layout">
-        <!-- left chat -->
         <div class="chat-box">
           <div class="bubble">Got your emoji pack. Wait—that’s actually YOU? 🤯</div>
           <div class="bubble me">Yup! Hand-drawn roots, tech delivery.</div>
           <div class="bubble">It even has your laugh.</div>
           <div class="bubble me">That’s the goal: real expression in messages.</div>
         </div>
-        <!-- right reactions -->
         <div class="reactions-box">
           <div style="background:#F5DDBA; display:inline-block; padding:.3rem .65rem; border-radius:.8rem; font-size:.78rem; margin-bottom:.6rem;">
             💡 Reactions people send
           </div>
-          <
+          <div class="bubble" style="background:#fff;">“This is exactly my face.”</div>
+          <div class="bubble" style="background:#fff;">“It even has your laugh.”</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7) IT'S JUST ME, FRANK (text updated, 1 CTA) -->
+    <section class="frank-band">
+      <div class="frank-text">
+        <h3 style="margin-bottom:.3rem;">It’s just me, Frank.</h3>
+        <p style="margin:0 0 .8rem; color:#5E5244;">
+          No big team just a person who loves drawing people the way their friends see them.
+          Thank you for your support and helping me put a few smiles into the world.
+        </p>
+        <a href="upload.html" class="btn-primary">Start my pack</a>
+      </div>
+      <div class="frank-img">
+        <!-- swap to any real .webp portrait you have -->
+        <img src="images/frankiemoj-frankthumbsup.webp" alt="Frankiemoji">
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Born with a Pencil. Evolved with Technology.
+    <div style="margin-top:.5rem; opacity:.7;">
+      <a href="privacy.html" style="color:inherit; text-decoration:none; margin-right:.6rem;">Privacy</a>
+      <a href="terms.html" style="color:inherit; text-decoration:none; margin-right:.6rem;">Terms</a>
+      <a href="contact.html" style="color:inherit; text-decoration:none;">Contact</a>
+    </div>
+  </footer>
+</body>
+</html>
