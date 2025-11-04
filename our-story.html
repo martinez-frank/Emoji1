@@ -70,9 +70,41 @@ ul.clean{margin:.2rem 0 0 1rem;padding:0}
 ul.clean li{margin:.25rem 0}
 
 /* ===== Timeline ===== */
+/* ===== Timeline ===== */
 .timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
 .step{padding:16px;border-radius:16px;background:#fff6e6;border:1px dashed #e8cf9e}
-.step h4{margin-top:8px;font-size:16px}
+
+/* titles under each emoji */
+.step h4{
+  margin-top:8px;
+  font-size:16px;
+  text-align:center;
+}
+
+/* description text under title */
+.step p{
+  text-align:center;
+  font-size:15px;
+  color:var(--graphite);
+}
+
+/* emoji image styling */
+.step img{
+  width:90px;                          /* about 15% bigger than marquee */
+  height:auto;
+  border-radius:16px;                   /* matches marquee tiles */
+  display:block;
+  margin:0 auto 12px;                   /* centers image */
+  background:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.18); /* stronger shadow */
+  transition:transform .35s cubic-bezier(.22,1,.36,1),
+             box-shadow .35s cubic-bezier(.22,1,.36,1);
+}
+
+.step img:hover{
+  transform:translateY(-4px);
+  box-shadow:0 14px 28px rgba(0,0,0,.22);
+}
 <div class="timeline">
   <!-- 1. Draw -->
   <div class="step">
