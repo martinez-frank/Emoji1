@@ -634,28 +634,28 @@ ul.clean li{margin:.25rem 0}
   })();
 </script>
 
-<!-- ===== Live chat moment ===== -->
 <script>
 (function () {
   const chat = document.getElementById("live-chat");
   if (!chat) return;
 
-  // only use images that exist in your repo
   const emojiPool = [
-    "images/frankiemoji-frankthumbsupwhite.webp",
+    "images/frankiemoji-frankwowwhite.webp",
     "images/frankiemoji-franklaughwhite.webp",
-    "images/frankiemoji-frankwowwhite.webp"
+    "images/frankiemoji-frankthumbsupwhite.webp"
   ];
 
   const script = [
     { who: "friend", text: "Got your emoji pack Thats actually YOU 😂" },
-    { who: "you",    text: "Yup Hand-drawn roots tech delivery" },
+    { who: "you", text: "Yup Hand-drawn roots tech delivery" },
     { who: "friend", text: "It even has your laugh" },
-    { who: "you",    text: "Thats the goal real expression in messages" }
+    { who: "you", text: "Thats the goal real expression in messages" },
+    { who: "friend", text: "Bro this looks just like you 😂" },
+    { who: "you", text: "Send me the link I want one" }
   ];
 
   let emojiIndex = 0;
-  function nextEmoji() {
+  function nextEmojiSrc() {
     const src = emojiPool[emojiIndex % emojiPool.length];
     emojiIndex++;
     return src;
@@ -668,7 +668,7 @@ ul.clean li{margin:.25rem 0}
       div.className = "chat-bubble friend";
 
       const img = document.createElement("img");
-      img.src = nextEmoji();
+      img.src = nextEmojiSrc();
       img.alt = "Frankiemoji";
       img.className = "chat-avatar";
 
@@ -696,6 +696,7 @@ ul.clean li{margin:.25rem 0}
   });
 })();
 </script>
+
 
 </body>
 </html>
