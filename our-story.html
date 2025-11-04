@@ -373,28 +373,29 @@ ul.clean li{margin:.25rem 0}
 </style>
 </head>
 <script>
-/* ===== Live chat moment ===== */
+<!-- ===== Live chat moment ===== -->
+<script>
 (function () {
   const chat = document.getElementById("live-chat");
   if (!chat) return;
 
-  // only use images that exist in your repo
+  // use the new white-background frank emojis you uploaded
   const emojiPool = [
-    "images/frankiemoji-frankthumbsupwhite.webp",
+    "images/frankiemoji-frankwowwhite.webp",
     "images/frankiemoji-franklaughwhite.webp",
-    "images/frankiemoji-frankwowwhite.webp"
+    "images/frankiemoji-frankthumbsupwhite.webp"
   ];
 
-  // plain-text version of your convo (no curly quotes)
+  // final conversation text (clean, like your screenshot)
   const script = [
-    { who: "friend", text: "Got your emoji pack. Thats actually YOU 😂" },
+    { who: "friend", text: "Got your emoji pack Thats actually YOU 😂" },
     { who: "you",    text: "Yup Hand-drawn roots tech delivery" },
     { who: "friend", text: "It even has your laugh" },
     { who: "you",    text: "Thats the goal real expression in messages" }
   ];
 
   let emojiIndex = 0;
-  function nextEmoji() {
+  function nextEmojiSrc() {
     const src = emojiPool[emojiIndex % emojiPool.length];
     emojiIndex++;
     return src;
@@ -404,10 +405,11 @@ ul.clean li{margin:.25rem 0}
     const div = document.createElement("div");
 
     if (line.who === "friend") {
+      // left bubble with emoji avatar
       div.className = "chat-bubble friend";
 
       const img = document.createElement("img");
-      img.src = nextEmoji();
+      img.src = nextEmojiSrc();
       img.alt = "Frankiemoji";
       img.className = "chat-avatar";
 
@@ -418,6 +420,7 @@ ul.clean li{margin:.25rem 0}
       div.appendChild(img);
       div.appendChild(txt);
     } else {
+      // orange right bubble
       div.className = "chat-bubble you";
       div.textContent = line.text;
     }
@@ -425,8 +428,8 @@ ul.clean li{margin:.25rem 0}
     return div;
   }
 
-  // play messages one by one
-  let delay = 200;
+  // drop messages one by one
+  let delay = 300;
   script.forEach(function (line) {
     setTimeout(function () {
       chat.appendChild(makeBubble(line));
