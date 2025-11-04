@@ -298,6 +298,77 @@ ul.clean li{margin:.25rem 0}
   box-shadow:0 8px 22px rgba(0,0,0,0.05);
   border-radius:18px;
 }
+/* ===== Live chat moment (highest impact version) ===== */
+.live-chat-wrap{
+  max-width:520px;
+  margin:0 auto;
+}
+
+.live-chat-card{
+  background:#fff;
+  border:1px solid #ecdcbc;
+  border-radius:26px;
+  box-shadow:0 15px 40px rgba(0,0,0,.06);
+  padding:16px 16px 18px;
+  position:relative;
+}
+
+.live-chat-notch{
+  width:90px;
+  height:4px;
+  background:#e4d7c1;
+  border-radius:999px;
+  margin:0 auto 14px;
+}
+
+.chat-stream{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.chat-bubble{
+  max-width:82%;
+  padding:10px 12px;
+  border-radius:16px;
+  line-height:1.35;
+  font-size:14px;
+  background:#fff6eb;
+  color:var(--espresso);
+  display:inline-block;
+}
+
+.chat-bubble.friend{
+  background:#ffffff;
+  border:1px solid #ecdcbc;
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+}
+
+.chat-avatar{
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 3px 10px rgba(0,0,0,.05);
+  flex:0 0 auto;
+}
+
+.chat-text{
+  flex:1 1 auto;
+}
+
+.chat-bubble.you{
+  align-self:flex-end;
+  background:var(--accent);
+  color:#fff;
+  border:0;
+}
+
+@media(max-width:960px){
+  .live-chat-wrap{max-width:100%;}
+}
 
 </style>
 </head>
@@ -413,45 +484,18 @@ ul.clean li{margin:.25rem 0}
 <!-- Real chat demo -->
 <section class="section">
   <div class="container">
-    <div class="chat-layout">
-      <!-- Left: Phone chat -->
-      <div class="phone">
-        <div class="chat">
-          <div class="bubble">Got your emoji pack Wait that’s actually YOU 😂</div>
-          <div class="bubble right">Yup Hand-drawn roots tech delivery</div>
-          <div class="bubble">It even has your laugh</div>
-          <div class="bubble right">That’s the goal real expression in messages</div>
+    <h2>How it plays in real chats</h2>
+    <div class="live-chat-wrap">
+      <div class="live-chat-card">
+        <div class="live-chat-notch"></div>
+        <div class="chat-stream" id="live-chat">
+          <!-- JS will drop bubbles here -->
         </div>
       </div>
-
-      <!-- Right: responses styled like phone -->
-      <div class="response-wrap">
-        <h3 class="chat-subtitle centered">What people send back</h3>
-        <div class="phone response-phone">
-          <div class="chat">
-            <div class="chat-line">
-              <img src="images/frankiemoji-frankthumbsup.webp" class="chat-emoji" alt="Frank thumbs up emoji">
-              <div class="meta">This is exactly my face</div>
-              <div class="meta">It even has your laugh</div>
-            </div>
-            <div class="chat-line">
-              <img src="images/frankiemoji-frankhoho.webp" class="chat-emoji" alt="Frank happy emoji">
-              <div class="meta">Send me the link I want one</div>
-            </div>
-            <div class="chat-line">
-              <img src="images/frankiemoji-franksweat.webp" class="chat-emoji" alt="Frank funny emoji">
-              <div class="meta">Bro this looks just like you 😂</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>
 
-<!-- Promise -->
-<section class="section">
   <div class="container paper soft" style="padding:20px; display:flex; align-items:center; gap:20px; border-radius:18px; box-shadow:0 8px 22px rgba(0,0,0,0.05); background:#fffdf8;">
     <img src="images/frankiemoji-frankthumbsup.webp" alt="Frank emoji thumbs up" style="width:96px; height:96px; border-radius:16px; box-shadow:0 6px 16px rgba(0,0,0,0.08); flex-shrink:0;">
     <div>
@@ -521,27 +565,50 @@ ul.clean li{margin:.25rem 0}
   })();
 })();
 
-/* ===== Phone Chat Demo ===== */
+/* ===== Live chat moment ===== */
 (function(){
-  const chat = document.getElementById('chat');
+  const chat = document.getElementById('live-chat');
+  if(!chat) return;
+
   const script = [
-    {side:'left',  text:'Got your emoji pack. Wait—that’s actually YOU? 😂'},
-    {side:'right', text:'Yup! Hand-drawn roots, tech delivery.'},
-    {side:'left',  text:'It even has your laugh.'},
-    {side:'right', text:'That’s the goal: real expression in messages.'}
+    {who:'friend', text:'Got your emoji pack Wait that’s actually YOU 😂'},
+    {who:'you',    text:'Yup Hand-drawn roots tech delivery'},
+    {who:'friend', text:'It even has your laugh'},
+    {who:'you',    text:'That’s the goal real expression in messages'},
   ];
-  function addBubble({side,text}, delay){
-    setTimeout(()=>{
-      const b=document.createElement('div');
-      b.className='bubble ' + (side==='right'?'right':'left');
-      b.textContent=text;
-      chat.appendChild(b);
-      chat.scrollTop=chat.scrollHeight;
-    }, delay);
+
+  function makeBubble(line){
+    const div = document.createElement('div');
+    if(line.who === 'friend'){
+      div.className = 'chat-bubble friend';
+      const img = document.createElement('img');
+      img.src = 'images/frankiemoji-frankthumbsup.webp';
+      img.alt = 'Frankiemoji';
+      img.className = 'chat-avatar';
+
+      const txt = document.createElement('div');
+      txt.className = 'chat-text';
+      txt.textContent = line.text;
+
+      div.appendChild(img);
+      div.appendChild(txt);
+    } else {
+      div.className = 'chat-bubble you';
+      div.textContent = line.text;
+    }
+    return div;
   }
-  let t=400;
-  script.forEach((line,i)=>{ addBubble(line, t); t+=1000; });
+
+  let t = 300;
+  script.forEach(line=>{
+    setTimeout(()=>{
+      chat.appendChild(makeBubble(line));
+      chat.parentElement.scrollTop = chat.parentElement.scrollHeight;
+    }, t);
+    t += 950;
+  });
 })();
+
 </script>
 </body>
 </html>
