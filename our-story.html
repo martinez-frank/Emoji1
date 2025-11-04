@@ -89,21 +89,22 @@ ul.clean li{margin:.25rem 0}
 }
 
 /* emoji image styling */
-.step img{
-  width:90px;                          /* about 15% bigger than marquee */
-  height:auto;
-  border-radius:16px;                   /* matches marquee tiles */
-  display:block;
-  margin:0 auto 12px;                   /* centers image */
-  background:#fff;
-  box-shadow:0 8px 18px rgba(0,0,0,.18); /* stronger shadow */
-  transition:transform .35s cubic-bezier(.22,1,.36,1),
-             box-shadow .35s cubic-bezier(.22,1,.36,1);
+/* ===== Timeline Image Enhancement (Final Balanced Size) ===== */
+.step img {
+  width: 126px;                       /* ≈15% larger than marquee */
+  height: auto;
+  border-radius: 16px;                /* same corner curve as marquee */
+  display: block;
+  margin: 0 auto 12px;
+  background: #fff;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22); /* stronger, softer shadow */
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.step img:hover{
-  transform:translateY(-4px);
-  box-shadow:0 14px 28px rgba(0,0,0,.22);
+.step img:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25); /* deeper hover lift */
 }
 <div class="timeline">
   <!-- 1. Draw -->
