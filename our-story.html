@@ -219,6 +219,38 @@ ul.clean li{margin:.25rem 0}
     width:100%;
   }
 }
+/* ===== Enhanced chat reaction styling (Frank emojis + UX polish) ===== */
+.chat-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.chat-header-row h2 {
+  margin: 0;
+}
+
+.chat-subtitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--graphite);
+  margin: 4px 0 0 0;
+}
+
+.chat-emoji {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  flex: 0 0 auto;
+  transition: transform 0.3s ease;
+}
+
+.chat-emoji:hover {
+  transform: scale(1.08);
+}
 
 </style>
 </head>
@@ -332,40 +364,47 @@ ul.clean li{margin:.25rem 0}
 </div>
   </section>
 
-
 <!-- Real chat demo -->
 <section class="section">
   <div class="container">
-    <h2>How it plays in real chats</h2>
+    <div class="chat-header-row">
+      <h2>How it plays in real chats</h2>
+      <h3 class="chat-subtitle">What people send back</h3>
+    </div>
+
     <div class="chat-layout">
-      <!-- phone on the left -->
+      <!-- Left: Phone chat -->
       <div class="phone">
-        <div class="chat" id="chat"></div>
+        <div class="chat">
+          <div class="bubble">Got your emoji pack Wait that’s actually YOU 😂</div>
+          <div class="bubble accent">Yup Hand-drawn roots tech delivery</div>
+          <div class="bubble">It even has your laugh</div>
+          <div class="bubble accent">That’s the goal real expression in messages</div>
+        </div>
       </div>
 
-      <!-- reactions / what people actually say -->
+      <!-- Right: Emoji responses -->
       <div class="chat-explainer paper soft">
-        <h3 style="margin-bottom:10px;font-size:16px;">What people send back</h3>
 
         <div class="chat-line">
-          <img src="images/franklaugh.png" alt="Frankiemoji reaction" class="chat-emoji">
+          <img src="images/frankiemoji-frankthumbsup.webp" alt="Frank thumbs up emoji" class="chat-emoji">
           <div class="chat-text">
-            <div class="meta">“This is exactly my face.”</div>
-            <div class="meta">“It even has your laugh.”</div>
+            <div class="meta">This is exactly my face</div>
+            <div class="meta">It even has your laugh</div>
           </div>
         </div>
 
         <div class="chat-line">
-          <img src="images/wink.png" alt="Frankiemoji wink" class="chat-emoji">
+          <img src="images/frankiemoji-frankhoho.webp" alt="Frank laughing emoji" class="chat-emoji">
           <div class="chat-text">
-            <div class="meta">“Send me the link — I want one.”</div>
+            <div class="meta">Send me the link I want one</div>
           </div>
         </div>
 
         <div class="chat-line">
-          <img src="images/laugh.png" alt="Frankiemoji laugh" class="chat-emoji">
+          <img src="images/frankiemoji-franksweat.webp" alt="Frank laughing with tears emoji" class="chat-emoji">
           <div class="chat-text">
-            <div class="meta">“Bro this looks just like you 😂”</div>
+            <div class="meta">Bro this looks just like you 😂</div>
           </div>
         </div>
 
@@ -373,6 +412,7 @@ ul.clean li{margin:.25rem 0}
     </div>
   </div>
 </section>
+
 
 
   <!-- Footer -->
