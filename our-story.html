@@ -174,6 +174,52 @@ ul.clean li{margin:.25rem 0}
   .grid-2, .timeline, .promise{grid-template-columns:1fr}
   .phone-wrap{flex-direction:column;align-items:center}
 }
+/* ===== Chat layout upgrade ===== */
+.chat-layout{
+  display:flex;
+  gap:22px;
+  align-items:flex-start;
+  margin-top:16px;
+}
+
+.chat-explainer{
+  flex:0 0 340px;
+  border-radius:16px;
+  box-shadow:0 10px 28px rgba(0,0,0,.04);
+}
+
+.chat-line{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  margin-bottom:10px;
+}
+
+.chat-emoji{
+  width:54px;
+  height:54px;
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  flex:0 0 auto;
+}
+
+.chat-text .meta{
+  font-size:13px;
+  line-height:1.3;
+  color:var(--graphite);
+}
+
+/* stack layout for mobile */
+@media(max-width:960px){
+  .chat-layout{
+    flex-direction:column;
+  }
+  .chat-explainer{
+    width:100%;
+  }
+}
+
 </style>
 </head>
 
@@ -287,41 +333,47 @@ ul.clean li{margin:.25rem 0}
   </section>
 
 
-  <!-- Real chat demo -->
-  <section class="section">
-    <div class="container">
-      <h2>How it plays in real chats</h2>
-      <div class="phone-wrap">
-        <div class="phone">
-          <div class="chat" id="chat"></div>
-        </div>
-        <div class="callout">
-          <div class="paper soft" style="padding:10px 14px;border-radius:12px;">
+<!-- Real chat demo -->
+<section class="section">
+  <div class="container">
+    <h2>How it plays in real chats</h2>
+    <div class="chat-layout">
+      <!-- phone on the left -->
+      <div class="phone">
+        <div class="chat" id="chat"></div>
+      </div>
+
+      <!-- reactions / what people actually say -->
+      <div class="chat-explainer paper soft">
+        <h3 style="margin-bottom:10px;font-size:16px;">What people send back</h3>
+
+        <div class="chat-line">
+          <img src="images/franklaugh.png" alt="Frankiemoji reaction" class="chat-emoji">
+          <div class="chat-text">
             <div class="meta">“This is exactly my face.”</div>
             <div class="meta">“It even has your laugh.”</div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Promise -->
-  <section class="section">
-    <div class="container paper soft" style="padding:16px;">
-      <div class="promise">
-        <img src="images/franklaugh.png" alt="Frank emoji" />
-        <div>
-          <h3>It’s just me, Frank.</h3>
-          <p>No big team just a artist who loves drawing people the way their friends see them.  
-          Thanks for your support and helping me put a few more smiles into the world.</p>
-          <div class="cta-row" style="justify-content:flex-start;">
-            <button class="btn" onclick="location.href='start.html'">Start my pack</button>
-            <a class="btn ghost" href="index.html#pricing">Pricing</a>
+        <div class="chat-line">
+          <img src="images/wink.png" alt="Frankiemoji wink" class="chat-emoji">
+          <div class="chat-text">
+            <div class="meta">“Send me the link — I want one.”</div>
           </div>
         </div>
+
+        <div class="chat-line">
+          <img src="images/laugh.png" alt="Frankiemoji laugh" class="chat-emoji">
+          <div class="chat-text">
+            <div class="meta">“Bro this looks just like you 😂”</div>
+          </div>
+        </div>
+
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- Footer -->
   <footer class="site-footer">
