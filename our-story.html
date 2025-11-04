@@ -372,6 +372,70 @@ ul.clean li{margin:.25rem 0}
 
 </style>
 </head>
+<script>
+/* ===== Live chat moment ===== */
+(function () {
+  const chat = document.getElementById("live-chat");
+  if (!chat) return;
+
+  // only use images that exist in your repo
+  const emojiPool = [
+    "images/frankiemoji-frankthumbsupwhite.webp",
+    "images/frankiemoji-franklaughwhite.webp",
+    "images/frankiemoji-frankwowwhite.webp"
+  ];
+
+  // plain-text version of your convo (no curly quotes)
+  const script = [
+    { who: "friend", text: "Got your emoji pack. Thats actually YOU 😂" },
+    { who: "you",    text: "Yup Hand-drawn roots tech delivery" },
+    { who: "friend", text: "It even has your laugh" },
+    { who: "you",    text: "Thats the goal real expression in messages" }
+  ];
+
+  let emojiIndex = 0;
+  function nextEmoji() {
+    const src = emojiPool[emojiIndex % emojiPool.length];
+    emojiIndex++;
+    return src;
+  }
+
+  function makeBubble(line) {
+    const div = document.createElement("div");
+
+    if (line.who === "friend") {
+      div.className = "chat-bubble friend";
+
+      const img = document.createElement("img");
+      img.src = nextEmoji();
+      img.alt = "Frankiemoji";
+      img.className = "chat-avatar";
+
+      const txt = document.createElement("div");
+      txt.className = "chat-text";
+      txt.textContent = line.text;
+
+      div.appendChild(img);
+      div.appendChild(txt);
+    } else {
+      div.className = "chat-bubble you";
+      div.textContent = line.text;
+    }
+
+    return div;
+  }
+
+  // play messages one by one
+  let delay = 200;
+  script.forEach(function (line) {
+    setTimeout(function () {
+      chat.appendChild(makeBubble(line));
+      chat.parentElement.scrollTop = chat.parentElement.scrollHeight;
+    }, delay);
+    delay += 950;
+  });
+})();
+</script>
 
 <body>
   <!-- Topbar -->
@@ -481,6 +545,7 @@ ul.clean li{margin:.25rem 0}
   </div>
 </div>
   </section>
+  
 <!-- Real chat demo -->
 <section class="section">
   <div class="container">
