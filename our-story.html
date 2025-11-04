@@ -251,6 +251,47 @@ ul.clean li{margin:.25rem 0}
 .chat-emoji:hover {
   transform: scale(1.08);
 }
+.response-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.chat-subtitle.centered{
+  text-align:center;
+  width:100%;
+  margin-bottom:0;
+}
+
+.response-phone{
+  width:340px;              /* match left phone */
+  background:#fffdf8;       /* tiny variation if you want */
+}
+
+.response-phone .chat{
+  gap:12px;
+}
+
+.response-phone .chat-line{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.response-phone .meta{
+  font-size:13px;
+  line-height:1.25;
+  color:var(--graphite);
+}
+@media(max-width:960px){
+  .response-wrap{
+    align-items:stretch;
+  }
+  .response-phone{
+    width:100%;
+  }
+}
 
 </style>
 </head>
@@ -363,52 +404,42 @@ ul.clean li{margin:.25rem 0}
   </div>
 </div>
   </section>
-
 <!-- Real chat demo -->
 <section class="section">
   <div class="container">
-    <div class="chat-header-row">
-      <h2>How it plays in real chats</h2>
-      <h3 class="chat-subtitle">What people send back</h3>
-    </div>
-
     <div class="chat-layout">
       <!-- Left: Phone chat -->
       <div class="phone">
         <div class="chat">
           <div class="bubble">Got your emoji pack Wait that’s actually YOU 😂</div>
-          <div class="bubble accent">Yup Hand-drawn roots tech delivery</div>
+          <div class="bubble right">Yup Hand-drawn roots tech delivery</div>
           <div class="bubble">It even has your laugh</div>
-          <div class="bubble accent">That’s the goal real expression in messages</div>
+          <div class="bubble right">That’s the goal real expression in messages</div>
         </div>
       </div>
 
-      <!-- Right: Emoji responses -->
-      <div class="chat-explainer paper soft">
-
-        <div class="chat-line">
-          <img src="images/frankiemoji-frankthumbsup.webp" alt="Frank thumbs up emoji" class="chat-emoji">
-          <div class="chat-text">
-            <div class="meta">This is exactly my face</div>
-            <div class="meta">It even has your laugh</div>
+      <!-- Right: responses styled like phone -->
+      <div class="response-wrap">
+        <h3 class="chat-subtitle centered">What people send back</h3>
+        <div class="phone response-phone">
+          <div class="chat">
+            <div class="chat-line">
+              <img src="images/frankiemoji-frankthumbsup.webp" class="chat-emoji" alt="Frank thumbs up emoji">
+              <div class="meta">This is exactly my face</div>
+              <div class="meta">It even has your laugh</div>
+            </div>
+            <div class="chat-line">
+              <img src="images/frankiemoji-frankhoho.webp" class="chat-emoji" alt="Frank happy emoji">
+              <div class="meta">Send me the link I want one</div>
+            </div>
+            <div class="chat-line">
+              <img src="images/frankiemoji-franksweat.webp" class="chat-emoji" alt="Frank funny emoji">
+              <div class="meta">Bro this looks just like you 😂</div>
+            </div>
           </div>
         </div>
-
-        <div class="chat-line">
-          <img src="images/frankiemoji-frankhoho.webp" alt="Frank laughing emoji" class="chat-emoji">
-          <div class="chat-text">
-            <div class="meta">Send me the link I want one</div>
-          </div>
-        </div>
-
-        <div class="chat-line">
-          <img src="images/frankiemoji-franksweat.webp" alt="Frank laughing with tears emoji" class="chat-emoji">
-          <div class="chat-text">
-            <div class="meta">Bro this looks just like you 😂</div>
-          </div>
-        </div>
-
       </div>
+
     </div>
   </div>
 </section>
