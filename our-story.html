@@ -565,10 +565,18 @@ ul.clean li{margin:.25rem 0}
   })();
 })();
 
+<script>
 /* ===== Live chat moment ===== */
 (function(){
   const chat = document.getElementById('live-chat');
   if(!chat) return;
+
+  // white-background emoji assets you just uploaded
+  const emojiPool = [
+    'images/frankiemoji-frankthumbsupwhite.webp',
+    'images/frankiemoji-franklaughwhite.webp',
+    'images/frankiemoji-frankwowwhite.webp'
+  ];
 
   const script = [
     {who:'friend', text:'Got your emoji pack Wait that’s actually YOU 😂'},
@@ -577,12 +585,21 @@ ul.clean li{margin:.25rem 0}
     {who:'you',    text:'That’s the goal real expression in messages'},
   ];
 
+  let emojiIndex = 0;
+  function nextEmoji(){
+    const e = emojiPool[emojiIndex % emojiPool.length];
+    emojiIndex++;
+    return e;
+  }
+
   function makeBubble(line){
     const div = document.createElement('div');
+
     if(line.who === 'friend'){
       div.className = 'chat-bubble friend';
+
       const img = document.createElement('img');
-      img.src = 'images/frankiemoji-frankthumbsup.webp';
+      img.src = nextEmoji();
       img.alt = 'Frankiemoji';
       img.className = 'chat-avatar';
 
@@ -599,15 +616,17 @@ ul.clean li{margin:.25rem 0}
     return div;
   }
 
-  let t = 300;
+  let delay = 300;
   script.forEach(line=>{
     setTimeout(()=>{
       chat.appendChild(makeBubble(line));
       chat.parentElement.scrollTop = chat.parentElement.scrollHeight;
-    }, t);
-    t += 950;
+    }, delay);
+    delay += 950;
   });
 })();
+</script>
+
 
 </script>
 </body>
