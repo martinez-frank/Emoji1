@@ -28,6 +28,7 @@
     }
 
     * { box-sizing:border-box; }
+
     html, body {
       margin:0;
       padding:0;
@@ -35,121 +36,130 @@
       color:var(--espresso);
       font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     }
+
     img { display:block; max-width:100%; }
+
     .container { max-width:1200px; margin:0 auto; padding:0 24px; }
 
-    /* keep the rest of your existing styles here (hero, marquee, pricing, footer, etc.) */
- 
+    /* Buttons */
+    .btn{
+      display:inline-block;
+      border:1px solid transparent;
+      padding:12px 18px;
+      border-radius:12px;
+      background:#fff;
+      color:var(--espresso);
+      font-weight:600;
+      cursor:pointer;
+      transition:transform .12s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:var(--accent);color:#fff}
+
+    /* Hero + marquee */
+    .hero{text-align:center;padding:64px 0 12px}
+    .hero-title{font-size:56px;line-height:1.05;margin:0}
+    .hero-sub{color:var(--graphite);margin:10px 0 24px}
+    .marquee-wrap{overflow:hidden;margin-top:8px}
+    .marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
+    .marq-img{width:128px;height:128px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
+    @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+    .track-left{animation:scrollLeft 54s linear infinite}
+    .track-right{animation:scrollRight 57s linear infinite}
+    .marquee-wrap { margin-bottom: 36px; }
+
+    /* Pricing */
+    .pricing { background:var(--paper); padding:48px 0; border-top: 1px solid #e8dfcc; }
+    .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;justify-items:center;max-width:900px;margin:0 auto}
+    .price-card{background:transparent;box-shadow:none;padding:0;display:flex;flex-direction:column;align-items:center;max-width:360px}
+    .price-card .price-img{width:100%;height:auto;object-fit:contain;background:#fff;padding:10px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.08);transition:box-shadow .18s ease}
+    .price-card:hover .price-img{box-shadow:0 16px 44px rgba(0,0,0,.14)}
+    .price-card .btn{width:100%;margin-top:12px;border-radius:12px}
+
+    /* restore card button width + centering on desktop */
+    .pricing .price-card .btn {
+      width: 180px;
+      display: block;
+      margin: 0 auto 0;
+    }
+    @media (max-width: 540px) {
+      .pricing .price-card .btn {
+        width: 70%;
+      }
+    }
+
+    /* Promo section */
+    #promo-section { text-align:center; margin-top:20px; }
+
+    /* Promo animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%,60% { transform: translateX(-6px); }
+      40%,80% { transform: translateX(6px); }
+    }
+    #promo-message.fade { animation: fadeIn 0.4s ease forwards; }
+    #promo-message.shake { animation: shake 0.4s ease; }
+
+    /* About button block */
+    .about-block {
+      text-align:center;
+      margin:20px 0 28px;
+    }
+    .about-block .btn {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Footer */
+    .site-footer {
+      border-top: 1px solid rgba(0,0,0,.04);
+      background: #fdf7ee;
+      padding: 1.5rem 0 2.5rem;
+      text-align: center;
+    }
+    .footer-inner {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+    .footer-inner p {
+      font-size: 0.78rem;
+      color: rgba(44,36,25,.85);
+      margin-bottom: 0.75rem;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .footer-links a {
+      text-decoration: none;
+      color: rgba(44,36,25,.85);
+      font-weight: 500;
+      font-size: 0.82rem;
+      transition: color 0.25s ease, text-decoration-color 0.25s ease;
+    }
+    .footer-links a:hover {
+      color: var(--espresso);
+      text-decoration: underline;
+      text-decoration-color: var(--espresso);
+    }
+    @media (max-width: 720px) {
+      .footer-links {
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .hero-title{font-size:42px}
+      .marq-img{height:96px;width:96px}
+    }
+  </style>
 </head>
 <body>
 
-/* Buttons */
-.btn{display:inline-block;border:1px solid transparent;padding:12px 18px;border-radius:12px;background:#fff;color:var(--espresso);font-weight:600;cursor:pointer;transition:transform .12s ease}
-.btn:hover{transform:translateY(-1px)}
-.btn.primary{background:var(--accent);color:#fff}
-
-/* Hero + marquee */
-.hero{text-align:center;padding:64px 0 12px}
-.hero-title{font-size:56px;line-height:1.05;margin:0}
-.hero-sub{color:var(--graphite);margin:10px 0 24px}
-.marquee-wrap{overflow:hidden;margin-top:8px}
-.marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
-.marq-img{width:128px;height:128px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
-@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-@keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-.track-left{animation:scrollLeft 54s linear infinite}
-.track-right{animation:scrollRight 57s linear infinite}
-/* Cushion below the emoji carousel now that the teaser is gone */
-.marquee-wrap {
-  margin-bottom: 36px; /* adds clean breathing space before pricing cards */
-}
-
-/* Subtle divider to separate carousel and pricing visually */
-.pricing {
-  border-top: 1px solid #e8dfcc;
-}
-
-/* Pricing (images as cards) */
-.pricing{background:var(--paper);padding:48px 0}
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;justify-items:center;max-width:900px;margin:0 auto}
-.price-card{background:transparent;box-shadow:none;padding:0;display:flex;flex-direction:column;align-items:center;max-width:360px}
-.price-card .price-img{width:100%;height:auto;aspect-ratio:auto;object-fit:contain;background:#fff;padding:10px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-/* Lift card image on hover (shadow only) */
-.price-card .price-img{ transition: box-shadow .18s ease; }
-.price-card:hover .price-img{ box-shadow: 0 16px 44px rgba(0,0,0,.14); }
-.price-card .btn{width:100%;margin-top:12px;border-radius:12px}
-
-.popular-note{display:grid;place-items:center;margin-top:10px}
-.popular-note .badge{background:var(--amber);color:#3a2d16;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.pricing-note{text-align:center;margin-top:14px;color:var(--graphite)}
-
-/* Bottom bar */
-.bottom-bar{position:sticky;bottom:0;background:rgba(250,243,224,.96);backdrop-filter:saturate(140%) blur(6px);border-top:1px solid #e8dfcc;padding:10px 0;z-index:40}
-.bottom-inner{display:flex;align-items:center;justify-content:center;gap:16px}
-.bottom-actions{display:flex;gap:12px}
-
-/* Footer */
-
-/* Footer */
-.site-footer {
-  border-top: 1px solid rgba(0,0,0,.04);
-  background: #fdf7ee;
-  padding: 1.5rem 0 2.5rem;
-  text-align: center;
-}
-
-.footer-inner {
-  width: min(1100px, 92%);
-  margin: 0 auto;
-}
-
-.footer-inner p {
-  font-size: 0.78rem;
-  color: rgba(44,36,25,.85);
-  margin-bottom: 0.75rem;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-}
-
-.footer-links a {
-  text-decoration: none;
-  color: rgba(44,36,25,.85);
-  font-weight: 500;
-  font-size: 0.82rem;
-  transition: color 0.25s ease, text-decoration-color 0.25s ease;
-}
-
-.footer-links a:hover {
-  color: var(--espresso);
-  text-decoration: underline;
-  text-decoration-color: var(--espresso);
-}
-
-@media (max-width: 720px) {
-  .footer-links {
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-}
-
-
-/* Story anchor */
-.story-anchor{height:1px}
-
-/* Responsive */
-@media (max-width:900px){
-  .hero-title{font-size:42px}
-  .marquee img{height:96px;width:96px}
-  .bottom-actions{gap:10px}
-}
-</style>
-</head>
-
-<body>
   <!-- Hero -->
   <section class="hero">
     <h1 class="hero-title">A World of Expressions.</h1>
@@ -162,226 +172,158 @@
     </div>
   </section>
 
-
   <!-- Pricing -->
   <section id="pricing" class="pricing">
     <div class="pricing-grid">
-  <div class="price-card">
-    <img class="price-img" src="images/packs/starter.webp"  alt="Starter pack pricing"  loading="lazy" />
-    <button class="btn primary" onclick="location.href='upload.html?pack=starter'">Get Starter</button>
-  </div>
+      <div class="price-card">
+        <img class="price-img" src="images/packs/starter.webp"  alt="Starter pack pricing"  loading="lazy" />
+        <button class="btn primary" onclick="location.href='upload.html?pack=starter'">Get Starter</button>
+      </div>
 
-  <div class="price-card">
-    <img class="price-img" src="images/packs/standard.webp" alt="Standard pack pricing" loading="lazy" />
-    <button class="btn primary" onclick="location.href='upload.html?pack=standard'">Get Standard</button>
-  </div>
+      <div class="price-card">
+        <img class="price-img" src="images/packs/standard.webp" alt="Standard pack pricing" loading="lazy" />
+        <button class="btn primary" onclick="location.href='upload.html?pack=standard'">Get Standard</button>
+      </div>
 
-  <div class="price-card">
-    <img class="price-img" src="images/packs/premium.webp"  alt="Premium pack pricing"  loading="lazy" />
-    <button class="btn primary" onclick="location.href='upload.html?pack=premium'">Get Premium</button>  
-  </div>
-</div>
-    
-  
+      <div class="price-card">
+        <img class="price-img" src="images/packs/premium.webp"  alt="Premium pack pricing"  loading="lazy" />
+        <button class="btn primary" onclick="location.href='upload.html?pack=premium'">Get Premium</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- tiny anchor -->
   <section id="story" class="story-anchor" aria-hidden="true"></section>
-<!-- Promo code section -->
-<div id="promo-section" style="text-align:center; margin-top:20px;">
-  <label for="promo-code" style="display:block; margin-bottom:8px; font-weight:500;">
-    Have a promo code?
-  </label>
 
-  <div style="display:inline-block;">
-    <input 
-      type="text" 
-      id="promo-code" 
-      placeholder="frankiemoji10"
-      style="padding:8px 12px; border:2px solid #E2C89B; border-radius:8px; font-size:15px; outline:none;"
-    >
-    <button 
-      id="apply-btn" 
-      style="background-color:#C96E27; color:white; border:none; padding:8px 14px; border-radius:8px; margin-left:6px; font-weight:600; cursor:pointer;"
-    >
-      Apply
-    </button>
-  </div>
+  <!-- Promo code section -->
+  <div id="promo-section">
+    <label for="promo-code" style="display:block; margin-bottom:8px; font-weight:500;">
+      Have a promo code?
+    </label>
 
-  <!-- centered message under input -->
-  <div id="promo-message-wrap" style="text-align:center; margin-top:12px;">
-    <p id="promo-message" 
-      style="display:none; margin:0 auto; font-weight:500; background:#FFF9EF; border:2px solid #F1D19A; border-radius:12px; padding:10px 14px; color:#2C2419; width:fit-content; max-width:320px;">
-    </p>
-  </div>
-   
+    <div style="display:inline-block;">
+      <input 
+        type="text" 
+        id="promo-code" 
+        placeholder="frankiemoji10"
+        style="padding:8px 12px; border:2px solid #E2C89B; border-radius:8px; font-size:15px; outline:none;"
+      >
+      <button 
+        id="apply-btn" 
+        style="background-color:#C96E27; color:white; border:none; padding:8px 14px; border-radius:8px; margin-left:6px; font-weight:600; cursor:pointer;"
+      >
+        Apply
+      </button>
+    </div>
 
-<style>
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes bounce {
-  0%, 100% { transform: scale(1); }
-  30% { transform: scale(1.2); }
-  60% { transform: scale(0.95); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-6px); }
-  40%, 80% { transform: translateX(6px); }
-}
-
-#promo-message.fade {
-  animation: fadeIn 0.4s ease forwards;
-}
-
-#promo-message.shake {
-  animation: shake 0.4s ease;
-}
-
-.bounce {
-  animation: bounce 0.5s ease;
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const applyBtn  = document.getElementById("apply-btn");
-  const promoInput = document.getElementById("promo-code");
-  const promoMsg   = document.getElementById("promo-message");
-
-  applyBtn.addEventListener("click", function () {
-    const code = promoInput.value.trim().toLowerCase();
-
-    // reset / hide first
-    promoMsg.classList.remove("fade", "shake");
-    promoMsg.style.display = "none";
-
-    setTimeout(() => {
-      // show message again
-      promoMsg.style.display = "block";
-
-      if (code === "frankiemoji10") {
-        // ✅ success
-      promoMsg.innerHTML = `Promo applied! 10% off your pack.`;
-        promoMsg.style.borderColor = "#F1D19A";
-        promoMsg.style.background  = "#FFF9EF";
-        promoMsg.style.color       = "#2C2419";
-        promoMsg.classList.add("fade");
-      } else {
-        // ❌ invalid code
-        promoMsg.innerHTML = "❌ Invalid code. Try again.";
-        promoMsg.style.borderColor = "#F1B0A0";
-        promoMsg.style.background  = "#FFF2EF";
-        promoMsg.style.color       = "#B84129";
-        promoMsg.classList.add("shake");
-      }
-    }, 30);
-  });
-});
-</script>
-
-</script>
-
-</section>
-
-  <style>
-.container { max-width:1200px; margin:0 auto; padding:0 24px; }
-
-/* Pricing card buttons — restore width/centering */
-.pricing .price-card .btn {
-  width: 180px;
-  display: block;
-  margin: 0 auto 0;
-}
-
-@media (max-width: 540px) {
-  .pricing .price-card .btn {
-    width: 70%;
-  }
-}
-
-/* Buttons */
-.btn {
-  display:inline-block;
-  border:1px solid transparent;
-  padding:12px 18px;
-  border-radius:12px;
-  background:var(--accent);
-  color:#fff;
-}
-  <style>
-    
-<!-- About button -->
-<div style="text-align:center; margin:20px 0 28px;">
-  <a href="our-story.html" class="btn">About</a>
-</div>
-
- <!-- Footer -->
-<footer class="site-footer">
-  <div class="footer-inner">
-    <p>© 2025 Frankiemoji™ Studios LLC. All Rights Reserved. Born with a Pencil. Evolved with Technology.</p>
-    <div class="footer-links">
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="contact.html">Contact</a>
+    <div id="promo-message-wrap" style="text-align:center; margin-top:12px;">
+      <p id="promo-message" 
+        style="display:none; margin:0 auto; font-weight:500; background:#FFF9EF; border:2px solid #F1D19A; border-radius:12px; padding:10px 14px; color:#2C2419; width:fit-content; max-width:320px;">
+      </p>
     </div>
   </div>
-</footer>
 
+  <!-- About button -->
+  <div class="about-block">
+    <a href="our-story.html" class="btn">About</a>
+  </div>
 
-<script>
-/* Frankiemoji marquee (v8.3.2) */
-(function(){
-  const CONF={owner:"martinez-frank",repo:"Emoji1",branch:"main",exclude:["starter","standard","premium"]};
-  const topEl=document.getElementById("marquee-top");
-  const btmEl=document.getElementById("marquee-btm");
-  if(!topEl||!btmEl) return;
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>© 2025 Frankiemoji™ Studios LLC. All Rights Reserved. Born with a Pencil. Evolved with Technology.</p>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
 
-  const EXCLUDE=(CONF.exclude||[]).map(s=>s.toLowerCase());
-  const EXTRA=[/\.ds_store/i,/manifest/i,/%20/];
-  const isOut=s=>{s=(s||"").toLowerCase();return EXCLUDE.some(x=>s.includes(x))||EXTRA.some(rx=>rx.test(s));};
-  const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
-  const build=urls=>{const frag=document.createDocumentFragment();urls.concat(urls).forEach(src=>{const img=new Image();img.className="marq-img";img.loading="lazy";img.decoding="async";img.alt="Frankiemoji expression";img.src=src;img.width=128;img.height=128;img.onerror=()=>img.remove();frag.appendChild(img);});return frag;};
+  <!-- Promo JS -->
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const applyBtn  = document.getElementById("apply-btn");
+    const promoInput = document.getElementById("promo-code");
+    const promoMsg   = document.getElementById("promo-message");
 
-  async function fromGitHub(){
-    try{
-      const url=`https://api.github.com/repos/${CONF.owner}/${CONF.repo}/contents/images?ref=${CONF.branch}`;
-      const res=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
-      if(!res.ok) throw 0;
-      const items=await res.json();
-      return items.filter(it=>it.type==="file")
-                  .filter(it => /\.webp$/i.test(it.name))
-                  .filter(it=>!isOut(it.name)&&!isOut(it.path))
-                  .map(it=>it.download_url);
-    }catch{ return []; }
-  }
-  async function fromManifest(){
-    try{
-      const res=await fetch("images/manifest.json",{cache:"no-store"});
-      if(!res.ok) throw 0;
-      const arr=await res.json();
-      return arr.filter(x=>/\.(png|jpe?g|webp|gif)$/i.test(x)&&!isOut(x));
-    }catch{ return []; }
-  }
+    applyBtn.addEventListener("click", function () {
+      const code = promoInput.value.trim().toLowerCase();
 
-  (async()=>{
-    let urls=await fromGitHub();
-    if(!urls.length) urls=await fromManifest();
-    if(!urls.length) urls=["images/e01.webp","images/e02.webp","images/e03.webp","images/e04.webp"];
-    urls=shuffle([...new Set(urls)]);
-    topEl.appendChild(build(urls));
-    btmEl.appendChild(build([...urls].reverse()));
-    topEl.style.animationDuration=(54+Math.random()*2).toFixed(2)+"s";
-    btmEl.style.animationDuration=(57+Math.random()*2).toFixed(2)+"s";
-        document.querySelectorAll(".marquee").forEach(m=>{
-      m.addEventListener("mouseenter",()=>m.style.animationPlayState="paused");
-      m.addEventListener("mouseleave",()=>m.style.animationPlayState="running");
+      promoMsg.classList.remove("fade", "shake");
+      promoMsg.style.display = "none";
+
+      setTimeout(() => {
+        promoMsg.style.display = "block";
+
+        if (code === "frankiemoji10") {
+          promoMsg.innerHTML = "Promo applied! 10% off your pack.";
+          promoMsg.style.borderColor = "#F1D19A";
+          promoMsg.style.background  = "#FFF9EF";
+          promoMsg.style.color       = "#2C2419";
+          promoMsg.classList.add("fade");
+        } else {
+          promoMsg.innerHTML = "❌ Invalid code. Try again.";
+          promoMsg.style.borderColor = "#F1B0A0";
+          promoMsg.style.background  = "#FFF2EF";
+          promoMsg.style.color       = "#B84129";
+          promoMsg.classList.add("shake");
+        }
+      }, 30);
     });
+  });
+  </script>
+
+  <!-- Marquee JS (unchanged) -->
+  <script>
+  (function(){
+    const CONF={owner:"martinez-frank",repo:"Emoji1",branch:"main",exclude:["starter","standard","premium"]};
+    const topEl=document.getElementById("marquee-top");
+    const btmEl=document.getElementById("marquee-btm");
+    if(!topEl||!btmEl) return;
+
+    const EXCLUDE=(CONF.exclude||[]).map(s=>s.toLowerCase());
+    const EXTRA=[/\.ds_store/i,/manifest/i,/%20/];
+    const isOut=s=>{s=(s||"").toLowerCase();return EXCLUDE.some(x=>s.includes(x))||EXTRA.some(rx=>rx.test(s));};
+    const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+    const build=urls=>{const frag=document.createDocumentFragment();urls.concat(urls).forEach(src=>{const img=new Image();img.className="marq-img";img.loading="lazy";img.decoding="async";img.alt="Frankiemoji expression";img.src=src;img.width=128;img.height=128;img.onerror=()=>img.remove();frag.appendChild(img);});return frag;};
+
+    async function fromGitHub(){
+      try{
+        const url=`https://api.github.com/repos/${CONF.owner}/${CONF.repo}/contents/images?ref=${CONF.branch}`;
+        const res=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
+        if(!res.ok) throw 0;
+        const items=await res.json();
+        return items.filter(it=>it.type==="file")
+                    .filter(it => /\.webp$/i.test(it.name))
+                    .filter(it=>!isOut(it.name)&&!isOut(it.path))
+                    .map(it=>it.download_url);
+      }catch{ return []; }
+    }
+    async function fromManifest(){
+      try{
+        const res=await fetch("images/manifest.json",{cache:"no-store"});
+        if(!res.ok) throw 0;
+        const arr=await res.json();
+        return arr.filter(x=>/\.(png|jpe?g|webp|gif)$/i.test(x)&&!isOut(x));
+      }catch{ return []; }
+    }
+
+    (async()=>{
+      let urls=await fromGitHub();
+      if(!urls.length) urls=await fromManifest();
+      if(!urls.length) urls=["images/e01.webp","images/e02.webp","images/e03.webp","images/e04.webp"];
+      urls=shuffle([...new Set(urls)]);
+      topEl.appendChild(build(urls));
+      btmEl.appendChild(build([...urls].reverse()));
+      topEl.style.animationDuration=(54+Math.random()*2).toFixed(2)+"s";
+      btmEl.style.animationDuration=(57+Math.random()*2).toFixed(2)+"s";
+      document.querySelectorAll(".marquee").forEach(m=>{
+        m.addEventListener("mouseenter",()=>m.style.animationPlayState="paused");
+        m.addEventListener("mouseleave",()=>m.style.animationPlayState="running");
+      });
+    })();
   })();
-})();
-</script>
-<!-- EOF v8.3.2 -->
+  </script>
 </body>
 </html>
- 
