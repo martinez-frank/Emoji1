@@ -179,7 +179,7 @@ img{display:block;max-width:100%}
 
   <!-- Success / error message -->
   <p id="promo-message" 
-     style="display:none; margin-top:14px; font-weight:500; background:#FFF9EF; border:2px solid #F1D19A; border-radius:12px; padding:10px 14px; display:inline-flex; align-items:center; justify-content:center; color:#2C2419;">
+     style="display:none; margin-top:14px; font-weight:500; background:#FFF9EF; border:2px solid #F1D19A; border-radius:12px; padding:10px 14px; color:#2C2419; text-align:center;">
   </p>
 </div>
 
@@ -187,6 +187,12 @@ img{display:block;max-width:100%}
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.2); }
+  60% { transform: scale(0.95); }
 }
 
 @keyframes shake {
@@ -202,6 +208,10 @@ img{display:block;max-width:100%}
 #promo-message.shake {
   animation: shake 0.4s ease;
 }
+
+.bounce {
+  animation: bounce 0.5s ease;
+}
 </style>
 
 <script>
@@ -213,26 +223,33 @@ applyBtn.addEventListener("click", function() {
   const code = promoInput.value.trim().toLowerCase();
 
   promoMsg.classList.remove("fade", "shake");
-  promoMsg.style.display = "inline-flex";
+  promoMsg.style.display = "none"; // hide bubble before showing
 
-  if (code === "frankiemoji10") {
-    promoMsg.innerHTML = `
-      <img src="Emoji/images/frankiemoji-frankthumbsup.webp" alt="Thumbs up" 
-           style="width:42px;height:auto;vertical-align:middle;margin-right:8px;">
-      Promo applied! 10% off your pack.
-    `;
-    promoMsg.style.borderColor = "#F1D19A";
-    promoMsg.style.color = "#2C2419";
-    promoMsg.style.background = "#FFF9EF";
-    promoMsg.classList.add("fade");
-  } else {
-    promoMsg.innerHTML = `❌ Invalid code. Try again.`;
-    promoMsg.style.borderColor = "#F1B0A0";
-    promoMsg.style.color = "#B84129";
-    promoMsg.style.background = "#FFF2EF";
-    promoMsg.classList.add("shake");
-  }
+  setTimeout(() => {
+    promoMsg.style.display = "inline-flex";
+
+    if (code === "frankiemoji10") {
+      promoMsg.innerHTML = `
+        <img src="Emoji/images/frankiemoji-frankthumbsup.webp" alt="Thumbs up" 
+             style="width:42px;height:auto;vertical-align:middle;margin-right:8px;" 
+             class="bounce">
+        Promo applied! 10% off your pack.
+      `;
+      promoMsg.style.borderColor = "#F1D19A";
+      promoMsg.style.color = "#2C2419";
+      promoMsg.style.background = "#FFF9EF";
+      promoMsg.classList.add("fade");
+    } else {
+      promoMsg.innerHTML = `❌ Invalid code. Try again.`;
+      promoMsg.style.borderColor = "#F1B0A0";
+      promoMsg.style.color = "#B84129";
+      promoMsg.style.background = "#FFF2EF";
+      promoMsg.classList.add("shake");
+    }
+  }, 50);
 });
+</script>
+
 </script>
 
 </section>
