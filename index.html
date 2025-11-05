@@ -233,9 +233,15 @@ applyBtn.addEventListener("click", function() {
 
     if (code === "frankiemoji10") {
       promoMsg.innerHTML = `
-        <img src="images/frankiemoji-frankthumbsup.webp" 
-             style="width:42px;height:auto;vertical-align:middle;margin-right:8px;" 
-             class="bounce">
+       promoMsg.innerHTML = `
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+    <img src="images/frankiemoji-frankthumbsup.webp" alt="Thumbs up"
+         style="width:64px;height:auto;"
+         class="bounce"
+         onerror="this.remove();">
+    <span>Promo applied! 10% off your pack.</span>
+  </div>
+`;
         Promo applied! 10% off your pack.
       `;
       promoMsg.style.borderColor = "#F1D19A";
