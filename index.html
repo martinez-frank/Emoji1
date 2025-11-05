@@ -236,16 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (code === "frankiemoji10") {
         // ✅ success
-        promoMsg.innerHTML = `
-          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-            <img src="images/frankiemoji-frankthumbsup.webp"
-                 alt="Thumbs up"
-                 style="width:64px;height:auto;"
-                 class="bounce"
-                 onerror="this.remove();">
-            <span>Promo applied! 10% off your pack.</span>
-          </div>
-        `;
+      promoMsg.innerHTML = `Promo applied! 10% off your pack.`;
         promoMsg.style.borderColor = "#F1D19A";
         promoMsg.style.background  = "#FFF9EF";
         promoMsg.style.color       = "#2C2419";
