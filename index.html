@@ -157,39 +157,84 @@ img{display:block;max-width:100%}
     
   
   <section id="story" class="story-anchor" aria-hidden="true"></section>
-<!-- Promo code (drop-in, no other edits needed) -->
-<section id="promo-block" style="background:var(--paper);text-align:center;padding:24px 0 40px;">
-  <div class="container">
-    <label for="promo" style="font-weight:600;color:var(--espresso);display:block;margin-bottom:8px;">
-      Have a promo code?
-    </label>
+<!-- Promo code section -->
+<div id="promo-section" style="text-align:center; margin-top:20px;">
+  <label for="promo-code" style="display:block; margin-bottom:8px; font-weight:500;">
+    Have a promo code?
+  </label>
 
-    <div style="display:inline-flex;gap:10px;align-items:center;">
-      <input id="promo" type="text" placeholder="Enter code"
-             style="padding:10px 14px;border:1px solid #ddd5c2;border-radius:10px;font:inherit;font-size:15px;">
-      <button class="btn primary" id="apply-promo" type="button">Apply</button>
-    </div>
+  <input 
+    type="text" 
+    id="promo-code" 
+    placeholder="frankiemoji10"
+    style="padding:8px 12px; border:2px solid #E2C89B; border-radius:8px; font-size:15px; outline:none;"
+  >
+  
+  <button 
+    id="apply-btn" 
+    style="background-color:#C96E27; color:white; border:none; padding:8px 14px; border-radius:8px; margin-left:6px; font-weight:600; cursor:pointer;"
+  >
+    Apply
+  </button>
 
-    <p id="promo-msg" style="font-size:14px;color:var(--accent);margin-top:8px;font-weight:500;"></p>
-  </div>
+  <!-- Success / error message -->
+  <p id="promo-message" 
+     style="display:none; margin-top:14px; font-weight:500; background:#FFF9EF; border:2px solid #F1D19A; border-radius:12px; padding:10px 14px; display:inline-flex; align-items:center; justify-content:center; color:#2C2419;">
+  </p>
+</div>
 
-  <script>
-    (function(){
-      var btn = document.getElementById('apply-promo');
-      if (!btn) return;
-      btn.addEventListener('click', function(){
-        var code = (document.getElementById('promo').value || '').trim().toLowerCase();
-        var msg  = document.getElementById('promo-msg');
-        if (code === 'frankiemoji10') {
-          msg.textContent = '✅ Promo applied! 10% off your pack.';
-        } else if (code) {
-          msg.textContent = '❌ Invalid code. Try again.';
-        } else {
-          msg.textContent = '';
-        }
-      });
-    })();
-  </script>
+<style>
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+#promo-message.fade {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+#promo-message.shake {
+  animation: shake 0.4s ease;
+}
+</style>
+
+<script>
+const applyBtn = document.getElementById("apply-btn");
+const promoInput = document.getElementById("promo-code");
+const promoMsg = document.getElementById("promo-message");
+
+applyBtn.addEventListener("click", function() {
+  const code = promoInput.value.trim().toLowerCase();
+
+  promoMsg.classList.remove("fade", "shake");
+  promoMsg.style.display = "inline-flex";
+
+  if (code === "frankiemoji10") {
+    promoMsg.innerHTML = `
+      <img src="Emoji/images/frankiemoji-frankthumbsup.webp" alt="Thumbs up" 
+           style="width:42px;height:auto;vertical-align:middle;margin-right:8px;">
+      Promo applied! 10% off your pack.
+    `;
+    promoMsg.style.borderColor = "#F1D19A";
+    promoMsg.style.color = "#2C2419";
+    promoMsg.style.background = "#FFF9EF";
+    promoMsg.classList.add("fade");
+  } else {
+    promoMsg.innerHTML = `❌ Invalid code. Try again.`;
+    promoMsg.style.borderColor = "#F1B0A0";
+    promoMsg.style.color = "#B84129";
+    promoMsg.style.background = "#FFF2EF";
+    promoMsg.classList.add("shake");
+  }
+});
+</script>
+
 </section>
 
  <!-- Footer -->
