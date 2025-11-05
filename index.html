@@ -63,10 +63,52 @@ img{display:block;max-width:100%}
 
 /* Footer */
 
-.site-footer{padding:28px 0}
-.site-footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #eee;padding-top:16px}
-.site-footer a{color:var(--espresso);text-decoration:none;margin-left:16px}
-.links{display:flex;align-items:center}
+/* Footer */
+.site-footer {
+  border-top: 1px solid rgba(0,0,0,.04);
+  background: #fdf7ee;
+  padding: 1.5rem 0 2.5rem;
+  text-align: center;
+}
+
+.footer-inner {
+  width: min(1100px, 92%);
+  margin: 0 auto;
+}
+
+.footer-inner p {
+  font-size: 0.78rem;
+  color: rgba(44,36,25,.85);
+  margin-bottom: 0.75rem;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: rgba(44,36,25,.85);
+  font-weight: 500;
+  font-size: 0.82rem;
+  transition: color 0.25s ease, text-decoration-color 0.25s ease;
+}
+
+.footer-links a:hover {
+  color: var(--espresso);
+  text-decoration: underline;
+  text-decoration-color: var(--espresso);
+}
+
+@media (max-width: 720px) {
+  .footer-links {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+}
+
 
 /* Story anchor */
 .story-anchor{height:1px}
