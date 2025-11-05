@@ -218,44 +218,48 @@ img{display:block;max-width:100%}
 </style>
 
 <script>
-const applyBtn = document.getElementById("apply-btn");
-const promoInput = document.getElementById("promo-code");
-const promoMsg = document.getElementById("promo-message");
+document.addEventListener("DOMContentLoaded", function () {
+  const applyBtn  = document.getElementById("apply-btn");
+  const promoInput = document.getElementById("promo-code");
+  const promoMsg   = document.getElementById("promo-message");
 
-applyBtn.addEventListener("click", function() {
-  const code = promoInput.value.trim().toLowerCase();
+  applyBtn.addEventListener("click", function () {
+    const code = promoInput.value.trim().toLowerCase();
 
-  promoMsg.classList.remove("fade", "shake");
-  promoMsg.style.display = "none"; // hide bubble before showing
+    // reset / hide first
+    promoMsg.classList.remove("fade", "shake");
+    promoMsg.style.display = "none";
 
-  setTimeout(() => {
-    promoMsg.style.display = "inline-flex";
+    setTimeout(() => {
+      // show message again
+      promoMsg.style.display = "block";
 
-    if (code === "frankiemoji10") {
-      promoMsg.innerHTML = `
-       promoMsg.innerHTML = `
-  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-    <img src="images/frankiemoji-frankthumbsup.webp" alt="Thumbs up"
-         style="width:64px;height:auto;"
-         class="bounce"
-         onerror="this.remove();">
-    <span>Promo applied! 10% off your pack.</span>
-  </div>
-`;
-        Promo applied! 10% off your pack.
-      `;
-      promoMsg.style.borderColor = "#F1D19A";
-      promoMsg.style.color = "#2C2419";
-      promoMsg.style.background = "#FFF9EF";
-      promoMsg.classList.add("fade");
-    } else {
-      promoMsg.innerHTML = `❌ Invalid code. Try again.`;
-      promoMsg.style.borderColor = "#F1B0A0";
-      promoMsg.style.color = "#B84129";
-      promoMsg.style.background = "#FFF2EF";
-      promoMsg.classList.add("shake");
-    }
-  }, 50);
+      if (code === "frankiemoji10") {
+        // ✅ success
+        promoMsg.innerHTML = `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <img src="images/frankiemoji-frankthumbsup.webp"
+                 alt="Thumbs up"
+                 style="width:64px;height:auto;"
+                 class="bounce"
+                 onerror="this.remove();">
+            <span>Promo applied! 10% off your pack.</span>
+          </div>
+        `;
+        promoMsg.style.borderColor = "#F1D19A";
+        promoMsg.style.background  = "#FFF9EF";
+        promoMsg.style.color       = "#2C2419";
+        promoMsg.classList.add("fade");
+      } else {
+        // ❌ invalid code
+        promoMsg.innerHTML = "❌ Invalid code. Try again.";
+        promoMsg.style.borderColor = "#F1B0A0";
+        promoMsg.style.background  = "#FFF2EF";
+        promoMsg.style.color       = "#B84129";
+        promoMsg.classList.add("shake");
+      }
+    }, 30);
+  });
 });
 </script>
 
