@@ -11,12 +11,25 @@
 <style>
 :root{--cream:#FAF3E0;--espresso:#2C2419;--graphite:#5F5B53;--amber:#F0C06C;--accent:#D8742B;--paper:#F8EED1;}
 *{box-sizing:border-box}
+<style>
+:root{ ... }
+
 /* Hide redundant expression confirmation bubbles */
 .selected-expressions,
 .selected-tags,
 #selected-expressions {
   display: none !important;
 }
+
+/* Extra guard for other selected chip containers */
+div[id^="selected-"],
+div[class*="selected-expression"],
+div[class*="selected-expressions"] {
+  display: none !important;
+}
+...
+</style>
+
 html,body{margin:0;padding:0;background:var(--cream);color:var(--espresso);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif}
 h1,h2,h3{font-family:"DM Serif Display",Georgia,serif}
 img{display:block;max-width:100%}
