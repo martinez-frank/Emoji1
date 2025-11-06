@@ -321,7 +321,7 @@
   const GH_REPO = "Emoji1";
   const IMAGES_PATH = "images";
 
-  // fallback list in case GitHub API doesn't return (desktop caching, rate limit, etc.)
+  // fallback list in case GitHub doesn't return (still point to your images/ folder)
   const FALLBACK_EMOJIS = [
     "frankemoji-aaronfunny.webp",
     "frankemoji-brockangry.webp",
@@ -361,36 +361,42 @@
     "frankemoji-sisterkiss.webp",
     "frankemoji-sisterthumbsup.webp",
     "frankemoji-sisterwink.webp"
-  ];
+  ].map(name => ({
+    src: `${IMAGES_PATH}/${name}`,
+    name
+  }));
 
   async function loadMarqueeEmojis() {
     let emojis = [];
 
     try {
+      // add timestamp so Safari/desktop doesn’t cache the directory request
       const res = await fetch(
         `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${IMAGES_PATH}?t=${Date.now()}`
       );
       const files = await res.json();
 
       if (Array.isArray(files)) {
+        // ✅ use GitHub's download_url so the path is ALWAYS valid
         emojis = files
           .filter(f => f.type === "file")
           .filter(f => f.name.toLowerCase().endsWith(".webp"))
           .filter(f => !f.name.toLowerCase().includes("white"))
-          .map(f => f.name);
-      } else {
-        console.warn("GitHub did not return an array, using fallback.");
+          .map(f => ({
+            src: f.download_url,   // ← this is the important change
+            name: f.name
+          }));
       }
     } catch (e) {
-      console.warn("GitHub fetch failed, using fallback.", e);
+      console.warn("GitHub fetch failed, will use fallback.", e);
     }
 
-    // if fetch failed or came back empty, use our local list
+    // if nothing came back from GitHub, use local list
     if (!emojis.length) {
       emojis = FALLBACK_EMOJIS;
     }
 
-    // shuffle for variety
+    // shuffle so faces are mixed
     emojis = emojis.sort(() => Math.random() - 0.5);
 
     const row1 = document.getElementById("emojiMarquee");
@@ -398,20 +404,20 @@
     if (!row1 || !row2) return;
 
     function addRun(el, list) {
-      list.forEach(name => {
+      list.forEach(item => {
         const img = document.createElement("img");
-        img.src = `${IMAGES_PATH}/${name}`;
-        img.alt = name;
+        img.src = item.src;
+        img.alt = item.name;
         img.className = "marq-img";
         el.appendChild(img);
       });
     }
 
-    // top row
+    // top row: normal, twice
     addRun(row1, emojis);
     addRun(row1, emojis);
 
-    // bottom row (reverse)
+    // bottom row: reversed, twice
     const reversed = [...emojis].reverse();
     addRun(row2, reversed);
     addRun(row2, reversed);
