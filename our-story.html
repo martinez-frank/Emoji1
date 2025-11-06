@@ -245,6 +245,13 @@ ul.clean li{margin:.25rem 0}
   box-shadow:0 4px 14px rgba(0,0,0,.08);
   flex:0 0 auto;
 }
+  /* standalone emoji line — floats between chat bubbles */
+.chat-emoji-line {
+  display: block;
+  width: 80px;           /* size of emoji */
+  margin: 10px auto 16px auto; /* spacing above/below */
+  border-radius: 16px;
+}
 
 .chat-text .meta{
   font-size:13px;
@@ -434,6 +441,8 @@ ul.clean li{margin:.25rem 0}
     { who: "you",    text: "Yup Hand-drawn roots tech delivery" },
     { who: "friend", text: "It even has your laugh" },
     { who: "you",    text: "Thats the goal real expression in messages" }
+    { type: "emoji" },  // 👈 this will drop a standalone emoji
+
   ];
 
   let emojiIndex = 0;
@@ -445,6 +454,15 @@ ul.clean li{margin:.25rem 0}
 
   function makeBubble(line) {
     const div = document.createElement("div");
+  // if this line is an emoji-only line, create an image and return
+    if (line.type === "emoji") {
+    const img = document.createElement("img");
+    img.src = nextEmojiSrc();     // uses your existing emoji pool
+    img.alt = "Frankiemoji";
+    img.className = "chat-emoji-line";
+    return img;
+  }
+
 
     if (line.who === "friend") {
       // left bubble with emoji avatar
