@@ -174,10 +174,10 @@
     <p class="hero-sub">Each emoji, handcrafted. Every face, unique. Your expressions — elevated.</p>
 
     <!-- Emoji carousel -->
-    <div class="marquee-wrap">
-      <div id="marquee-top" class="marquee track-left" aria-label="Emoji gallery row 1"></div>
-      <div id="marquee-btm" class="marquee track-right" aria-label="Emoji gallery row 2"></div>
-    </div>
+   <div class="marquee-wrap">
+  <div class="marquee track-left" id="emojiMarquee"></div>
+</div>
+
   </section>
 
   <!-- Pricing -->
@@ -333,5 +333,45 @@
     })();
   })();
   </script>
+<script>
+  const GH_OWNER = "martinez-frank";
+  const GH_REPO = "martinez-frank.github.io";
+  const IMAGES_PATH = "Emoji/images"; // your .webp folder
+
+  async function loadMarqueeEmojis() {
+    try {
+      const res = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${IMAGES_PATH}`);
+      const files = await res.json();
+
+      // keep only .webp and exclude “white”
+      let emojis = files
+        .filter(f => f.type === "file")
+        .filter(f => f.name.toLowerCase().endsWith(".webp"))
+        .filter(f => !f.name.toLowerCase().includes("white"))
+        .map(f => f.name);
+
+      emojis = emojis.sort(() => Math.random() - 0.5); // shuffle order
+
+      const marquee = document.getElementById("emojiMarquee");
+
+      function addRun(list) {
+        list.forEach(name => {
+          const img = document.createElement("img");
+          img.src = `${IMAGES_PATH}/${name}`;
+          img.alt = name;
+          img.className = "marq-img";
+          marquee.appendChild(img);
+        });
+      }
+
+      addRun(emojis);
+      addRun(emojis); // duplicate for smooth scroll
+    } catch (e) {
+      console.error("Could not load emojis", e);
+    }
+  }
+
+  loadMarqueeEmojis();
+</script>
 </body>
 </html>
