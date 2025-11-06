@@ -315,65 +315,109 @@
   </script>
 
   <!-- Marquee JS (unchanged) -->
-  <script>
+<script>
   // GitHub: where emoji images actually live
   const GH_OWNER = "martinez-frank";
-  const GH_REPO = "Emoji1";     // your emoji repo
-  const IMAGES_PATH = "images"; // folder in that repo
+  const GH_REPO = "Emoji1";
+  const IMAGES_PATH = "images";
+
+  // fallback list in case GitHub API doesn't return (desktop caching, rate limit, etc.)
+  const FALLBACK_EMOJIS = [
+    "frankemoji-aaronfunny.webp",
+    "frankemoji-brockangry.webp",
+    "frankemoji-brocklaugh.webp",
+    "frankemoji-brockpointing.webp",
+    "frankemoji-corihappy.webp",
+    "frankemoji-coriheart.webp",
+    "frankemoji-dennishappy.webp",
+    "frankemoji-dennisho.webp",
+    "frankemoji-dennisunglassescool.webp",
+    "frankemoji-dennisthinking.webp",
+    "frankemoji-donprofessional.webp",
+    "frankemoji-donthumbsup.webp",
+    "frankemoji-frankcomputer.webp",
+    "frankemoji-frankdrawing.webp",
+    "frankemoji-frankfunny.webp",
+    "frankemoji-frankheart.webp",
+    "frankemoji-franklaugh.webp",
+    "frankemoji-frankohno.webp",
+    "frankemoji-frankside.webp",
+    "frankemoji-franksideeye.webp",
+    "frankemoji-franksquint.webp",
+    "frankemoji-franksweat.webp",
+    "frankemoji-frankthumbsup.webp",
+    "frankemoji-franktounge.webp",
+    "frankemoji-frankwow.webp",
+    "frankemoji-frankyawn.webp",
+    "frankemoji-greatidea.webp",
+    "frankemoji-happydonsmile.webp",
+    "frankemoji-kissingheart.webp",
+    "frankemoji-misshalo.webp",
+    "frankemoji-misslaughing.webp",
+    "frankemoji-missscared.webp",
+    "frankemoji-misssmile.webp",
+    "frankemoji-sisterangry.webp",
+    "frankemoji-sisterheart.webp",
+    "frankemoji-sisterkiss.webp",
+    "frankemoji-sisterthumbsup.webp",
+    "frankemoji-sisterwink.webp"
+  ];
 
   async function loadMarqueeEmojis() {
+    let emojis = [];
+
     try {
       const res = await fetch(
-        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${IMAGES_PATH}`
+        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${IMAGES_PATH}?t=${Date.now()}`
       );
       const files = await res.json();
 
-      // make sure we actually got a list
-      if (!Array.isArray(files)) {
-        console.warn("Did not get file list from GitHub:", files);
-        return;
+      if (Array.isArray(files)) {
+        emojis = files
+          .filter(f => f.type === "file")
+          .filter(f => f.name.toLowerCase().endsWith(".webp"))
+          .filter(f => !f.name.toLowerCase().includes("white"))
+          .map(f => f.name);
+      } else {
+        console.warn("GitHub did not return an array, using fallback.");
       }
-
-      // keep only .webp and exclude any with "white"
-      let emojis = files
-        .filter(f => f.type === "file")
-        .filter(f => f.name.toLowerCase().endsWith(".webp"))
-        .filter(f => !f.name.toLowerCase().includes("white"))
-        .map(f => f.name);
-
-      // shuffle for variety
-      emojis = emojis.sort(() => Math.random() - 0.5);
-
-      const row1 = document.getElementById("emojiMarquee");
-      const row2 = document.getElementById("emojiMarquee2");
-      if (!row1 || !row2) return;
-
-      function addRun(el, list) {
-        list.forEach(name => {
-          const img = document.createElement("img");
-          img.src = `${IMAGES_PATH}/${name}`;
-          img.alt = name;
-          img.className = "marq-img";
-          el.appendChild(img);
-        });
-      }
-
-      // top row: normal order, twice
-      addRun(row1, emojis);
-      addRun(row1, emojis);
-
-      // bottom row: reverse order, twice
-      const reversed = [...emojis].reverse();
-      addRun(row2, reversed);
-      addRun(row2, reversed);
-
     } catch (e) {
-      console.error("Could not load emojis", e);
+      console.warn("GitHub fetch failed, using fallback.", e);
     }
+
+    // if fetch failed or came back empty, use our local list
+    if (!emojis.length) {
+      emojis = FALLBACK_EMOJIS;
+    }
+
+    // shuffle for variety
+    emojis = emojis.sort(() => Math.random() - 0.5);
+
+    const row1 = document.getElementById("emojiMarquee");
+    const row2 = document.getElementById("emojiMarquee2");
+    if (!row1 || !row2) return;
+
+    function addRun(el, list) {
+      list.forEach(name => {
+        const img = document.createElement("img");
+        img.src = `${IMAGES_PATH}/${name}`;
+        img.alt = name;
+        img.className = "marq-img";
+        el.appendChild(img);
+      });
+    }
+
+    // top row
+    addRun(row1, emojis);
+    addRun(row1, emojis);
+
+    // bottom row (reverse)
+    const reversed = [...emojis].reverse();
+    addRun(row2, reversed);
+    addRun(row2, reversed);
   }
 
   loadMarqueeEmojis();
 </script>
-
 </body>
 </html>
