@@ -334,14 +334,24 @@
   })();
   </script>
 <script>
+<script>
+  // point to the repo that actually has the emoji images
   const GH_OWNER = "martinez-frank";
-  const GH_REPO = "martinez-frank.github.io";
-  const IMAGES_PATH = "Emoji/images"; // your .webp folder
+  const GH_REPO = "Emoji1";        // <-- was martinez-frank.github.io
+  const IMAGES_PATH = "images";    // <-- was Emoji/images
 
   async function loadMarqueeEmojis() {
     try {
-      const res = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${IMAGES_PATH}`);
+      const res = await fetch(
+        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${IMAGES_PATH}`
+      );
       const files = await res.json();
+
+      // make sure we actually got a list
+      if (!Array.isArray(files)) {
+        console.warn("Did not get file list from GitHub:", files);
+        return;
+      }
 
       // keep only .webp and exclude “white”
       let emojis = files
@@ -350,22 +360,26 @@
         .filter(f => !f.name.toLowerCase().includes("white"))
         .map(f => f.name);
 
-      emojis = emojis.sort(() => Math.random() - 0.5); // shuffle order
+      // shuffle
+      emojis = emojis.sort(() => Math.random() - 0.5);
 
       const marquee = document.getElementById("emojiMarquee");
+      if (!marquee) return;
 
       function addRun(list) {
         list.forEach(name => {
           const img = document.createElement("img");
-          img.src = `${IMAGES_PATH}/${name}`;
+          img.src = `${IMAGES_PATH}/${name}`;   // /images/filename.webp
           img.alt = name;
           img.className = "marq-img";
           marquee.appendChild(img);
         });
       }
 
+      // add 2 runs for continuous scroll
       addRun(emojis);
-      addRun(emojis); // duplicate for smooth scroll
+      addRun(emojis);
+
     } catch (e) {
       console.error("Could not load emojis", e);
     }
@@ -373,5 +387,6 @@
 
   loadMarqueeEmojis();
 </script>
+
 </body>
 </html>
