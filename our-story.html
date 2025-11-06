@@ -436,14 +436,16 @@ ul.clean li{margin:.25rem 0}
   ];
 
   // final conversation text (clean, like your screenshot)
-  const script = [
-    { who: "friend", text: "Got your emoji pack Thats actually YOU 😂" },
-    { who: "you",    text: "Yup Hand-drawn roots tech delivery" },
-    { who: "friend", text: "It even has your laugh" },
-    { who: "you",    text: "Thats the goal real expression in messages" }
-    { type: "emoji" },  // 👈 this will drop a standalone emoji
+const script = [
+  { who: "friend", text: "Got your emoji pack Thats actually YOU 😂" },
+  { who: "you", text: "Yup Hand–drawn roots tech delivery" },
+  { who: "friend", text: "It even has your laugh" },
+  { who: "you", text: "Thats the goal real expression in messages" },
+  { type: "emoji" },  // 👈 this is the new standalone emoji
+  { who: "friend", text: "Wait. This looks just like you 😂" },
+  { who: "you", text: "Send me the link I want one" }
+];
 
-  ];
 
   let emojiIndex = 0;
   function nextEmojiSrc() {
@@ -452,41 +454,40 @@ ul.clean li{margin:.25rem 0}
     return src;
   }
 
-  function makeBubble(line) {
-    const div = document.createElement("div");
-  // if this line is an emoji-only line, create an image and return
-    if (line.type === "emoji") {
+ function makeBubble(line) {
+  // if this is our special emoji-only line
+  if (line.type === "emoji") {
     const img = document.createElement("img");
-    img.src = nextEmojiSrc();     // uses your existing emoji pool
+    img.src = nextEmojiSrc();     // uses your existing emoji pool from above
     img.alt = "Frankiemoji";
     img.className = "chat-emoji-line";
     return img;
   }
 
+  // otherwise keep doing bubbles like before
+  const div = document.createElement("div");
 
-    if (line.who === "friend") {
-      // left bubble with emoji avatar
-      div.className = "chat-bubble friend";
+  if (line.who === "friend") {
+    div.className = "chat-bubble friend";
 
-      const img = document.createElement("img");
-      img.src = nextEmojiSrc();
-      img.alt = "Frankiemoji";
-      img.className = "chat-avatar";
+    const img = document.createElement("img");
+    img.src = nextEmojiSrc();
+    img.alt = "Frankiemoji";
+    img.className = "chat-avatar";
 
-      const txt = document.createElement("div");
-      txt.className = "chat-text";
-      txt.textContent = line.text;
+    const txt = document.createElement("div");
+    txt.className = "chat-text";
+    txt.textContent = line.text;
 
-      div.appendChild(img);
-      div.appendChild(txt);
-    } else {
-      // orange right bubble
-      div.className = "chat-bubble you";
-      div.textContent = line.text;
-    }
-
-    return div;
+    div.appendChild(img);
+    div.appendChild(txt);
+  } else {
+    div.className = "chat-bubble you";
+    div.textContent = line.text;
   }
+
+  return div;
+}
 
   // drop messages one by one
   let delay = 300;
