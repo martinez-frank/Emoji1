@@ -756,6 +756,59 @@ document.addEventListener("DOMContentLoaded", () => {
   images.forEach(img => marquee.appendChild(img.cloneNode(true)));
 });
 </script>
+<script>
+(async function () {
+  // GitHub repo info
+  const OWNER = "martinez-frank";
+  const REPO  = "Emoji1";
+  const PATH  = "images"; // Folder that holds frankemoji-*.webp files
 
+  // Select the two marquee rows
+  const row1 = document.getElementById("storyEmojiMarquee");
+  const row2 = document.getElementById("storyEmojiMarquee2");
+  if (!row1 || !row2) return;
+
+  try {
+    // Fetch all image files from GitHub
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`);
+    const files = await res.json();
+
+    // Keep only .webp files and exclude "white.webp"
+    let emojis = files
+      .filter(f => f.type === "file")
+      .filter(f => f.name.toLowerCase().endsWith(".webp"))
+      .filter(f => !f.name.toLowerCase().includes("white"))
+      .map(f => f.name);
+
+    // Shuffle the array
+    emojis = emojis.sort(() => Math.random() - 0.5);
+
+    // Helper to fill a marquee row
+    const fillRow = (el, list) => {
+      list.forEach(name => {
+        const img = document.createElement("img");
+        img.src = `${PATH}/${name}`;
+        img.alt = name;
+        img.className = "marq-img";
+        el.appendChild(img);
+      });
+      // Duplicate for smooth infinite scrolling
+      list.forEach(name => {
+        const img = document.createElement("img");
+        img.src = `${PATH}/${name}`;
+        img.alt = name;
+        img.className = "marq-img";
+        el.appendChild(img);
+      });
+    };
+
+    // Fill top marquee rows
+    fillRow(row1, emojis);
+    fillRow(row2, [...emojis].reverse());
+  } catch (e) {
+    console.error("Could not load emoji marquee", e);
+  }
+})();
+</script>
 </body>
 </html>
