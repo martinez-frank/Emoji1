@@ -141,10 +141,10 @@
 <body>
 
   <!-- emoji marquee -->
-  <div class="marquee-wrap" aria-hidden="true">
-    <div class="marquee track-left" id="emojiMarquee"></div>
-    <div class="marquee track-right" id="emojiMarquee2"></div>
-  </div>
+ <!-- Emoji marquee (single row) -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee track-left" id="privacyEmojiMarquee"></div>
+</div>
 
   <!-- centered buttons -->
   <div class="top-buttons">
@@ -204,9 +204,9 @@
     const REPO  = "Emoji1";
     const PATH  = "images"; // where all frankiemoji-*.webp live
 
-    const row1 = document.getElementById("emojiMarquee");
-    const row2 = document.getElementById("emojiMarquee2");
-    if (!row1 || !row2) return;
+    const row1 = document.getElementById("privacyEmojiMarquee");
+    if (!row1) return;
+
 
     try {
       const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`);
@@ -240,7 +240,6 @@
       }
 
       fillRow(row1, emojis);
-      fillRow(row2, [...emojis].reverse());
     } catch (e) {
       console.error("Could not load privacy marquee:", e);
     }
