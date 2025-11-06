@@ -3,55 +3,288 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Terms of Use — Frankiemoji™</title>
+  <title>Terms of Use — Frankiemoji</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --cream:#FAF3E0;
+      --espresso:#2C2419;
+      --graphite:#5F5B53;
+      --accent:#D8742B;
+      --paper:#FFFFFF;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--cream);
+      color: var(--espresso);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* top emoji marquee */
+    .marquee-wrap {
+      overflow: hidden;
+      border-bottom: 1px solid #e2cda9;
+      background: #f9eeda;
+    }
+    .marquee {
+      display: flex;
+      gap: 16px;
+      padding: 10px 0;
+      will-change: transform;
+    }
+    .marq-img {
+      width: 108px;
+      height: 108px;
+      object-fit: contain;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      flex: 0 0 auto;
+    }
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .track-left { animation: scrollLeft 54s linear infinite; }
+    .marquee img[src*="white"] { display: none !important; } /* hide white bg variants */
+
+    /* top buttons (same as contact) */
+    .top-links {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 0 0;
+    }
+    .nav-pill {
+      background: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 6px 18px 7px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--espresso);
+      cursor: pointer;
+      transition: transform .12s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,.03);
+    }
+    .nav-pill.primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .nav-pill:hover {
+      transform: translateY(-1px);
+    }
+
+    /* terms card */
+    .terms-shell {
+      max-width: 780px;
+      margin: 26px auto 60px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 10px 34px rgba(0,0,0,.05);
+      padding: 28px 28px 32px;
+    }
+    @media (max-width: 720px) {
+      .terms-shell {
+        margin: 22px 14px 56px;
+        padding: 24px 16px 28px;
+      }
+      .marq-img {
+        width: 92px;
+        height: 92px;
+      }
+    }
+    .terms-title {
+      font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      margin-bottom: 4px;
+    }
+    .terms-sub {
+      color: rgba(44,36,25,.7);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .terms-shell h2,
+    .terms-shell h3,
+    .terms-shell h4 {
+      margin-top: 20px;
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+    .terms-shell p {
+      line-height: 1.6;
+      margin: 0 0 12px;
+      font-size: 14px;
+    }
+    .terms-shell ol {
+      padding-left: 18px;
+      margin-bottom: 12px;
+    }
+    .terms-shell li {
+      margin-bottom: 5px;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    /* contact button inside card */
+    .inline-actions {
+      margin-top: 26px;
+    }
+    .btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .12s ease;
+      font-size: 14px;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    /* footer (same as contact) */
+    .site-footer {
+      border-top: 1px solid rgba(0,0,0,.04);
+      background: #fdf7ee;
+      padding: 1.5rem 0 2.5rem;
+      text-align: center;
+    }
+    .footer-inner {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+    .footer-inner p {
+      font-size: 0.78rem;
+      color: rgba(44,36,25,.85);
+      margin-bottom: 0.75rem;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .footer-links a {
+      text-decoration: none;
+      color: rgba(44,36,25,.85);
+      font-weight: 500;
+      font-size: 0.82rem;
+      transition: color 0.25s ease, text-decoration-color 0.25s ease;
+    }
+    .footer-links a:hover {
+      color: var(--espresso);
+      text-decoration: underline;
+      text-decoration-color: var(--espresso);
+    }
+    @media (max-width: 600px) {
+      .footer-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container nav">
-      <div class="brand"><a href="index.html">Frankiemoji™</a></div>
-      <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="privacy.html">Privacy</a>
-      </nav>
-    </div>
-  </header>
 
-  <main class="legal-page container" style="padding:3rem 0;">
-    <h1>Terms of Use</h1>
-    <p>Effective Date: November 4, 2025</p>
+  <!-- emoji marquee -->
+  <div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee track-left" id="termsEmojiMarquee"></div>
+  </div>
+
+  <!-- top nav pills -->
+  <div class="top-links">
+    <button class="nav-pill primary" onclick="location.href='index.html'">Home</button>
+    <button class="nav-pill" onclick="location.href='our-story.html'">About</button>
+  </div>
+
+  <!-- terms card -->
+  <main class="terms-shell">
+    <h1 class="terms-title">Terms of Use</h1>
+    <p class="terms-sub">Effective date: November 4, 2025</p>
 
     <h2>1. Overview</h2>
-    <p>Welcome to Frankiemoji™. By accessing or using our website, artwork, or related services (collectively, the “Service”), you agree to these Terms of Use. If you do not agree, please do not use the Service.</p>
+    <p>By accessing or using this website and related services (the “Service”), you agree to these Terms of Use. If you do not agree, please do not use the Service.</p>
 
     <h2>2. Ownership and Copyright</h2>
-    <p>All content on this website — including text, code, illustrations, and digital artwork — is the exclusive property of <strong>Frankiemoji™ Studios LLC</strong> and is protected by copyright and trademark laws. All rights are reserved.</p>
+    <p>All content on this website — including text, code, illustrations, and digital artwork — is the exclusive property of Frankiemoji™ Studios LLC and is protected by copyright and trademark laws. All rights reserved.</p>
 
     <h2>3. Permitted Use</h2>
     <p>You may browse the site for personal, non-commercial purposes only. You may not copy, reproduce, redistribute, or modify any material without prior written permission.</p>
 
     <h2>4. Custom Artwork and Submissions</h2>
-    <p>When you submit selfies, images, or other materials for custom emoji creation, you grant Frankiemoji™ Studios LLC permission to use those materials solely for the purpose of creating your ordered artwork. We do not sell, share, or reuse submitted content beyond fulfilling your order.</p>
+    <p>When you submit selfies, images, or other materials for a custom emoji creation, you grant Frankiemoji™ Studios LLC permission to use those materials solely to create and deliver your ordered artwork. We do not resell or reuse your submitted content beyond fulfilling your order.</p>
 
     <h2>5. Limitation of Liability</h2>
-    <p>Frankiemoji™ Studios LLC is not responsible for any indirect or consequential damages resulting from use of this Service. The Service is provided “as is” without warranties of any kind.</p>
+    <p>The Service is provided “as is.” Frankiemoji™ Studios LLC is not responsible for any indirect or consequential damages arising from use of the Service.</p>
 
     <h2>6. Updates to These Terms</h2>
     <p>We may update these Terms from time to time. Updates take effect when posted on this page.</p>
 
     <h2>7. Contact</h2>
-    <p>Questions? Email <a href="mailto:hello@frankiemoji.com">hello@frankiemoji.com</a>.</p>
+    <p>If you have questions about these Terms or need help with a custom agreement, use our contact form below.</p>
+
+    <div class="inline-actions">
+      <button class="btn" onclick="location.href='contact.html'">Go to contact page</button>
+    </div>
   </main>
 
+  <!-- footer -->
   <footer class="site-footer">
     <div class="footer-inner">
-      <p>© 2025 Frankiemoji™ Studios LLC. All Rights Reserved.</p>
+      <p>© 2025 Frankiemoji™ Studios LLC. All Rights Reserved. Born with a Pencil. Evolved with Technology.</p>
       <div class="footer-links">
         <a href="privacy.html">Privacy</a>
         <a href="terms.html">Terms</a>
+        <a href="contact.html">Contact</a>
       </div>
     </div>
   </footer>
+
+  <!-- marquee JS: same pattern as contact, pulls every .webp in /Emoji/images except *white.webp -->
+  <script>
+    (async function () {
+      const OWNER = "martinez-frank";
+      const REPO = "Emoji1";
+      const PATH = "images";
+      const row = document.getElementById("termsEmojiMarquee");
+      if (!row) return;
+
+      try {
+        const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`);
+        const files = await res.json();
+
+        let emojis = (Array.isArray(files) ? files : [])
+          .filter(f => f.type === "file")
+          .filter(f => f.name.toLowerCase().endsWith(".webp"))
+          .filter(f => !f.name.toLowerCase().includes("white"))
+          .map(f => f.name);
+
+        // shuffle
+        emojis = emojis.sort(() => Math.random() - 0.5);
+
+        const fill = (list) => {
+          list.forEach(name => {
+            const img = document.createElement("img");
+            img.src = `${PATH}/${name}`;
+            img.alt = name;
+            img.className = "marq-img";
+            row.appendChild(img);
+          });
+        };
+
+        fill(emojis);
+        fill(emojis); // duplicate for smooth scroll
+      } catch (err) {
+        console.warn("Could not load marquee images for terms page", err);
+      }
+    })();
+  </script>
 </body>
 </html>
