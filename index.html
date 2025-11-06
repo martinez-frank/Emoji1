@@ -69,9 +69,41 @@
     .marq-img{width:128px;height:128px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
     @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
     @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-    .track-left{animation:scrollLeft 54s linear infinite}
-    .track-right{animation:scrollRight 57s linear infinite}
     .marquee-wrap { margin-bottom: 36px; }
+
+    /* ✅ Additions for dual-row marquee and filtering */
+    .track-left { animation: scrollLeft 54s linear infinite; }
+    .track-right { animation: scrollRight 57s linear infinite; }
+
+    /* ensure both rows have consistent spacing */
+    .marquee-wrap {
+    overflow: hidden;
+    margin-top: 8px;
+    margin-bottom: 36px;
+    }
+
+    /* base marquee row style */
+   .marquee {
+   display: flex;
+   gap: 16px;
+   padding: 8px 0;
+   will-change: transform;
+   }
+
+   /* individual emoji tile */
+   .marq-img {
+   height: 128px;
+   object-fit: contain;
+   border-radius: 16px;
+   box-shadow: 0 2px 8px rgba(0,0,0,.06);
+   background: #fff;
+   flex: 0 0 auto;
+   }
+
+   /* hide any “white” background image variants */
+   .marquee img[src*="white"] {
+   display: none !important;
+  }
 
     /* Pricing */
     .pricing { background:var(--paper); padding:48px 0; border-top: 1px solid #e8dfcc; }
@@ -174,10 +206,10 @@
     <p class="hero-sub">Each emoji, handcrafted. Every face, unique. Your expressions — elevated.</p>
 
     <!-- Emoji carousel -->
-   <div class="marquee-wrap">
-  <div class="marquee track-left" id="emojiMarquee"></div>
-</div>
-
+     <div class="marquee-wrap">
+    <div class="marquee track-left" id="emojiMarquee"></div>
+    <div class="marquee track-right" id="emojiMarquee2"></div>
+  </div>
   </section>
 
   <!-- Pricing -->
@@ -284,61 +316,10 @@
 
   <!-- Marquee JS (unchanged) -->
   <script>
-  (function(){
-    const CONF={owner:"martinez-frank",repo:"Emoji1",branch:"main",exclude:["starter","standard","premium"]};
-    const topEl=document.getElementById("marquee-top");
-    const btmEl=document.getElementById("marquee-btm");
-    if(!topEl||!btmEl) return;
-
-    const EXCLUDE=(CONF.exclude||[]).map(s=>s.toLowerCase());
-    const EXTRA=[/\.ds_store/i,/manifest/i,/%20/];
-    const isOut=s=>{s=(s||"").toLowerCase();return EXCLUDE.some(x=>s.includes(x))||EXTRA.some(rx=>rx.test(s));};
-    const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
-    const build=urls=>{const frag=document.createDocumentFragment();urls.concat(urls).forEach(src=>{const img=new Image();img.className="marq-img";img.loading="lazy";img.decoding="async";img.alt="Frankiemoji expression";img.src=src;img.width=128;img.height=128;img.onerror=()=>img.remove();frag.appendChild(img);});return frag;};
-
-    async function fromGitHub(){
-      try{
-        const url=`https://api.github.com/repos/${CONF.owner}/${CONF.repo}/contents/images?ref=${CONF.branch}`;
-        const res=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
-        if(!res.ok) throw 0;
-        const items=await res.json();
-        return items.filter(it=>it.type==="file")
-                    .filter(it => /\.webp$/i.test(it.name))
-                    .filter(it=>!isOut(it.name)&&!isOut(it.path))
-                    .map(it=>it.download_url);
-      }catch{ return []; }
-    }
-    async function fromManifest(){
-      try{
-        const res=await fetch("images/manifest.json",{cache:"no-store"});
-        if(!res.ok) throw 0;
-        const arr=await res.json();
-        return arr.filter(x=>/\.(png|jpe?g|webp|gif)$/i.test(x)&&!isOut(x));
-      }catch{ return []; }
-    }
-
-    (async()=>{
-      let urls=await fromGitHub();
-      if(!urls.length) urls=await fromManifest();
-      if(!urls.length) urls=["images/e01.webp","images/e02.webp","images/e03.webp","images/e04.webp"];
-      urls=shuffle([...new Set(urls)]);
-      topEl.appendChild(build(urls));
-      btmEl.appendChild(build([...urls].reverse()));
-      topEl.style.animationDuration=(54+Math.random()*2).toFixed(2)+"s";
-      btmEl.style.animationDuration=(57+Math.random()*2).toFixed(2)+"s";
-      document.querySelectorAll(".marquee").forEach(m=>{
-        m.addEventListener("mouseenter",()=>m.style.animationPlayState="paused");
-        m.addEventListener("mouseleave",()=>m.style.animationPlayState="running");
-      });
-    })();
-  })();
-  </script>
-  </script>
-  <script>
-  // point to the repo that actually has the emoji images
+  // GitHub: where emoji images actually live
   const GH_OWNER = "martinez-frank";
-  const GH_REPO = "Emoji1";        // <-- was martinez-frank.github.io
-  const IMAGES_PATH = "images";    // <-- was Emoji/images
+  const GH_REPO = "Emoji1";     // your emoji repo
+  const IMAGES_PATH = "images"; // folder in that repo
 
   async function loadMarqueeEmojis() {
     try {
@@ -353,32 +334,38 @@
         return;
       }
 
-      // keep only .webp and exclude “white”
+      // keep only .webp and exclude any with "white"
       let emojis = files
         .filter(f => f.type === "file")
         .filter(f => f.name.toLowerCase().endsWith(".webp"))
         .filter(f => !f.name.toLowerCase().includes("white"))
         .map(f => f.name);
 
-      // shuffle
+      // shuffle for variety
       emojis = emojis.sort(() => Math.random() - 0.5);
 
-      const marquee = document.getElementById("emojiMarquee");
-      if (!marquee) return;
+      const row1 = document.getElementById("emojiMarquee");
+      const row2 = document.getElementById("emojiMarquee2");
+      if (!row1 || !row2) return;
 
-      function addRun(list) {
+      function addRun(el, list) {
         list.forEach(name => {
           const img = document.createElement("img");
-          img.src = `${IMAGES_PATH}/${name}`;   // /images/filename.webp
+          img.src = `${IMAGES_PATH}/${name}`;
           img.alt = name;
           img.className = "marq-img";
-          marquee.appendChild(img);
+          el.appendChild(img);
         });
       }
 
-      // add 2 runs for continuous scroll
-      addRun(emojis);
-      addRun(emojis);
+      // top row: normal order, twice
+      addRun(row1, emojis);
+      addRun(row1, emojis);
+
+      // bottom row: reverse order, twice
+      const reversed = [...emojis].reverse();
+      addRun(row2, reversed);
+      addRun(row2, reversed);
 
     } catch (e) {
       console.error("Could not load emojis", e);
@@ -387,7 +374,6 @@
 
   loadMarqueeEmojis();
 </script>
-
 
 </body>
 </html>
