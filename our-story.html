@@ -530,26 +530,10 @@ ul.clean li{margin:.25rem 0}
     </div>
   </section>
    <!-- Drawing marquee (single row, continuous loop) -->
+<!-- Marquee -->
 <div class="marquee-wrap drawing-marquee" aria-hidden="true">
-  <div class="marquee track-left">
-    <!-- first run -->
-    <img src="images/story/story-drawing-1.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 1" />
-    <img src="images/story/story-drawing-2.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 2" />
-    <img src="images/story/story-drawing-3.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 3" />
-    <img src="images/story/story-drawing-4.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 4" />
-    <img src="images/story/story-drawing-5.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 5" />
-    <img src="images/story/story-drawing-6.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 6" />
-    <img src="images/story/story-drawing-7.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 7" />
-    <img src="images/story/story-drawing-8.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 8" />
-    <img src="images/story/story-drawing-9.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 9" />
-    <!-- 👇 your new ones -->
-    <img src="images/story/story-drawing-10.webp" class="marq-img drawing-img" alt="Frankiemoji sketch 10" />
-    <img src="images/story/story-drawing-11.webp" class="marq-img drawing-img" alt="Frankiemoji sketch 11" />
-    <img src="images/story/story-drawing-12.webp" class="marq-img drawing-img" alt="Frankiemoji sketch 12" />
-    <!-- detail shot -->
-    <img src="images/story/story-drawing-detail.webp" class="marq-img drawing-img" alt="Frankiemoji sketch detail" />
-
-    <!-- second run (repeat in same order to make scroll seamless) -->
+  <div class="marquee track-left" id="drawingMarquee">
+    <!-- original list + your new ones -->
     <img src="images/story/story-drawing-1.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 1" />
     <img src="images/story/story-drawing-2.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 2" />
     <img src="images/story/story-drawing-3.webp"  class="marq-img drawing-img" alt="Frankiemoji sketch 3" />
@@ -564,6 +548,9 @@ ul.clean li{margin:.25rem 0}
     <img src="images/story/story-drawing-12.webp" class="marq-img drawing-img" alt="Frankiemoji sketch 12" />
     <img src="images/story/story-drawing-detail.webp" class="marq-img drawing-img" alt="Frankiemoji sketch detail" />
   </div>
+
+  <!-- you can leave this second row empty or add more later -->
+  <div id="mq2" class="marquee track-right"></div>
 </div>
 
   <!-- From pencil to pixels -->
