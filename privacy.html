@@ -7,220 +7,187 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --cream: #FAF3E0;
-      --espresso: #2C2419;
-      --graphite: #5F5B53;
-      --accent: #D8742B;
-      --paper: #FFFFFF;
+      --cream:#F7ECD3;
+      --espresso:#2C2419;
+      --paper:#FFFFFF;
+      --accent:#D8742B;
+      --amber:#F0C06C;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--cream);
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      color: var(--espresso);
+    * { box-sizing:border-box; }
+    html, body {
+      margin:0;
+      padding:0;
+      background:var(--cream);
+      color:var(--espresso);
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     }
 
-    /* marquee like contact/terms */
+    /* top marquee */
     .marquee-wrap {
-      overflow: hidden;
-      border-bottom: 1px solid rgba(0,0,0,.05);
-      background: #f6e8d0;
+      overflow:hidden;
+      border-bottom:1px solid rgba(0,0,0,.05);
+      background:#F3DEC0;
     }
     .marquee {
-      display: flex;
-      gap: 16px;
-      padding: 8px 0;
-      will-change: transform;
+      display:flex;
+      gap:16px;
+      padding:10px 0;
+      will-change:transform;
     }
     .marq-img {
-      width: 92px;
-      height: 92px;
-      object-fit: contain;
-      border-radius: 16px;
-      background: #fff;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06);
-      flex: 0 0 auto;
+      width:118px;
+      height:118px;
+      object-fit:contain;
+      border-radius:14px;
+      background:#fff;
+      box-shadow:0 3px 10px rgba(0,0,0,.04);
+      flex:0 0 auto;
     }
-    @keyframes scrollLeft {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    .track-left { animation: scrollLeft 56s linear infinite; }
+    @keyframes scrollLeft { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    @keyframes scrollRight { 0%{transform:translateX(-50%)} 100%{transform:translateX(0)} }
+    .track-left { animation:scrollLeft 54s linear infinite; }
+    .track-right { animation:scrollRight 57s linear infinite; }
 
-    /* top nav pills */
-    .top-links {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      padding: 16px 0 6px;
+    /* top nav buttons (centered) */
+    .top-buttons {
+      text-align:center;
+      padding:14px 0 6px;
+      background:var(--cream);
     }
-    .nav-pill {
-      border: none;
-      background: #fff;
-      color: var(--espresso);
-      padding: 7px 20px;
-      border-radius: 999px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: transform .1s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    .top-buttons .btn-nav {
+      border:none;
+      background:#D8742B;
+      color:#fff;
+      font-weight:600;
+      padding:7px 28px;
+      border-radius:999px;
+      cursor:pointer;
+      margin:0 4px;
+      font-size:14px;
     }
-    .nav-pill.primary {
-      background: var(--accent);
-      color: #fff;
-    }
-    .nav-pill:hover {
-      transform: translateY(-1px);
+    .top-buttons .btn-nav.secondary {
+      background:#D8742B; /* keep same color as you asked */
     }
 
-    /* card */
-    .privacy-shell {
-      max-width: 680px;
-      margin: 18px auto 48px;
-      background: #fff;
-      border-radius: 14px;
-      padding: 26px 26px 30px;
-      box-shadow: 0 4px 16px rgba(0,0,0,.03);
+    /* main card */
+    .content-shell {
+      max-width:720px;            /* ← match terms width */
+      margin:16px auto 44px;
+      background:#fff;
+      border-radius:14px;
+      padding:28px 28px 32px;
+      box-shadow:0 10px 32px rgba(0,0,0,.03);
     }
-    .privacy-title {
-      font-size: 1.35rem;
-      margin-bottom: 3px;
+    h1 {
+      font-size:1.4rem;
+      margin:0 0 .35rem;
     }
-    .privacy-sub {
-      font-size: .78rem;
-      color: rgba(44,36,25,.65);
-      margin-bottom: 18px;
+    .muted {
+      font-size:.78rem;
+      color:rgba(44,36,25,.55);
+      margin-bottom:1.25rem;
     }
-    .privacy-shell h2 {
-      font-size: .9rem;
-      margin-top: 16px;
-      margin-bottom: 6px;
+    .section-title {
+      font-weight:600;
+      margin:1.1rem 0 .3rem;
     }
-    .privacy-shell p {
-      font-size: .82rem;
-      line-height: 1.5;
-      margin-top: 0;
-      color: rgba(44,36,25,.92);
+    p {
+      margin:.3rem 0;
+      line-height:1.5;
+      font-size:.87rem;
     }
-    .btn {
-      display: inline-block;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 8px 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .inline-actions {
-      margin-top: 16px;
+
+    .btn-primary {
+      background:var(--accent);
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      padding:8px 18px;
+      font-weight:600;
+      cursor:pointer;
+      margin-top:1.3rem;
     }
 
     /* footer */
     .site-footer {
-      border-top: 1px solid rgba(0,0,0,.03);
-      background: #fdf7ee;
-      padding: 1.5rem 0 2.5rem;
-      text-align: center;
-    }
-    .site-footer p {
-      font-size: 0.78rem;
-      color: rgba(44,36,25,.85);
-      margin-bottom: 0.55rem;
+      border-top:1px solid rgba(0,0,0,.03);
+      background:#fdf7ee;
+      text-align:center;
+      padding:1.6rem 0 2.5rem;
+      font-size:.72rem;
+      color:rgba(44,36,25,.85);
     }
     .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
+      margin-top:.5rem;
+      display:flex;
+      justify-content:center;
+      gap:1.4rem;
     }
     .footer-links a {
-      text-decoration: none;
-      color: rgba(44,36,25,.85);
-      font-size: .78rem;
-      font-weight: 500;
+      text-decoration:none;
+      color:rgba(44,36,25,.85);
+      font-weight:500;
     }
     .footer-links a:hover {
-      text-decoration: underline;
+      text-decoration:underline;
     }
-    @media (max-width: 740px) {
-      .privacy-shell { margin: 16px 16px 48px; }
-      .marq-img { width: 78px; height: 78px; }
-      .footer-links { flex-direction: column; gap: .4rem; }
+
+    @media (max-width:560px) {
+      .marq-img { width:92px; height:92px; }
+      .content-shell { margin:16px 14px 44px; padding:20px 18px 26px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- marquee -->
-  <div class="marquee-wrap">
-    <div class="marquee track-left" id="privacyMarquee">
-      <!-- fallback static emojis in case JS fails -->
-      <img src="images/frankiemoji-franklaugh.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-coricool.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-dennishappy.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-frankside.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-misslaughing.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-frankwow.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-brockhappy.webp" class="marq-img" alt="">
-      <!-- duplicated for smooth scroll -->
-      <img src="images/frankiemoji-franklaugh.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-coricool.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-dennishappy.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-frankside.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-misslaughing.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-frankwow.webp" class="marq-img" alt="">
-      <img src="images/frankiemoji-brockhappy.webp" class="marq-img" alt="">
-    </div>
+  <!-- emoji marquee -->
+  <div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee track-left" id="emojiMarquee"></div>
+    <div class="marquee track-right" id="emojiMarquee2"></div>
   </div>
 
-  <!-- top pills -->
-  <div class="top-links">
-    <button class="nav-pill primary" onclick="location.href='index.html'">Home</button>
-    <button class="nav-pill primary" onclick="location.href='our-story.html'">About</button>
+  <!-- centered buttons -->
+  <div class="top-buttons">
+    <button class="btn-nav" onclick="location.href='index.html'">Home</button>
+    <button class="btn-nav secondary" onclick="location.href='our-story.html'">About</button>
   </div>
 
-  <!-- privacy content -->
-  <main class="privacy-shell">
-    <h1 class="privacy-title">Privacy Policy</h1>
-    <p class="privacy-sub">Effective date: November 4, 2025</p>
+  <!-- main privacy card -->
+  <main class="content-shell">
+    <h1>Privacy Policy</h1>
+    <p class="muted">Effective date: November 4, 2025</p>
 
-    <h2>1. What this policy covers</h2>
+    <p class="section-title">1. What this policy covers</p>
     <p>This policy explains how Frankiemoji™ Studios LLC (“we,” “us,” or “our”) collects, uses, and protects information when you visit our website or submit materials for your emoji portraits.</p>
 
-    <h2>2. Information we collect</h2>
-    <p>We may collect basic contact details (like your name and email), order details (what pack you selected), and media you submit (selfies or reference photos) so we can create your emoji artwork.</p>
+    <p class="section-title">2. Information we collect</p>
+    <p>We may collect your contact details (like your name and email), your order details (which pack or option you chose), and any reference images you send so we can create your emoji artwork.</p>
 
-    <h2>3. How we use your information</h2>
-    <p>We use your information only to deliver the service you requested — for example, to contact you about your order, send finished artwork, or follow up on a custom/commissioned request.</p>
+    <p class="section-title">3. How we use your information</p>
+    <p>We use your info only to deliver the service you requested — for example, to contact you about your order, deliver the finished files, or follow up on a custom / commissioned request.</p>
 
-    <h2>4. Artwork and likeness</h2>
-    <p>Images or likenesses you send to us are used solely for creating your ordered emoji portraits or related artwork. We don’t resell, share, or post your materials outside of fulfilling your order unless you’ve given us permission.</p>
+    <p class="section-title">4. Artwork & likeness</p>
+    <p>Images or likenesses you send are used solely for creating your ordered emoji portraits or related artwork. We don’t resell, share, or post your materials outside of fulfilling your order unless you’ve given us permission.</p>
 
-    <h2>5. Storage & security</h2>
-    <p>We keep project files only as long as reasonably necessary to complete or support your order. We use reasonable safeguards to protect your data, but no method of storage or transmission is 100% secure.</p>
+    <p class="section-title">5. Storage & security</p>
+    <p>We keep project files only as long as reasonably necessary to complete or support your order. We use reasonable safeguards, but no method of storage or transmission is 100% secure.</p>
 
-    <h2>6. Sharing</h2>
-    <p>We don’t sell your personal information. We may share limited data with service providers (for example, email delivery) strictly to help us deliver your emoji pack.</p>
+    <p class="section-title">6. Cookies & analytics</p>
+    <p>We may use simple analytics to understand traffic and improve our pages. You can control cookies through your browser.</p>
 
-    <h2>7. Cookies & analytics</h2>
-    <p>Our site may use basic cookies or analytics to understand page performance and improve the experience. You can turn off cookies in your browser if you prefer.</p>
+    <p class="section-title">7. Children</p>
+    <p>Our services are meant for adults, parents, teams, and event planners. If you submit images of children, you confirm you have the right to do so.</p>
 
-    <h2>8. Children</h2>
-    <p>Our services are intended for grown-ups, parents, teams, and event planners. If you submit images of children, you confirm you have the right to do so.</p>
-
-    <h2>9. Changes to this policy</h2>
+    <p class="section-title">8. Changes to this policy</p>
     <p>We may update this Privacy Policy from time to time. When we do, we’ll update the date at the top of this page.</p>
 
-    <h2>10. Questions</h2>
-    <p>Need to clarify how your images or details are used? Reach out and we’ll walk you through it.</p>
+    <p class="section-title">9. Questions</p>
+    <p>Need to clarify how your images or details are used? Reach out — we’ll walk you through it.</p>
 
-    <div class="inline-actions">
-      <button class="btn" onclick="location.href='contact.html'">Contact</button>
-    </div>
+    <button class="btn-primary" onclick="location.href='contact.html'">Contact</button>
   </main>
 
-  <!-- footer -->
+  <!-- footer (same as terms/contact) -->
   <footer class="site-footer">
     <p>© 2025 Frankiemoji™ Studios LLC. All Rights Reserved. Born with a Pencil. Evolved with Technology.</p>
     <div class="footer-links">
@@ -230,11 +197,54 @@
     </div>
   </footer>
 
-  <!-- optional JS to auto-pull emoji images like on index/about (only if you want to swap to live list) -->
-  <!--
+  <!-- auto-load marquee images (same logic as terms) -->
   <script>
-    // same pattern we used on other pages, omitted here for simplicity
+  (async function () {
+    const OWNER = "martinez-frank";
+    const REPO  = "Emoji1";
+    const PATH  = "images"; // where all frankiemoji-*.webp live
+
+    const row1 = document.getElementById("emojiMarquee");
+    const row2 = document.getElementById("emojiMarquee2");
+    if (!row1 || !row2) return;
+
+    try {
+      const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`);
+      const files = await res.json();
+
+      let emojis = files
+        .filter(f => f.type === "file")
+        .filter(f => f.name.toLowerCase().endsWith(".webp"))
+        .filter(f => !f.name.toLowerCase().includes("white"))
+        .map(f => f.name);
+
+      // randomize
+      emojis = emojis.sort(() => Math.random() - 0.5);
+
+      function fillRow(el, list) {
+        list.forEach(name => {
+          const img = document.createElement("img");
+          img.src = `${PATH}/${name}`;
+          img.alt = name;
+          img.className = "marq-img";
+          el.appendChild(img);
+        });
+        // duplicate for seamless scroll
+        list.forEach(name => {
+          const img = document.createElement("img");
+          img.src = `${PATH}/${name}`;
+          img.alt = name;
+          img.className = "marq-img";
+          el.appendChild(img);
+        });
+      }
+
+      fillRow(row1, emojis);
+      fillRow(row2, [...emojis].reverse());
+    } catch (e) {
+      console.error("Could not load privacy marquee:", e);
+    }
+  })();
   </script>
-  -->
 </body>
 </html>
