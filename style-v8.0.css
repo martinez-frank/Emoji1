@@ -102,6 +102,14 @@ img{display:block;max-width:100%}
   text-align:center;
   padding:28px 28px 22px;
 }
+
+ /* keep expression chips inside the upload box */
+ .card.upload,
+ .card.upload-card {
+  overflow: hidden;
+  padding-bottom: 24px;
+}
+
 .upload-card h3{margin:0 0 10px}
 
 /* ---------- Pricing (images as cards) ---------- */
