@@ -109,7 +109,10 @@ img{display:block;max-width:100%}
   overflow: hidden;
   padding-bottom: 24px;
 }
-
+/* hide duplicate selected expression row */
+#expr-thumbs {
+  display: none !important;
+}
 .upload-card h3{margin:0 0 10px}
 
 /* ---------- Pricing (images as cards) ---------- */
