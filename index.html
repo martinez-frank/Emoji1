@@ -2,101 +2,167 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Frankiemoji — Coming Soon</title>
+  <!-- temporary splash, don't index -->
+  <meta name="robots" content="noindex, nofollow">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      font-family: 'DM Serif Display', serif;
-      background: #FAF3E0;
-      color: #2C2419;
-      text-align: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+    :root{
+      --cream:#FAF3E0;
+      --espresso:#2C2419;
+      --paper:#FEFAF3;
     }
-    .container {
-      background: #fffdf8;
-      border-radius: 1.5rem;
-      padding: 2.4rem 2rem 1.8rem;
-      box-shadow: 0 24px 50px rgba(44,36,25,.08);
-      max-width: 440px;
-      width: 100%;
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      background:var(--cream);
+      color:var(--espresso);
+      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
     }
-    .pill {
-      display: inline-block;
-      background: #FAF3E0;
-      padding: 0.5rem 1.2rem;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      border: 1px solid rgba(44,36,25,.04);
-      margin-bottom: 1.2rem;
-      letter-spacing: 0.05rem;
+    main{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:1.6rem 1.2rem 1.6rem;
+      animation:fadeIn 1.4s ease;
     }
-    h1 {
-      font-family: 'DM Serif Display', serif;
-      font-size: 2.2rem;
-      margin: 0.5rem 0 1rem;
+    @keyframes fadeIn{
+      from{opacity:0; transform:translateY(12px);}
+      to{opacity:1; transform:none;}
     }
-    .subtitle {
-      color: rgba(44,36,25,.65);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
+    .card{
+      background:var(--paper);
+      border:1px solid rgba(44,36,25,.04);
+      border-radius:1.5rem;
+      max-width:650px;
+      width:100%;
+      text-align:center;
+      padding:2rem 2.4rem 2.1rem;
+      box-shadow:0 22px 60px rgba(44,36,25,.08);
     }
-    .countdown {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.45rem;
-      justify-items: center;
-      margin-bottom: 1.5rem;
+    .pill{
+      display:inline-block;
+      background:#FAF3E0;
+      padding:0.55rem 1.8rem;
+      border-radius:999px;
+      text-transform:uppercase;
+      font-size:0.7rem;
+      letter-spacing:0.12em;
+      font-weight:600;
+      border:1px solid rgba(44,36,25,0.04);
+      margin-bottom:1.1rem;
     }
-    .timebox {
-      background: #fff;
-      border: 1px solid rgba(44,36,25,.03);
-      border-radius: 1.3rem;
-      width: 130px;
-      padding: 1rem 0.3rem;
-      box-shadow: 0 4px 10px rgba(44,36,25,.05);
+    h1{
+      font-family:"DM Serif Display",serif;
+      font-size:2.4rem;
+      margin:0 0 .4rem;
     }
-    .timevalue {
-      font-size: 2.2rem;
-      font-weight: 700;
-      line-height: 1;
-      color: #2C2419;
+    .subtitle{
+      color:rgba(44,36,25,.65);
+      margin-bottom:1.4rem;
+      line-height:1.45;
     }
-    .timelabel {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06rem;
-      color: rgba(44,36,25,.6);
+
+    /* countdown grid (tightened) */
+    .countdown{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:0.65rem;
+      justify-items:center;
+      margin-bottom:1.1rem;
     }
-    .go-live {
-      font-family: 'Inter', sans-serif;
-      color: rgba(44,36,25,.65);
-      font-size: 0.8rem;
-      margin-top: 1.4rem;
+    .timebox{
+      background:#fff;
+      border:1px solid rgba(44,36,25,.03);
+      border-radius:1.35rem;
+      width:132px;
+      padding:1.02rem .2rem 1.02rem;
+      transition:transform .2s ease, box-shadow .2s ease;
     }
-    .black-friday {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      margin-top: 0.4rem;
+    .timebox:hover{
+      transform:translateY(-2px);
+      box-shadow:0 4px 12px rgba(44,36,25,.08);
     }
-    .logo {
-      width: 160px;
-      margin-top: 1.2rem;
-      cursor: pointer;
+    /* tick pulse (we'll add/remove .pulse in JS) */
+    @keyframes pulse {
+      0% { transform:scale(1); box-shadow:0 0 0 rgba(44,36,25,0); }
+      40% { transform:scale(1.03); box-shadow:0 0 12px rgba(44,36,25,.08); }
+      100% { transform:scale(1); box-shadow:0 0 0 rgba(44,36,25,0); }
     }
-    footer {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.7rem;
-      color: rgba(44,36,25,.5);
-      margin-top: 2rem;
+    .pulse{
+      animation:pulse 0.9s ease;
     }
-    /* Modal */
+
+    .timevalue{
+      font-size:2.47rem;
+      font-weight:700;
+      line-height:1;
+      color:var(--espresso);
+    }
+    .timelabel{
+      font-size:.63rem;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-top:.45rem;
+      opacity:.6;
+    }
+
+    .go-live{
+      font-size:.82rem;
+      color:rgba(44,36,25,.55);
+      margin-bottom:0.25rem;
+    }
+    .black-friday{
+      font-size:.95rem;
+      color:#000;
+      margin-bottom:1.3rem;
+      font-weight:700;
+      letter-spacing:0.05em;
+      text-transform:uppercase;
+    }
+
+    /* logo trigger */
+    .secret-logo{
+      text-align:center;
+      margin-top:0;
+      margin-bottom:.4rem;
+      cursor:pointer;
+      position:relative;
+    }
+    .secret-logo::before{
+      content:"";
+      position:absolute;
+      top:50%; left:50%;
+      transform:translate(-50%, -50%);
+      width:270px; height:270px;
+      background:radial-gradient(circle, rgba(250,243,224,0.6) 0%, transparent 70%);
+      z-index:-1;
+    }
+    .secret-logo img{
+      max-width:232px;
+      height:auto;
+      display:inline-block;
+      transition:transform .3s ease, filter .3s ease;
+      filter:drop-shadow(0 10px 25px rgba(44,36,25,0.05));
+    }
+    .secret-logo:hover img{
+      transform:scale(1.04);
+      filter:drop-shadow(0 14px 28px rgba(44,36,25,0.15));
+    }
+
+    footer{
+      text-align:center;
+      padding:1.2rem 1rem 1.5rem;
+      font-size:.72rem;
+      color:rgba(44,36,25,.45);
+    }
+
+    /* modal */
     .access-backdrop{
       position:fixed;
       inset:0;
@@ -142,34 +208,59 @@
       color:rgba(44,36,25,.5);
       margin-left:.35rem;
     }
-    .error-msg{color:#c0392b;font-size:.72rem;margin-top:.45rem;}
+    .error-msg{
+      color:#c0392b;
+      font-size:.72rem;
+      margin-top:.45rem;
+    }
+
+    @media (max-width:540px){
+      main{padding:1rem .9rem 1.1rem;}
+      .card{padding:1.6rem 1rem 1.6rem;}
+      h1{font-size:2.05rem;}
+      .subtitle{margin-bottom:1.1rem;}
+      .timebox{width:120px;}
+      .timevalue{font-size:2.25rem;}
+      .black-friday{margin-bottom:1.1rem;}
+      .secret-logo::before{width:210px; height:210px;}
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="pill">LAUNCH COUNTDOWN</div>
-    <h1>A World of Expressions.</h1>
-    <p class="subtitle">We’re opening the emoji studio very soon.</p>
-    <div class="countdown">
-      <div class="timebox"><div id="days" class="timevalue">17</div><div class="timelabel">Days</div></div>
-      <div class="timebox"><div id="hours" class="timevalue">04</div><div class="timelabel">Hrs</div></div>
-      <div class="timebox"><div id="minutes" class="timevalue">20</div><div class="timelabel">Mins</div></div>
-      <div class="timebox"><div id="seconds" class="timevalue">17</div><div class="timelabel">Secs</div></div>
-    </div>
-    <p class="go-live">Going live: November 28, 2025</p>
-    <p class="black-friday">BLACK FRIDAY</p>
-    <img src="images/frankiemoji-logo.webp" class="logo" alt="Frankiemoji Logo" onclick="unlockPreview()" />
-    <footer>
-      © 2025 Frankiemoji™ Studios LLC. Born with a Pencil. Evolved with Technology.
-    </footer>
-  </div>
 
-  <!-- Modal -->
+  <main>
+    <div class="card">
+      <div class="pill">Launch Countdown</div>
+      <h1>A World of Expressions.</h1>
+      <p class="subtitle">We’re opening the emoji studio very soon.</p>
+
+      <div class="countdown" id="countdown">
+        <div class="timebox"><div class="timevalue" id="days">00</div><div class="timelabel">days</div></div>
+        <div class="timebox"><div class="timevalue" id="hours">00</div><div class="timelabel">hrs</div></div>
+        <div class="timebox"><div class="timevalue" id="minutes">00</div><div class="timelabel">mins</div></div>
+        <div class="timebox"><div class="timevalue" id="seconds">00</div><div class="timelabel">secs</div></div>
+      </div>
+
+      <p class="go-live">Going live: November 28, 2025</p>
+      <p class="black-friday">Black Friday</p>
+
+      <!-- logo trigger -->
+      <div class="secret-logo" onclick="openAccessModal()">
+        <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji Logo">
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Frankiemoji™ Studios LLC. Born with a Pencil. Evolved with Technology.
+  </footer>
+
+  <!-- modal -->
   <div id="access-modal" class="access-backdrop">
     <div class="access-box">
       <h2>Pre-release access</h2>
       <p>Enter your code to view the studio preview.</p>
-      <input type="password" id="access-input" placeholder="Enter code" />
+      <input type="password" id="access-input" placeholder="Enter code">
       <button id="access-submit">Continue</button>
       <button id="access-cancel" class="secondary">Cancel</button>
       <p id="access-error" class="error-msg" style="display:none;">Code not recognized.</p>
@@ -177,23 +268,40 @@
   </div>
 
   <script>
-    // Countdown timer
-    const launchDate = new Date('November 28, 2025 00:00:00').getTime();
-    const timer = setInterval(() => {
+    // countdown
+    const launchDate = new Date("2025-11-28T00:00:00").getTime();
+    const countdownEl = document.getElementById("countdown");
+
+    const timer = setInterval(function() {
       const now = new Date().getTime();
-      const diff = launchDate - now;
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const s = Math.floor((diff % (1000 * 60)) / 1000);
-      document.getElementById('days').textContent = d;
-      document.getElementById('hours').textContent = h.toString().padStart(2,'0');
-      document.getElementById('minutes').textContent = m.toString().padStart(2,'0');
-      document.getElementById('seconds').textContent = s.toString().padStart(2,'0');
-      if(diff < 0){ clearInterval(timer); }
+      const distance = launchDate - now;
+
+      if (distance < 0) {
+        clearInterval(timer);
+        countdownEl.innerHTML = "We are live 🎉";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("days").textContent = String(days).padStart(2,'0');
+      document.getElementById("hours").textContent = String(hours).padStart(2,'0');
+      document.getElementById("minutes").textContent = String(minutes).padStart(2,'0');
+      document.getElementById("seconds").textContent = String(seconds).padStart(2,'0');
+
+      // re-trigger pulse each tick
+      const boxes = countdownEl.querySelectorAll(".timebox");
+      boxes.forEach(box => {
+        box.classList.remove("pulse");
+        void box.offsetWidth;
+        box.classList.add("pulse");
+      });
     }, 1000);
 
-    // Secret modal logic
+    // modal gate
     const SECRET_CODE = "frankiemoji2025";
     const PREVIEW_URL = "index-main.html";
 
@@ -203,7 +311,7 @@
     const cancelBtn = document.getElementById("access-cancel");
     const errorMsg = document.getElementById("access-error");
 
-    function unlockPreview(){
+    function openAccessModal(){
       modal.style.display = "flex";
       errorMsg.style.display = "none";
       input.value = "";
