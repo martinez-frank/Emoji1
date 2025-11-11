@@ -6,7 +6,7 @@ app = FastAPI(title="Frankiemoji API", version="0.0.1")
 
 @app.get("/api/hello")
 def hello():
-    return {"message": "Frankiemoji backend alive ✌️"}
+    return {"message": "Frankiemoji backend alive - peace!"}
 
 # example protected route for later
 @app.get("/api/admin/ping")
