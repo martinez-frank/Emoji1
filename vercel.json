@@ -6,11 +6,7 @@
       "use": "@vercel/python"
     },
     {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "index-main.html",
+      "src": "*.html",
       "use": "@vercel/static"
     },
     {
@@ -28,8 +24,8 @@
       "dest": "/images/$1"
     },
     {
-      "src": "/index-main.html",
-      "dest": "/index-main.html"
+      "src": "/(.+\\.html)",
+      "dest": "/$1"
     },
     {
       "src": "/(.*)",
