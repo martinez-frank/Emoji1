@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A World of Expressions — Frankiemoji</title>
+  <meta name="description" content="Each emoji, handcrafted. Every face, unique. Your expressions — elevated." />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- build: v8.3.2 -->
+  <style>
+    :root{
+      --cream:#FAF3E0;
+      --espresso:#2C2419;
+      --graphite:#5F5B53;
+      --amber:#F0C06C;
+      --accent:#D8742B;
+      --paper:#F8E8CC;
+    }
+
+    /* Hide redundant expression confirmation bubbles */
+    .selected-expressions,
+    .selected-tags,
+    #selected-expressions,
+    div[id^="selected-"],
+    div[class*="selected-expression"],
+    div[class*="selected-expressions"] {
+      display: none !important;
+    }
+
+    * { box-sizing:border-box; }
+
+    html, body {
+      margin:0;
+      padding:0;
+      background:var(--cream);
+      color:var(--espresso);
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    }
+
+    img { display:block; max-width:100%; }
+    /* Hide white-background emoji variants from marquee */
+    .marquee img[src*="white"] {
+     display: none !important;
+    }
+
+    .container { max-width:1200px; margin:0 auto; padding:0 24px; }
+
+    /* Buttons */
+    .btn{
+      display:inline-block;
+      border:1px solid transparent;
+      padding:12px 18px;
+      border-radius:12px;
+      background:#fff;
+      color:var(--espresso);
+      font-weight:600;
+      cursor:pointer;
+      transition:transform .12s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:var(--accent);color:#fff}
+
+    /* Hero + marquee */
+    .hero{text-align:center;padding:64px 0 12px}
+    .hero-title{font-size:56px;line-height:1.05;margin:0}
+    .hero-sub{color:var(--graphite);margin:10px 0 24px}
+    .marquee-wrap{overflow:hidden;margin-top:8px}
+    .marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
+    .marq-img{width:128px;height:128px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
+    @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+    .marquee-wrap { margin-bottom: 36px; }
+
+    /* ✅ Additions for dual-row marquee and filtering */
+    .track-left { animation: scrollLeft 54s linear infinite; }
+    .track-right { animation: scrollRight 57s linear infinite; }
+
+    /* ensure both rows have consistent spacing */
+    .marquee-wrap {
+    overflow: hidden;
+    margin-top: 8px;
+    margin-bottom: 36px;
+    }
+
+    /* base marquee row style */
+   .marquee {
+   display: flex;
+   gap: 16px;
+   padding: 8px 0;
+   will-change: transform;
+   }
+
+   /* individual emoji tile */
+   .marq-img {
+   height: 128px;
+   object-fit: contain;
+   border-radius: 16px;
+   box-shadow: 0 2px 8px rgba(0,0,0,.06);
+   background: #fff;
+   flex: 0 0 auto;
+   }
+
+   /* hide any “white” background image variants */
+   .marquee img[src*="white"] {
+   display: none !important;
+  }
+
+    /* Pricing */
+    .pricing { background:var(--paper); padding:48px 0; border-top: 1px solid #e8dfcc; }
+    .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;justify-items:center;max-width:900px;margin:0 auto}
+    .price-card{background:transparent;box-shadow:none;padding:0;display:flex;flex-direction:column;align-items:center;max-width:360px}
+    .price-card .price-img{width:100%;height:auto;object-fit:contain;background:#fff;padding:10px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.08);transition:box-shadow .18s ease}
+    .price-card:hover .price-img{box-shadow:0 16px 44px rgba(0,0,0,.14)}
+    .price-card .btn{width:100%;margin-top:12px;border-radius:12px}
+
+    /* restore card button width + centering on desktop */
+    .pricing .price-card .btn {
+      width: 180px;
+      display: block;
+      margin: 0 auto 0;
+    }
+    @media (max-width: 540px) {
+      .pricing .price-card .btn {
+        width: 70%;
+      }
+    }
+
+    /* Promo section */
+    #promo-section { text-align:center; margin-top:20px; }
+
+    /* Promo animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%,60% { transform: translateX(-6px); }
+      40%,80% { transform: translateX(6px); }
+    }
+    #promo-message.fade { animation: fadeIn 0.4s ease forwards; }
+    #promo-message.shake { animation: shake 0.4s ease; }
+
+    /* About button block */
+    .about-block a {
+  text-decoration: none;
+  color: #fff; /* matches your .btn color */
+    }
+    .about-block {
+      text-align:center;
+      margin:20px 0 28px;
+    }
+    .about-block .btn {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Footer */
+    .site-footer {
+    border-top: 1px solid rgba(0,0,0,.04);
+    background: #f7ebd2;
+    padding: 0.6rem 0 1.8rem;
+    text-align: center;
+    }
+
+    }
+    .footer-inner {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+    .footer-inner p {
+      font-size: 0.78rem;
+      color: rgba(44,36,25,.85);
+      margin-bottom: 0.75rem;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .footer-links a {
+      text-decoration: none;
+      color: rgba(44,36,25,.85);
+      font-weight: 500;
+      font-size: 0.82rem;
+      transition: color 0.25s ease, text-decoration-color 0.25s ease;
+    }
+    .footer-links a:hover {
+      color: var(--espresso);
+      text-decoration: underline;
+      text-decoration-color: var(--espresso);
+    }
+    @media (max-width: 720px) {
+      .footer-links {
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .hero-title{font-size:42px}
+      .marq-img{height:96px;width:96px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1 class="hero-title">A World of Expressions.</h1>
+    <p class="hero-sub">Each emoji, handcrafted. Every face, unique. Your expressions — elevated.</p>
+
+    <!-- Emoji carousel -->
+     <div class="marquee-wrap">
+    <div class="marquee track-left" id="emojiMarquee"></div>
+    <div class="marquee track-right" id="emojiMarquee2"></div>
+  </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="pricing">
+    <div class="pricing-grid">
+      <div class="price-card">
+        <img class="price-img" src="images/packs/starter.webp"  alt="Starter pack pricing"  loading="lazy" />
+        <button class="btn primary" onclick="location.href='upload.html?pack=starter'">Get Starter</button>
+      </div>
+
+      <div class="price-card">
+        <img class="price-img" src="images/packs/standard.webp" alt="Standard pack pricing" loading="lazy" />
+        <button class="btn primary" onclick="location.href='upload.html?pack=standard'">Get Standard</button>
+      </div>
+
+      <div class="price-card">
+        <img class="price-img" src="images/packs/premium.webp"  alt="Premium pack pricing"  loading="lazy" />
+        <button class="btn primary" onclick="location.href='upload.html?pack=premium'">Get Premium</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- tiny anchor -->
+  <section id="story" class="story-anchor" aria-hidden="true"></section>
+
+  <!-- Promo code section -->
+  <div id="promo-section">
+    <label for="promo-code" style="display:block; margin-bottom:8px; font-weight:500;">
+      Have a promo code?
+    </label>
+
+    <div style="display:inline-block;">
+      <input 
+        type="text" 
+        id="promo-code" 
+        placeholder="frankiemoji10"
+        style="padding:8px 12px; border:2px solid #E2C89B; border-radius:8px; font-size:15px; outline:none;"
+      >
+      <button 
+        id="apply-btn" 
+        style="background-color:#C96E27; color:white; border:none; padding:8px 14px; border-radius:8px; margin-left:6px; font-weight:600; cursor:pointer;"
+      >
+        Apply
+      </button>
+    </div>
+
+    <div id="promo-message-wrap" style="text-align:center; margin-top:12px;">
+      <p id="promo-message" 
+        style="display:none; margin:0 auto; font-weight:500; background:#FFF9EF; border:2px solid #F1D19A; border-radius:12px; padding:10px 14px; color:#2C2419; width:fit-content; max-width:320px;">
+      </p>
+    </div>
+  </div>
+
+  <!-- About button -->
+  <div class="about-block">
+    <a href="our-story.html" class="btn">About</a>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+
+      <!-- Frankiemoji logo under promo -->
+  <div style="display:flex; justify-content:center; align-items:center; margin-top:-2px; margin-bottom:-14px;">
+  <img src="images/frankiemoji-logo-main.png"
+       alt="Frankiemoji Logo"
+       style="max-width:200px; width:100%; height:auto;">
+</div>
+
+      <p style="margin-top:0;">© 2025 Frankiemoji™ Studios LLC. All Rights Reserved. Born with a Pencil. Evolved with Technology.</p>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Promo JS -->
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const applyBtn  = document.getElementById("apply-btn");
+    const promoInput = document.getElementById("promo-code");
+    const promoMsg   = document.getElementById("promo-message");
+
+    applyBtn.addEventListener("click", function () {
+      const code = promoInput.value.trim().toLowerCase();
+
+      promoMsg.classList.remove("fade", "shake");
+      promoMsg.style.display = "none";
+
+      setTimeout(() => {
+        promoMsg.style.display = "block";
+
+        if (code === "frankiemoji10") {
+          promoMsg.innerHTML = "Promo applied! 10% off your pack.";
+          promoMsg.style.borderColor = "#F1D19A";
+          promoMsg.style.background  = "#FFF9EF";
+          promoMsg.style.color       = "#2C2419";
+          promoMsg.classList.add("fade");
+        } else {
+          promoMsg.innerHTML = "❌ Invalid code. Try again.";
+          promoMsg.style.borderColor = "#F1B0A0";
+          promoMsg.style.background  = "#FFF2EF";
+          promoMsg.style.color       = "#B84129";
+          promoMsg.classList.add("shake");
+        }
+      }, 30);
+    });
+  });
+  </script>
+
+  <!-- Marquee JS (unchanged) -->
+<script>
+  // GitHub: where emoji images actually live
+  const GH_OWNER = "martinez-frank";
+  const GH_REPO = "Emoji1";
+  const IMAGES_PATH = "images";
+
+  // fallback list in case GitHub doesn't return (still point to your images/ folder)
+  const FALLBACK_EMOJIS = [
+    "frankemoji-aaronfunny.webp",
+    "frankemoji-brockangry.webp",
+    "frankemoji-brocklaugh.webp",
+    "frankemoji-brockpointing.webp",
+    "frankemoji-corihappy.webp",
+    "frankemoji-coriheart.webp",
+    "frankemoji-dennishappy.webp",
+    "frankemoji-dennisho.webp",
+    "frankemoji-dennisunglassescool.webp",
+    "frankemoji-dennisthinking.webp",
+    "frankemoji-donprofessional.webp",
+    "frankemoji-donthumbsup.webp",
+    "frankemoji-frankcomputer.webp",
+    "frankemoji-frankdrawing.webp",
+    "frankemoji-frankfunny.webp",
+    "frankemoji-frankheart.webp",
+    "frankemoji-franklaugh.webp",
+    "frankemoji-frankohno.webp",
+    "frankemoji-frankside.webp",
+    "frankemoji-franksideeye.webp",
+    "frankemoji-franksquint.webp",
+    "frankemoji-franksweat.webp",
+    "frankemoji-frankthumbsup.webp",
+    "frankemoji-franktounge.webp",
+    "frankemoji-frankwow.webp",
+    "frankemoji-frankyawn.webp",
+    "frankemoji-greatidea.webp",
+    "frankemoji-happydonsmile.webp",
+    "frankemoji-kissingheart.webp",
+    "frankemoji-misshalo.webp",
+    "frankemoji-misslaughing.webp",
+    "frankemoji-missscared.webp",
+    "frankemoji-misssmile.webp",
+    "frankemoji-sisterangry.webp",
+    "frankemoji-sisterheart.webp",
+    "frankemoji-sisterkiss.webp",
+    "frankemoji-sisterthumbsup.webp",
+    "frankemoji-sisterwink.webp"
+  ].map(name => ({
+    src: `${IMAGES_PATH}/${name}`,
+    name
+  }));
+
+  async function loadMarqueeEmojis() {
+    let emojis = [];
+
+    try {
+      // add timestamp so Safari/desktop doesn’t cache the directory request
+      const res = await fetch(
+        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${IMAGES_PATH}?t=${Date.now()}`
+      );
+      const files = await res.json();
+
+      if (Array.isArray(files)) {
+        // ✅ use GitHub's download_url so the path is ALWAYS valid
+        emojis = files
+          .filter(f => f.type === "file")
+          .filter(f => f.name.toLowerCase().endsWith(".webp"))
+          .filter(f => !f.name.toLowerCase().includes("white"))
+          .map(f => ({
+            src: f.download_url,   // ← this is the important change
+            name: f.name
+          }));
+      }
+    } catch (e) {
+      console.warn("GitHub fetch failed, will use fallback.", e);
+    }
+
+    // if nothing came back from GitHub, use local list
+    if (!emojis.length) {
+      emojis = FALLBACK_EMOJIS;
+    }
+
+    // shuffle so faces are mixed
+    emojis = emojis.sort(() => Math.random() - 0.5);
+
+    const row1 = document.getElementById("emojiMarquee");
+    const row2 = document.getElementById("emojiMarquee2");
+    if (!row1 || !row2) return;
+
+    function addRun(el, list) {
+      list.forEach(item => {
+        const img = document.createElement("img");
+        img.src = item.src;
+        img.alt = item.name;
+        img.className = "marq-img";
+        el.appendChild(img);
+      });
+    }
+
+    // top row: normal, twice
+    addRun(row1, emojis);
+    addRun(row1, emojis);
+
+    // bottom row: reversed, twice
+    const reversed = [...emojis].reverse();
+    addRun(row2, reversed);
+    addRun(row2, reversed);
+  }
+
+  loadMarqueeEmojis();
+</script>
+</body>
+</html>
