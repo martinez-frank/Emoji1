@@ -246,7 +246,7 @@
 
       <!-- logo trigger -->
       <div class="secret-logo" onclick="openAccessModal()">
-        <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji Logo">
+        <img src="images/frankiemoji-logo-main.webp" alt="Frankiemoji Logo">
       </div>
     </div>
   </main>
@@ -301,39 +301,42 @@
       });
     }, 1000);
 
-    // modal gate
-    const SECRET_CODE = "frankiemoji2025";
-    const PREVIEW_URL = "index-main.html";
+    <script>
+  // countdown (leave all your countdown code above as-is…)
 
-    const modal = document.getElementById("access-modal");
-    const input = document.getElementById("access-input");
-    const submitBtn = document.getElementById("access-submit");
-    const cancelBtn = document.getElementById("access-cancel");
-    const errorMsg = document.getElementById("access-error");
+  // modal gate
+  const SECRET_CODE = "megusta";          // <– your new code
+  const PREVIEW_URL = "index-main.html";  // <– where you actually want to go
 
-    function openAccessModal(){
-      modal.style.display = "flex";
-      errorMsg.style.display = "none";
-      input.value = "";
-      setTimeout(() => input.focus(), 50);
+  const modal = document.getElementById("access-modal");
+  const input = document.getElementById("access-input");
+  const submitBtn = document.getElementById("access-submit");
+  const cancelBtn = document.getElementById("access-cancel");
+  const errorMsg = document.getElementById("access-error");
+
+  function openAccessModal() {
+    modal.style.display = "flex";
+    errorMsg.style.display = "none";
+    input.value = "";
+    input.focus();
+  }
+
+  function checkCode() {
+    const attempt = input.value.trim();
+    if (attempt === SECRET_CODE) {
+      window.location.href = PREVIEW_URL;
+    } else {
+      errorMsg.style.display = "block";
     }
+  }
 
-    submitBtn.addEventListener("click", checkCode);
-    input.addEventListener("keydown", (e) => {
-      if(e.key === "Enter") checkCode();
-    });
-    cancelBtn.addEventListener("click", () => {
-      modal.style.display = "none";
-    });
-
-    function checkCode(){
-      const attempt = input.value.trim();
-      if(attempt === SECRET_CODE){
-        window.location.href = PREVIEW_URL;
-      } else {
-        errorMsg.style.display = "block";
-      }
-    }
-  </script>
+  submitBtn.addEventListener("click", checkCode);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") checkCode();
+  });
+  cancelBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+</script>
 </body>
 </html>
