@@ -2,26 +2,16 @@
 import os
 from typing import Optional
 
+import requests
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel
 
-# try to import supabase client
-from supabase import create_client, Client
+app = FastAPI(title="Frankiemoji API", version="0.0.3")
 
-app = FastAPI(title="Frankiemoji API", version="0.0.2")
-
-# --- Supabase setup ---
-SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_URL = os.getenv("SUPABASE_URL")  # e.g. https://xxxx.supabase.co
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 
-if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
-    # we'll still start, but uploading will fail with a clear message
-    supabase = None
-else:
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-
-# data shape from the front-end
 class UploadIn(BaseModel):
     file_url: str
     note: Optional[str] = None
@@ -29,36 +19,49 @@ class UploadIn(BaseModel):
 
 @app.post("/api/upload")
 def upload_file(payload: UploadIn):
-    # guard: do we have a client?
-    if supabase is None:
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
         raise HTTPException(
             status_code=500,
-            detail="Supabase client not initialized. Check SUPABASE_URL and SUPABASE_SERVICE_KEY.",
+            detail="Supabase env vars missing. Set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel.",
         )
 
+    # Supabase REST endpoint for table "uploads"
+    endpoint = f"{SUPABASE_URL}/rest/v1/uploads"
+
+    headers = {
+        "apikey": SUPABASE_SERVICE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+        "Content-Type": "application/json",
+        # allow inserting without specifying all columns
+        "Prefer": "return=representation",
+    }
+
+    json_payload = {
+        "file_url": payload.file_url,
+        "note": payload.note,
+    }
+
     try:
-        insert_data = {
-            "file_url": payload.file_url,
-            "note": payload.note,
-        }
-
-        result = supabase.table("uploads").insert(insert_data).execute()
-
-        return {
-            "ok": True,
-            "received": payload.file_url,
-            "note": payload.note,
-            "status": "stored-db",
-            "result": result.data,
-        }
+        resp = requests.post(endpoint, headers=headers, json=json_payload, timeout=10)
     except Exception as e:
-        # bubble up the actual reason so you can see it in Vercel logs
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Could not reach Supabase: {e}")
+
+    if resp.status_code >= 400:
+        # Bubble up Supabase error so you see it in the browser
+        raise HTTPException(status_code=resp.status_code, detail=resp.text)
+
+    return {
+        "ok": True,
+        "received": payload.file_url,
+        "note": payload.note,
+        "status": "stored-db",
+        "supabase": resp.json(),
+    }
 
 
 @app.get("/api/hello")
 def hello():
-    return {"message": "Frankiemoji backend connected to Supabase — peace!"}
+    return {"message": "Frankiemoji backend alive — HTTP mode ✅"}
 
 
 @app.get("/api/admin/ping")
@@ -66,3 +69,4 @@ def admin_ping(x_admin_token: Optional[str] = Header(None)):
     if x_admin_token != "frankiemoji2025":
         raise HTTPException(status_code=401, detail="Not authorized")
     return {"ok": True, "service": "admin", "status": "ready"}
+
