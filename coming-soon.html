@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Frankiemoji — Coming Soon</title>
+  <meta name="description" content="Frankiemoji — A world of expressions. Born with a pencil. Evolved with technology. Launching soon." />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --cream:#FAF3E0;
+      --espresso:#2C2419;
+      --paper:#FEFAF3;
+      --accent:#C47E4A;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      background:var(--cream);
+      color:var(--espresso);
+      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    /* marquee (top strip) */
+    .marquee-shell{
+      background:rgba(254,250,243,.55);
+      border-bottom:1px solid rgba(44,36,25,.03);
+      overflow:hidden;
+      white-space:nowrap;
+      padding:.55rem 0;
+    }
+    .marquee-track{
+      display:inline-block;
+      animation:scroll 20s linear infinite;
+    }
+    .marquee-track img{
+      height:58px;
+      width:auto;
+      margin:0 .55rem;
+      border-radius:1.1rem;
+      background:#f6d9a9;
+      object-fit:cover;
+    }
+    @keyframes scroll{
+      0%{transform:translateX(0);}
+      100%{transform:translateX(-50%);}
+    }
+
+    main{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:3.2rem 1.4rem 2.8rem;
+    }
+    .card{
+      background:var(--paper);
+      border:1px solid rgba(44,36,25,.04);
+      border-radius:1.5rem;
+      max-width:620px;
+      width:100%;
+      text-align:center;
+      padding:2.6rem 2.2rem 2.1rem;
+      box-shadow:0 22px 60px rgba(44,36,25,.08);
+    }
+    .pill{
+      display:inline-block;
+      background:rgba(196,126,74,.12);
+      padding:.4rem 1rem;
+      border-radius:999px;
+      text-transform:uppercase;
+      font-size:.65rem;
+      letter-spacing:.08em;
+      margin-bottom:1.2rem;
+    }
+    h1{
+      font-family:"DM Serif Display",serif;
+      font-size:2.35rem;
+      margin:0 0 .4rem;
+    }
+    .subtitle{
+      color:rgba(44,36,25,.65);
+      margin-bottom:1.8rem;
+    }
+    .countdown{
+      display:flex;
+      justify-content:center;
+      gap:1rem;
+      flex-wrap:wrap;
+      margin-bottom:1.5rem;
+    }
+    .timebox{
+      background:#fff;
+      border:1px solid rgba(44,36,25,.03);
+      border-radius:1.05rem;
+      width:90px;
+      padding:.8rem .2rem .85rem;
+    }
+    .timevalue{
+      font-size:1.7rem;
+      font-weight:700;
+      line-height:1;
+      color:var(--espresso);
+    }
+    .timelabel{
+      font-size:.62rem;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-top:.3rem;
+      opacity:.55;
+    }
+    .go-live{
+      font-size:.8rem;
+      color:rgba(44,36,25,.5);
+    }
+
+    /* secret logo button */
+    .secret-logo{
+      text-align:center;
+      margin-top:2.4rem;
+      margin-bottom:1rem;
+      /* no pointer to keep it sneaky */
+      cursor: default;
+    }
+    .secret-logo img{
+      max-width:160px;
+      height:auto;
+      display:inline-block;
+      filter:drop-shadow(0 10px 25px rgba(44,36,25,.05));
+    }
+
+    footer{
+      text-align:center;
+      padding:1.6rem 1rem 2.4rem;
+      font-size:.72rem;
+      color:rgba(44,36,25,.45);
+    }
+
+    @media (max-width:540px){
+      h1{font-size:2rem;}
+      .card{padding:2.2rem 1.1rem 1.8rem;}
+      .timebox{width:78px;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- marquee like your homepage -->
+  <div class="marquee-shell">
+    <div class="marquee-track">
+      <!-- swap with your real images in /images if needed -->
+      <img src="images/emoji-1.webp" alt="">
+      <img src="images/emoji-2.webp" alt="">
+      <img src="images/emoji-3.webp" alt="">
+      <img src="images/emoji-4.webp" alt="">
+      <img src="images/emoji-5.webp" alt="">
+      <img src="images/emoji-1.webp" alt="">
+      <img src="images/emoji-2.webp" alt="">
+      <img src="images/emoji-3.webp" alt="">
+      <img src="images/emoji-4.webp" alt="">
+      <img src="images/emoji-5.webp" alt="">
+    </div>
+  </div>
+
+  <main>
+    <div class="card">
+      <div class="pill">Launch countdown</div>
+      <h1>A World of Expressions.</h1>
+      <p class="subtitle">We’re opening the emoji studio very soon. Born with a Pencil. Evolved with Technology.</p>
+
+      <div class="countdown" id="countdown">
+        <div class="timebox">
+          <div class="timevalue" id="days">00</div>
+          <div class="timelabel">days</div>
+        </div>
+        <div class="timebox">
+          <div class="timevalue" id="hours">00</div>
+          <div class="timelabel">hrs</div>
+        </div>
+        <div class="timebox">
+          <div class="timevalue" id="minutes">00</div>
+          <div class="timelabel">mins</div>
+        </div>
+        <div class="timebox">
+          <div class="timevalue" id="seconds">00</div>
+          <div class="timelabel">secs</div>
+        </div>
+      </div>
+
+      <p class="go-live">Going live: November 28, 2025</p>
+
+      <!-- sneaky logo -->
+      <div class="secret-logo" onclick="unlockPreview()">
+        <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji">
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Frankiemoji™ Studios LLC. Born with a Pencil. Evolved with Technology.
+  </footer>
+
+  <script>
+    // countdown to 2025-11-28 00:00:00
+    const launchDate = new Date("2025-11-28T00:00:00").getTime();
+
+    const timer = setInterval(function() {
+      const now = new Date().getTime();
+      const distance = launchDate - now;
+
+      if (distance < 0) {
+        clearInterval(timer);
+        document.getElementById("countdown").innerHTML = "We are live 🎉";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("days").textContent = String(days).padStart(2,'0');
+      document.getElementById("hours").textContent = String(hours).padStart(2,'0');
+      document.getElementById("minutes").textContent = String(minutes).padStart(2,'0');
+      document.getElementById("seconds").textContent = String(seconds).padStart(2,'0');
+    }, 1000);
+
+    // sneaky logo gate
+    const PREVIEW_URL = "index.html"; // change to your Vercel preview link later
+    const SECRET_CODE = "frankiemoji2025";
+
+    function unlockPreview() {
+      const attempt = prompt("Enter pre-release code:");
+      if (attempt === SECRET_CODE) {
+        window.location.href = PREVIEW_URL;
+      } else if (attempt) {
+        alert("Code not recognized.");
+      }
+    }
+  </script>
+</body>
+</html>
