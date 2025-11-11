@@ -23,14 +23,16 @@
       flex-direction:column;
     }
 
-    /* main layout (no marquee now) */
     main{
       flex:1;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:1.6rem 1.2rem 1.6rem; /* tight top so mobile fits */
+      padding:1.6rem 1.2rem 1.6rem;
+      animation:fadeIn 1.6s ease;
     }
+    @keyframes fadeIn{from{opacity:0; transform:translateY(12px);}to{opacity:1; transform:none;}}
+
     .card{
       background:var(--paper);
       border:1px solid rgba(44,36,25,.04);
@@ -65,23 +67,39 @@
       line-height:1.45;
     }
 
-    /* countdown (5% larger) */
+    /* countdown grid */
     .countdown{
-      display:flex;
-      justify-content:center;
-      gap:1.05rem;
-      flex-wrap:wrap;
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:1.1rem;
+      justify-items:center;
       margin-bottom:1.4rem;
     }
     .timebox{
       background:#fff;
       border:1px solid rgba(44,36,25,.03);
       border-radius:1.35rem;
-      width:132px;              /* 5% bigger */
+      width:132px;
       padding:1.02rem .2rem 1.02rem;
+      transition:transform .2s ease, box-shadow .2s ease;
     }
+    .timebox:hover{
+      transform:translateY(-2px);
+      box-shadow:0 4px 12px rgba(44,36,25,.08);
+    }
+
+    /* Pulse animation */
+    @keyframes pulse {
+      0% { transform:scale(1); box-shadow:0 0 0 rgba(44,36,25,0);}
+      40% { transform:scale(1.03); box-shadow:0 0 12px rgba(44,36,25,.08);}
+      100% { transform:scale(1); box-shadow:0 0 0 rgba(44,36,25,0);}
+    }
+    .pulse {
+      animation:pulse 0.9s ease;
+    }
+
     .timevalue{
-      font-size:2.47rem;        /* 5% bigger */
+      font-size:2.47rem;
       font-weight:700;
       line-height:1;
       color:var(--espresso);
@@ -97,27 +115,44 @@
     .go-live{
       font-size:.82rem;
       color:rgba(44,36,25,.55);
-      margin-bottom:0.35rem;
+      margin-bottom:0.25rem;
     }
     .black-friday{
-      font-size:.8rem;
+      font-size:.95rem;
       color:#000;
-      margin-bottom:1.4rem;
-      font-weight:600;
+      margin-bottom:1.5rem;
+      font-weight:700;
+      letter-spacing:0.05em;
+      text-transform:uppercase;
     }
 
-    /* logo (5% bigger) */
+    /* logo */
     .secret-logo{
       text-align:center;
       margin-top:0;
       margin-bottom:.4rem;
-      cursor:default; /* sneaky */
+      cursor:pointer;
+      position:relative;
+    }
+    .secret-logo::before{
+      content:"";
+      position:absolute;
+      top:50%; left:50%;
+      transform:translate(-50%, -50%);
+      width:270px; height:270px;
+      background:radial-gradient(circle, rgba(250,243,224,0.6) 0%, transparent 70%);
+      z-index:-1;
     }
     .secret-logo img{
-      max-width:232px;  /* was 220px, +5% */
+      max-width:232px;
       height:auto;
       display:inline-block;
+      transition:transform .3s ease, filter .3s ease;
       filter:drop-shadow(0 10px 25px rgba(44,36,25,0.05));
+    }
+    .secret-logo:hover img{
+      transform:scale(1.04);
+      filter:drop-shadow(0 14px 28px rgba(44,36,25,0.15));
     }
 
     footer{
@@ -127,15 +162,15 @@
       color:rgba(44,36,25,.45);
     }
 
-    /* mobile */
     @media (max-width:540px){
       main{padding:1rem .9rem 1.1rem;}
       .card{padding:1.6rem 1rem 1.6rem;}
       h1{font-size:2.05rem;}
       .subtitle{margin-bottom:1.1rem;}
-      .timebox{width:120px;}          /* slight tighten for narrow screens */
+      .timebox{width:120px;}
       .timevalue{font-size:2.25rem;}
       .black-friday{margin-bottom:1.1rem;}
+      .secret-logo::before{width:210px; height:210px;}
     }
   </style>
 </head>
@@ -148,28 +183,15 @@
       <p class="subtitle">We’re opening the emoji studio very soon.</p>
 
       <div class="countdown" id="countdown">
-        <div class="timebox">
-          <div class="timevalue" id="days">00</div>
-          <div class="timelabel">days</div>
-        </div>
-        <div class="timebox">
-          <div class="timevalue" id="hours">00</div>
-          <div class="timelabel">hrs</div>
-        </div>
-        <div class="timebox">
-          <div class="timevalue" id="minutes">00</div>
-          <div class="timelabel">mins</div>
-        </div>
-        <div class="timebox">
-          <div class="timevalue" id="seconds">00</div>
-          <div class="timelabel">secs</div>
-        </div>
+        <div class="timebox"><div class="timevalue" id="days">00</div><div class="timelabel">days</div></div>
+        <div class="timebox"><div class="timevalue" id="hours">00</div><div class="timelabel">hrs</div></div>
+        <div class="timebox"><div class="timevalue" id="minutes">00</div><div class="timelabel">mins</div></div>
+        <div class="timebox"><div class="timevalue" id="seconds">00</div><div class="timelabel">secs</div></div>
       </div>
 
       <p class="go-live">Going live: November 28, 2025</p>
       <p class="black-friday">Black Friday</p>
 
-      <!-- secret logo gate -->
       <div class="secret-logo" onclick="unlockPreview()">
         <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji">
       </div>
@@ -181,37 +203,44 @@
   </footer>
 
   <script>
-    // countdown
     const launchDate = new Date("2025-11-28T00:00:00").getTime();
-    const timer = setInterval(function() {
+    const timer = setInterval(() => {
       const now = new Date().getTime();
       const distance = launchDate - now;
+      const cd = document.getElementById("countdown");
+
       if (distance < 0) {
         clearInterval(timer);
-        document.getElementById("countdown").innerHTML = "We are live 🎉";
+        cd.innerHTML = "We are live 🎉";
         return;
       }
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      document.getElementById("days").textContent = String(days).padStart(2,'0');
-      document.getElementById("hours").textContent = String(hours).padStart(2,'0');
-      document.getElementById("minutes").textContent = String(minutes).padStart(2,'0');
-      document.getElementById("seconds").textContent = String(seconds).padStart(2,'0');
+      const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("days").textContent = String(d).padStart(2,'0');
+      document.getElementById("hours").textContent = String(h).padStart(2,'0');
+      document.getElementById("minutes").textContent = String(m).padStart(2,'0');
+      document.getElementById("seconds").textContent = String(s).padStart(2,'0');
+
+      // Pulse sync — triggers once per second
+      const boxes = cd.querySelectorAll('.timebox');
+      boxes.forEach(b => {
+        b.classList.remove('pulse');
+        void b.offsetWidth; // reflow reset
+        b.classList.add('pulse');
+      });
     }, 1000);
 
-    // secret gate
     const SECRET_CODE = "frankiemoji2025";
-    const PREVIEW_URL = "index.html"; // swap with your Vercel preview link later
-    function unlockPreview() {
+    const PREVIEW_URL = "index.html";
+    function unlockPreview(){
       const attempt = prompt("Enter pre-release code:");
-      if (attempt === SECRET_CODE) {
-        window.location.href = PREVIEW_URL;
-      } else if (attempt) {
-        alert("Code not recognized.");
-      }
+      if(attempt === SECRET_CODE){window.location.href = PREVIEW_URL;}
+      else if(attempt){alert("Code not recognized.");}
     }
   </script>
 </body>
 </html>
+
