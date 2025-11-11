@@ -1,32 +1,48 @@
 # api/main.py
+import os
+from typing import Optional
+
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel
-from typing import Optional
-import os
+
+# try to import supabase client
 from supabase import create_client, Client
 
-# Initialize FastAPI
 app = FastAPI(title="Frankiemoji API", version="0.0.2")
 
-# Setup Supabase client
+# --- Supabase setup ---
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-# Data shape for uploads
+if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+    # we'll still start, but uploading will fail with a clear message
+    supabase = None
+else:
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
+
+# data shape from the front-end
 class UploadIn(BaseModel):
-    file_url: str  # required
-    note: Optional[str] = None  # optional field for comments
+    file_url: str
+    note: Optional[str] = None
+
 
 @app.post("/api/upload")
 def upload_file(payload: UploadIn):
+    # guard: do we have a client?
+    if supabase is None:
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase client not initialized. Check SUPABASE_URL and SUPABASE_SERVICE_KEY.",
+        )
+
     try:
-        # insert data into uploads table
-        data = {
+        insert_data = {
             "file_url": payload.file_url,
             "note": payload.note,
         }
-        result = supabase.table("uploads").insert(data).execute()
+
+        result = supabase.table("uploads").insert(insert_data).execute()
 
         return {
             "ok": True,
@@ -35,13 +51,15 @@ def upload_file(payload: UploadIn):
             "status": "stored-db",
             "result": result.data,
         }
-
     except Exception as e:
+        # bubble up the actual reason so you can see it in Vercel logs
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/hello")
 def hello():
     return {"message": "Frankiemoji backend connected to Supabase — peace!"}
+
 
 @app.get("/api/admin/ping")
 def admin_ping(x_admin_token: Optional[str] = Header(None)):
