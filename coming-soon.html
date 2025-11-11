@@ -11,7 +11,6 @@
       --cream:#FAF3E0;
       --espresso:#2C2419;
       --paper:#FEFAF3;
-      --accent:#C47E4A;
     }
     *{box-sizing:border-box;}
     body{
@@ -24,38 +23,13 @@
       flex-direction:column;
     }
 
-    /* === EMOJI MARQUEE === */
-    .marquee-shell{
-      background:rgba(254,250,243,.55);
-      border-bottom:1px solid rgba(44,36,25,.03);
-      overflow:hidden;
-      white-space:nowrap;
-      padding:.45rem 0;
-    }
-    .marquee-track{
-      display:inline-block;
-      animation:scroll 20s linear infinite;
-    }
-    .marquee-track img{
-      height:56px;
-      width:auto;
-      margin:0 .5rem;
-      border-radius:1.1rem;
-      background:#f6d9a9;
-      object-fit:cover;
-    }
-    @keyframes scroll{
-      0%{transform:translateX(0);}
-      100%{transform:translateX(-50%);}
-    }
-
-    /* === LAYOUT === */
+    /* main layout (no marquee now) */
     main{
       flex:1;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:2.4rem 1.4rem 1.8rem; /* reduced top padding */
+      padding:1.6rem 1.2rem 1.6rem; /* tight top so mobile fits */
     }
     .card{
       background:var(--paper);
@@ -64,15 +38,14 @@
       max-width:650px;
       width:100%;
       text-align:center;
-      padding:2.1rem 2.4rem 2.2rem; /* reduced top and bottom padding */
+      padding:2rem 2.4rem 2.1rem;
       box-shadow:0 22px 60px rgba(44,36,25,.08);
     }
 
-    /* === HEADER TEXT === */
     .pill{
       display:inline-block;
       background:#FAF3E0;
-      padding:0.6rem 1.9rem;
+      padding:0.55rem 1.8rem;
       border-radius:999px;
       text-transform:uppercase;
       font-size:0.7rem;
@@ -88,27 +61,27 @@
     }
     .subtitle{
       color:rgba(44,36,25,.65);
-      margin-bottom:1.5rem;
+      margin-bottom:1.4rem;
       line-height:1.45;
     }
 
-    /* === COUNTDOWN === */
+    /* countdown (5% larger) */
     .countdown{
       display:flex;
       justify-content:center;
       gap:1.05rem;
       flex-wrap:wrap;
-      margin-bottom:1.5rem;
+      margin-bottom:1.4rem;
     }
     .timebox{
       background:#fff;
       border:1px solid rgba(44,36,25,.03);
-      border-radius:1.3rem;
-      width:126px;
-      padding:1rem .2rem 1rem;
+      border-radius:1.35rem;
+      width:132px;              /* 5% bigger */
+      padding:1.02rem .2rem 1.02rem;
     }
     .timevalue{
-      font-size:2.35rem;
+      font-size:2.47rem;        /* 5% bigger */
       font-weight:700;
       line-height:1;
       color:var(--espresso);
@@ -120,6 +93,7 @@
       margin-top:.45rem;
       opacity:.6;
     }
+
     .go-live{
       font-size:.82rem;
       color:rgba(44,36,25,.55);
@@ -128,19 +102,19 @@
     .black-friday{
       font-size:.8rem;
       color:#000;
-      margin-bottom:1.5rem;
+      margin-bottom:1.4rem;
       font-weight:600;
     }
 
-    /* === LOGO === */
+    /* logo (5% bigger) */
     .secret-logo{
       text-align:center;
       margin-top:0;
       margin-bottom:.4rem;
-      cursor:default;
+      cursor:default; /* sneaky */
     }
     .secret-logo img{
-      max-width:220px;
+      max-width:232px;  /* was 220px, +5% */
       height:auto;
       display:inline-block;
       filter:drop-shadow(0 10px 25px rgba(44,36,25,0.05));
@@ -148,42 +122,25 @@
 
     footer{
       text-align:center;
-      padding:1.2rem 1rem 1.8rem;
+      padding:1.2rem 1rem 1.5rem;
       font-size:.72rem;
       color:rgba(44,36,25,.45);
     }
 
-    /* === MOBILE OPTIMIZATION === */
+    /* mobile */
     @media (max-width:540px){
-      main{padding:1.2rem 1rem 1.2rem;}   /* tighter top */
-      .card{padding:1.7rem 1rem 1.7rem;}  /* fits all in one view */
+      main{padding:1rem .9rem 1.1rem;}
+      .card{padding:1.6rem 1rem 1.6rem;}
       h1{font-size:2.05rem;}
-      .subtitle{margin-bottom:1.2rem;}
-      .timebox{width:110px;}
-      .timevalue{font-size:2.1rem;}
-      .black-friday{margin-bottom:1.3rem;}
+      .subtitle{margin-bottom:1.1rem;}
+      .timebox{width:120px;}          /* slight tighten for narrow screens */
+      .timevalue{font-size:2.25rem;}
+      .black-friday{margin-bottom:1.1rem;}
     }
   </style>
 </head>
 <body>
 
-  <!-- === MARQUEE === -->
-  <div class="marquee-shell">
-    <div class="marquee-track">
-      <img src="images/emoji-1.webp" alt="">
-      <img src="images/emoji-2.webp" alt="">
-      <img src="images/emoji-3.webp" alt="">
-      <img src="images/emoji-4.webp" alt="">
-      <img src="images/emoji-5.webp" alt="">
-      <img src="images/emoji-1.webp" alt="">
-      <img src="images/emoji-2.webp" alt="">
-      <img src="images/emoji-3.webp" alt="">
-      <img src="images/emoji-4.webp" alt="">
-      <img src="images/emoji-5.webp" alt="">
-    </div>
-  </div>
-
-  <!-- === MAIN CARD === -->
   <main>
     <div class="card">
       <div class="pill">Launch Countdown</div>
@@ -212,9 +169,9 @@
       <p class="go-live">Going live: November 28, 2025</p>
       <p class="black-friday">Black Friday</p>
 
-      <!-- === SECRET LOGO BUTTON === -->
+      <!-- secret logo gate -->
       <div class="secret-logo" onclick="unlockPreview()">
-        <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji logo">
+        <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji">
       </div>
     </div>
   </main>
@@ -224,7 +181,7 @@
   </footer>
 
   <script>
-    // Countdown timer
+    // countdown
     const launchDate = new Date("2025-11-28T00:00:00").getTime();
     const timer = setInterval(function() {
       const now = new Date().getTime();
@@ -244,13 +201,16 @@
       document.getElementById("seconds").textContent = String(seconds).padStart(2,'0');
     }, 1000);
 
-    // Secret gate logic
+    // secret gate
     const SECRET_CODE = "frankiemoji2025";
-    const PREVIEW_URL = "index.html";
-    function unlockPreview(){
+    const PREVIEW_URL = "index.html"; // swap with your Vercel preview link later
+    function unlockPreview() {
       const attempt = prompt("Enter pre-release code:");
-      if(attempt === SECRET_CODE){window.location.href = PREVIEW_URL;}
-      else if(attempt){alert("Code not recognized.");}
+      if (attempt === SECRET_CODE) {
+        window.location.href = PREVIEW_URL;
+      } else if (attempt) {
+        alert("Code not recognized.");
+      }
     }
   </script>
 </body>
