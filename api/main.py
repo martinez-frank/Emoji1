@@ -2,30 +2,47 @@
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel
 from typing import Optional
+import os
+from supabase import create_client, Client
 
-app = FastAPI(title="Frankiemoji API", version="0.0.1")
+# Initialize FastAPI
+app = FastAPI(title="Frankiemoji API", version="0.0.2")
 
-@app.get("/api/hello")
-# data shape for uploads
+# Setup Supabase client
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
+# Data shape for uploads
 class UploadIn(BaseModel):
-    file_url: str             # required
+    file_url: str  # required
     note: Optional[str] = None  # optional field for comments
-
 
 @app.post("/api/upload")
 def upload_file(payload: UploadIn):
-    # later: save to DB / Supabase / S3
-    return {
-        "ok": True,
-        "received": payload.file_url,
-        "note": payload.note,
-        "status": "stored-temp"
-    }
+    try:
+        # insert data into uploads table
+        data = {
+            "file_url": payload.file_url,
+            "note": payload.note,
+        }
+        result = supabase.table("uploads").insert(data).execute()
 
+        return {
+            "ok": True,
+            "received": payload.file_url,
+            "note": payload.note,
+            "status": "stored-db",
+            "result": result.data,
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/hello")
 def hello():
-    return {"message": "Frankiemoji backend alive - peace!"}
+    return {"message": "Frankiemoji backend connected to Supabase — peace!"}
 
-# example protected route for later
 @app.get("/api/admin/ping")
 def admin_ping(x_admin_token: Optional[str] = Header(None)):
     if x_admin_token != "frankiemoji2025":
