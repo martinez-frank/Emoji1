@@ -1,5 +1,6 @@
 # api/main.py
 from fastapi import FastAPI, Header, HTTPException
+from pydantic import BaseModel
 from typing import Optional
 
 app = FastAPI(title="Frankiemoji API", version="0.0.1")
