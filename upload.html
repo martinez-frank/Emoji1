@@ -65,6 +65,36 @@
 .track-left{animation:scrollLeft 50s linear infinite}
 .track-right{animation:scrollRight 53s linear infinite}
 
+<!-- === Frankiemoji Upload Test Section === -->
+<section class="upload-section" style="text-align:center; padding:48px 0;">
+  <h2 style="font-family:'DM Serif Display',serif; color:var(--espresso);">
+    Send Your Frankiemoji Reference
+  </h2>
+  <p style="max-width:480px; margin:12px auto; color:var(--graphite);">
+    Paste an image URL for now — Uploadcare or file picker coming next.
+  </p>
+
+  <input id="fileUrl" type="text"
+         placeholder="https://example.com/your-image.png"
+         style="width:80%; max-width:480px; padding:12px; border-radius:8px; border:1px solid #ccc;" />
+
+  <br /><br />
+
+  <textarea id="note" rows="3"
+            placeholder="Add notes for the artist (optional)"
+            style="width:80%; max-width:480px; padding:12px; border-radius:8px; border:1px solid #ccc;"></textarea>
+
+  <br /><br />
+
+  <button id="sendBtn"
+          style="background:var(--accent); color:white; padding:12px 32px; border:none; border-radius:8px; font-weight:600;">
+    Send to Studio
+  </button>
+
+  <p id="statusMsg" style="margin-top:16px; font-family:'Inter',sans-serif;"></p>
+</section>
+<!-- === End Upload Section === -->
+    
 /* Buttons */
 .btn{display:inline-block;border:none;padding:12px 20px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;transition:all .2s}
 .btn:hover{background:#b85f22;transform:translateY(-1px)}
@@ -429,5 +459,55 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     });
   })();
   </script>
+<!-- === Frankiemoji Upload Script === -->
+<script>
+  const sendBtn = document.getElementById("sendBtn");
+  const fileUrlInput = document.getElementById("fileUrl");
+  const noteInput = document.getElementById("note");
+  const statusMsg = document.getElementById("statusMsg");
+
+  sendBtn.addEventListener("click", async () => {
+    const fileUrl = fileUrlInput.value.trim();
+    const note = noteInput.value.trim();
+
+    if (!fileUrl) {
+      statusMsg.textContent = "Please enter an image URL first.";
+      statusMsg.style.color = "#c0392b";
+      return;
+    }
+
+    statusMsg.textContent = "Sending to Frankiemoji studio…";
+    statusMsg.style.color = "#444";
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          file_url: fileUrl,
+          note: note || null
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.ok) {
+        statusMsg.textContent = "✅ Upload received. We’ll start the emoji magic.";
+        statusMsg.style.color = "#2ecc71";
+        console.log("Server Response:", data);
+      } else {
+        statusMsg.textContent = "⚠️ Server responded but with an error.";
+        statusMsg.style.color = "#e67e22";
+        console.log("Server Error:", data);
+      }
+    } catch (err) {
+      statusMsg.textContent = "❌ Could not reach the Frankiemoji API.";
+      statusMsg.style.color = "#c0392b";
+      console.error(err);
+    }
+  });
+</script>
+<!-- === End Frankiemoji Upload Script === -->
+
 </body>
 </html>
