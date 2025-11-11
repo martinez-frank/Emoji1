@@ -6,6 +6,22 @@ from typing import Optional
 app = FastAPI(title="Frankiemoji API", version="0.0.1")
 
 @app.get("/api/hello")
+# data shape for uploads
+class UploadIn(BaseModel):
+    file_url: str             # required
+    note: Optional[str] = None  # optional field for comments
+
+
+@app.post("/api/upload")
+def upload_file(payload: UploadIn):
+    # later: save to DB / Supabase / S3
+    return {
+        "ok": True,
+        "received": payload.file_url,
+        "note": payload.note,
+        "status": "stored-temp"
+    }
+
 def hello():
     return {"message": "Frankiemoji backend alive - peace!"}
 
