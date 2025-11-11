@@ -4,43 +4,58 @@ from typing import Optional
 
 import requests
 from fastapi import FastAPI, Header, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-app = FastAPI(title="Frankiemoji API", version="0.0.3")
+app = FastAPI(title="Frankiemoji API", version="0.0.4")
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")  # e.g. https://xxxx.supabase.co
+# allow your sites to call this API
+origins = [
+    "https://frankiemoji.com",
+    "https://www.frankiemoji.com",
+    "https://emoji1-sandy.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:5173",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
-
+UPLOAD_SECRET = os.getenv("FRANKIEMOJI_UPLOAD_SECRET")  # optional
 
 class UploadIn(BaseModel):
     file_url: str
     note: Optional[str] = None
 
-
 @app.get("/api/upload")
 def upload_info():
-    return {
-        "detail": "This endpoint accepts POST with JSON: { 'file_url': '...', 'note': '...' }"
-    }
+    return {"detail": "This endpoint accepts POST with JSON: { 'file_url': '...', 'note': '...' }"}
 
-def upload_file(payload: UploadIn):
+@app.post("/api/upload")
+def upload_file(payload: UploadIn, x_upload_key: Optional[str] = Header(None)):
+    # if you set FRANKIEMOJI_UPLOAD_SECRET in Vercel, enforce it
+    if UPLOAD_SECRET and x_upload_key != UPLOAD_SECRET:
+        raise HTTPException(status_code=401, detail="Not authorized")
+
     if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
         raise HTTPException(
             status_code=500,
             detail="Supabase env vars missing. Set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel.",
         )
 
-    # Supabase REST endpoint for table "uploads"
     endpoint = f"{SUPABASE_URL}/rest/v1/uploads"
-
     headers = {
         "apikey": SUPABASE_SERVICE_KEY,
         "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
         "Content-Type": "application/json",
-        # allow inserting without specifying all columns
         "Prefer": "return=representation",
     }
-
     json_payload = {
         "file_url": payload.file_url,
         "note": payload.note,
@@ -52,7 +67,6 @@ def upload_file(payload: UploadIn):
         raise HTTPException(status_code=500, detail=f"Could not reach Supabase: {e}")
 
     if resp.status_code >= 400:
-        # Bubble up Supabase error so you see it in the browser
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
 
     return {
@@ -63,15 +77,6 @@ def upload_file(payload: UploadIn):
         "supabase": resp.json(),
     }
 
-
 @app.get("/api/hello")
 def hello():
-    return {"message": "Frankiemoji backend alive — HTTP mode ✅"}
-
-
-@app.get("/api/admin/ping")
-def admin_ping(x_admin_token: Optional[str] = Header(None)):
-    if x_admin_token != "frankiemoji2025":
-        raise HTTPException(status_code=401, detail="Not authorized")
-    return {"ok": True, "service": "admin", "status": "ready"}
-
+    return {"message": "Frankiemoji backend alive — CORS ready ✅"}
