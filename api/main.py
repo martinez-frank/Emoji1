@@ -17,7 +17,12 @@ class UploadIn(BaseModel):
     note: Optional[str] = None
 
 
-@app.post("/api/upload")
+@app.get("/api/upload")
+def upload_info():
+    return {
+        "detail": "This endpoint accepts POST with JSON: { 'file_url': '...', 'note': '...' }"
+    }
+
 def upload_file(payload: UploadIn):
     if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
         raise HTTPException(
