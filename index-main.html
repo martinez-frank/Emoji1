@@ -2,438 +2,338 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>A World of Expressions — Frankiemoji</title>
-  <meta name="description" content="Each emoji, handcrafted. Every face, unique. Your expressions — elevated." />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- build: v8.3.2 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Frankiemoji — Coming Soon</title>
+  <!-- temporary splash, don't index -->
+  <meta name="robots" content="noindex, nofollow">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
       --cream:#FAF3E0;
       --espresso:#2C2419;
-      --graphite:#5F5B53;
-      --amber:#F0C06C;
-      --accent:#D8742B;
-      --paper:#F8E8CC;
+      --paper:#FEFAF3;
     }
-
-    /* Hide redundant expression confirmation bubbles */
-    .selected-expressions,
-    .selected-tags,
-    #selected-expressions,
-    div[id^="selected-"],
-    div[class*="selected-expression"],
-    div[class*="selected-expressions"] {
-      display: none !important;
-    }
-
-    * { box-sizing:border-box; }
-
-    html, body {
+    *{box-sizing:border-box;}
+    body{
       margin:0;
-      padding:0;
       background:var(--cream);
       color:var(--espresso);
-      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
     }
-
-    img { display:block; max-width:100%; }
-    /* Hide white-background emoji variants from marquee */
-    .marquee img[src*="white"] {
-     display: none !important;
+    main{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:1.6rem 1.2rem 1.6rem;
+      animation:fadeIn 1.4s ease;
     }
-
-    .container { max-width:1200px; margin:0 auto; padding:0 24px; }
-
-    /* Buttons */
-    .btn{
-      display:inline-block;
-      border:1px solid transparent;
-      padding:12px 18px;
-      border-radius:12px;
-      background:#fff;
-      color:var(--espresso);
-      font-weight:600;
-      cursor:pointer;
-      transition:transform .12s ease;
+    @keyframes fadeIn{
+      from{opacity:0; transform:translateY(12px);}
+      to{opacity:1; transform:none;}
     }
-    .btn:hover{transform:translateY(-1px)}
-    .btn.primary{background:var(--accent);color:#fff}
-
-    /* Hero + marquee */
-    .hero{text-align:center;padding:64px 0 12px}
-    .hero-title{font-size:56px;line-height:1.05;margin:0}
-    .hero-sub{color:var(--graphite);margin:10px 0 24px}
-    .marquee-wrap{overflow:hidden;margin-top:8px}
-    .marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
-    .marq-img{width:128px;height:128px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
-    @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-    .marquee-wrap { margin-bottom: 36px; }
-
-    /* ✅ Additions for dual-row marquee and filtering */
-    .track-left { animation: scrollLeft 54s linear infinite; }
-    .track-right { animation: scrollRight 57s linear infinite; }
-
-    /* ensure both rows have consistent spacing */
-    .marquee-wrap {
-    overflow: hidden;
-    margin-top: 8px;
-    margin-bottom: 36px;
-    }
-
-    /* base marquee row style */
-   .marquee {
-   display: flex;
-   gap: 16px;
-   padding: 8px 0;
-   will-change: transform;
-   }
-
-   /* individual emoji tile */
-   .marq-img {
-   height: 128px;
-   object-fit: contain;
-   border-radius: 16px;
-   box-shadow: 0 2px 8px rgba(0,0,0,.06);
-   background: #fff;
-   flex: 0 0 auto;
-   }
-
-   /* hide any “white” background image variants */
-   .marquee img[src*="white"] {
-   display: none !important;
-  }
-
-    /* Pricing */
-    .pricing { background:var(--paper); padding:48px 0; border-top: 1px solid #e8dfcc; }
-    .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;justify-items:center;max-width:900px;margin:0 auto}
-    .price-card{background:transparent;box-shadow:none;padding:0;display:flex;flex-direction:column;align-items:center;max-width:360px}
-    .price-card .price-img{width:100%;height:auto;object-fit:contain;background:#fff;padding:10px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.08);transition:box-shadow .18s ease}
-    .price-card:hover .price-img{box-shadow:0 16px 44px rgba(0,0,0,.14)}
-    .price-card .btn{width:100%;margin-top:12px;border-radius:12px}
-
-    /* restore card button width + centering on desktop */
-    .pricing .price-card .btn {
-      width: 180px;
-      display: block;
-      margin: 0 auto 0;
-    }
-    @media (max-width: 540px) {
-      .pricing .price-card .btn {
-        width: 70%;
-      }
-    }
-
-    /* Promo section */
-    #promo-section { text-align:center; margin-top:20px; }
-
-    /* Promo animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20%,60% { transform: translateX(-6px); }
-      40%,80% { transform: translateX(6px); }
-    }
-    #promo-message.fade { animation: fadeIn 0.4s ease forwards; }
-    #promo-message.shake { animation: shake 0.4s ease; }
-
-    /* About button block */
-    .about-block a {
-  text-decoration: none;
-  color: #fff; /* matches your .btn color */
-    }
-    .about-block {
+    .card{
+      background:var(--paper);
+      border:1px solid rgba(44,36,25,.04);
+      border-radius:1.5rem;
+      max-width:650px;
+      width:100%;
       text-align:center;
-      margin:20px 0 28px;
+      padding:2rem 2.4rem 2.1rem;
+      box-shadow:0 22px 60px rgba(44,36,25,.08);
     }
-    .about-block .btn {
-      background: var(--accent);
-      color: #fff;
+    .pill{
+      display:inline-block;
+      background:#FAF3E0;
+      padding:0.55rem 1.8rem;
+      border-radius:999px;
+      text-transform:uppercase;
+      font-size:0.7rem;
+      letter-spacing:0.12em;
+      font-weight:600;
+      border:1px solid rgba(44,36,25,0.04);
+      margin-bottom:1.1rem;
+    }
+    h1{
+      font-family:"DM Serif Display",serif;
+      font-size:2.4rem;
+      margin:0 0 .4rem;
+    }
+    .subtitle{
+      color:rgba(44,36,25,.65);
+      margin-bottom:1.4rem;
+      line-height:1.45;
     }
 
-    /* Footer */
-    .site-footer {
-    border-top: 1px solid rgba(0,0,0,.04);
-    background: #f7ebd2;
-    padding: 0.6rem 0 1.8rem;
-    text-align: center;
+    /* countdown grid (tightened) */
+    .countdown{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:0.65rem;
+      justify-items:center;
+      margin-bottom:1.1rem;
+    }
+    .timebox{
+      background:#fff;
+      border:1px solid rgba(44,36,25,.03);
+      border-radius:1.35rem;
+      width:132px;
+      padding:1.02rem .2rem 1.02rem;
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .timebox:hover{
+      transform:translateY(-2px);
+      box-shadow:0 4px 12px rgba(44,36,25,.08);
+    }
+    /* tick pulse (we'll add/remove .pulse in JS) */
+    @keyframes pulse {
+      0% { transform:scale(1); box-shadow:0 0 0 rgba(44,36,25,0); }
+      40% { transform:scale(1.03); box-shadow:0 0 12px rgba(44,36,25,.08); }
+      100% { transform:scale(1); box-shadow:0 0 0 rgba(44,36,25,0); }
+    }
+    .pulse{
+      animation:pulse 0.9s ease;
     }
 
+    .timevalue{
+      font-size:2.47rem;
+      font-weight:700;
+      line-height:1;
+      color:var(--espresso);
     }
-    .footer-inner {
-      width: min(1100px, 92%);
-      margin: 0 auto;
+    .timelabel{
+      font-size:.63rem;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-top:.45rem;
+      opacity:.6;
     }
-    .footer-inner p {
-      font-size: 0.78rem;
-      color: rgba(44,36,25,.85);
-      margin-bottom: 0.75rem;
+
+    .go-live{
+      font-size:.82rem;
+      color:rgba(44,36,25,.55);
+      margin-bottom:0.25rem;
     }
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
+    .black-friday{
+      font-size:.95rem;
+      color:#000;
+      margin-bottom:1.3rem;
+      font-weight:700;
+      letter-spacing:0.05em;
+      text-transform:uppercase;
     }
-    .footer-links a {
-      text-decoration: none;
-      color: rgba(44,36,25,.85);
-      font-weight: 500;
-      font-size: 0.82rem;
-      transition: color 0.25s ease, text-decoration-color 0.25s ease;
+
+    /* logo trigger */
+    .secret-logo{
+      text-align:center;
+      margin-top:0;
+      margin-bottom:.4rem;
+      cursor:pointer;
+      position:relative;
     }
-    .footer-links a:hover {
-      color: var(--espresso);
-      text-decoration: underline;
-      text-decoration-color: var(--espresso);
+    .secret-logo::before{
+      content:"";
+      position:absolute;
+      top:50%; left:50%;
+      transform:translate(-50%, -50%);
+      width:270px; height:270px;
+      background:radial-gradient(circle, rgba(250,243,224,0.6) 0%, transparent 70%);
+      z-index:-1;
     }
-    @media (max-width: 720px) {
-      .footer-links {
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-      .hero-title{font-size:42px}
-      .marq-img{height:96px;width:96px}
+    .secret-logo img{
+      max-width:232px;
+      height:auto;
+      display:inline-block;
+      transition:transform .3s ease, filter .3s ease;
+      filter:drop-shadow(0 10px 25px rgba(44,36,25,0.05));
+    }
+    .secret-logo:hover img{
+      transform:scale(1.04);
+      filter:drop-shadow(0 14px 28px rgba(44,36,25,0.15));
+    }
+
+    footer{
+      text-align:center;
+      padding:1.2rem 1rem 1.5rem;
+      font-size:.72rem;
+      color:rgba(44,36,25,.45);
+    }
+
+    /* modal */
+    .access-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(44,36,25,.25);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:40;
+      backdrop-filter:blur(3px);
+    }
+    .access-box{
+      background:#fff;
+      border-radius:1.2rem;
+      padding:1.4rem 1.3rem 1.1rem;
+      width:92%;
+      max-width:340px;
+      text-align:left;
+      box-shadow:0 18px 50px rgba(44,36,25,.12);
+    }
+    .access-box h2{margin:0 0 .4rem;font-size:1.25rem;}
+    .access-box p{margin:0 0 .7rem;font-size:.8rem;color:rgba(44,36,25,.6);}
+    .access-box input{
+      width:100%;
+      padding:.55rem .6rem;
+      border:1px solid rgba(44,36,25,.12);
+      border-radius:.6rem;
+      font-size:.8rem;
+      margin-bottom:.6rem;
+    }
+    .access-box button{
+      display:inline-block;
+      background:#2C2419;
+      color:#fff;
+      border:none;
+      padding:.5rem 1.05rem;
+      border-radius:.5rem;
+      font-weight:600;
+      font-size:.78rem;
+      cursor:pointer;
+    }
+    .access-box button.secondary{
+      background:transparent;
+      color:rgba(44,36,25,.5);
+      margin-left:.35rem;
+    }
+    .error-msg{
+      color:#c0392b;
+      font-size:.72rem;
+      margin-top:.45rem;
+    }
+
+    @media (max-width:540px){
+      main{padding:1rem .9rem 1.1rem;}
+      .card{padding:1.6rem 1rem 1.6rem;}
+      h1{font-size:2.05rem;}
+      .subtitle{margin-bottom:1.1rem;}
+      .timebox{width:120px;}
+      .timevalue{font-size:2.25rem;}
+      .black-friday{margin-bottom:1.1rem;}
+      .secret-logo::before{width:210px; height:210px;}
     }
   </style>
 </head>
 <body>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h1 class="hero-title">A World of Expressions.</h1>
-    <p class="hero-sub">Each emoji, handcrafted. Every face, unique. Your expressions — elevated.</p>
+  <main>
+    <div class="card">
+      <div class="pill">Launch Countdown</div>
+      <h1>A World of Expressions.</h1>
+      <p class="subtitle">We’re opening the emoji studio very soon.</p>
 
-    <!-- Emoji carousel -->
-     <div class="marquee-wrap">
-    <div class="marquee track-left" id="emojiMarquee"></div>
-    <div class="marquee track-right" id="emojiMarquee2"></div>
-  </div>
-  </section>
-
-  <!-- Pricing -->
-  <section id="pricing" class="pricing">
-    <div class="pricing-grid">
-      <div class="price-card">
-        <img class="price-img" src="images/packs/starter.webp"  alt="Starter pack pricing"  loading="lazy" />
-        <button class="btn primary" onclick="location.href='upload.html?pack=starter'">Get Starter</button>
+      <div class="countdown" id="countdown">
+        <div class="timebox"><div class="timevalue" id="days">00</div><div class="timelabel">days</div></div>
+        <div class="timebox"><div class="timevalue" id="hours">00</div><div class="timelabel">hrs</div></div>
+        <div class="timebox"><div class="timevalue" id="minutes">00</div><div class="timelabel">mins</div></div>
+        <div class="timebox"><div class="timevalue" id="seconds">00</div><div class="timelabel">secs</div></div>
       </div>
 
-      <div class="price-card">
-        <img class="price-img" src="images/packs/standard.webp" alt="Standard pack pricing" loading="lazy" />
-        <button class="btn primary" onclick="location.href='upload.html?pack=standard'">Get Standard</button>
-      </div>
+      <p class="go-live">Going live: November 28, 2025</p>
+      <p class="black-friday">Black Friday</p>
 
-      <div class="price-card">
-        <img class="price-img" src="images/packs/premium.webp"  alt="Premium pack pricing"  loading="lazy" />
-        <button class="btn primary" onclick="location.href='upload.html?pack=premium'">Get Premium</button>
+      <!-- logo trigger -->
+      <div class="secret-logo" onclick="openAccessModal()">
+        <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji Logo">
       </div>
     </div>
-  </section>
+  </main>
 
-  <!-- tiny anchor -->
-  <section id="story" class="story-anchor" aria-hidden="true"></section>
-
-  <!-- Promo code section -->
-  <div id="promo-section">
-    <label for="promo-code" style="display:block; margin-bottom:8px; font-weight:500;">
-      Have a promo code?
-    </label>
-
-    <div style="display:inline-block;">
-      <input 
-        type="text" 
-        id="promo-code" 
-        placeholder="frankiemoji10"
-        style="padding:8px 12px; border:2px solid #E2C89B; border-radius:8px; font-size:15px; outline:none;"
-      >
-      <button 
-        id="apply-btn" 
-        style="background-color:#C96E27; color:white; border:none; padding:8px 14px; border-radius:8px; margin-left:6px; font-weight:600; cursor:pointer;"
-      >
-        Apply
-      </button>
-    </div>
-
-    <div id="promo-message-wrap" style="text-align:center; margin-top:12px;">
-      <p id="promo-message" 
-        style="display:none; margin:0 auto; font-weight:500; background:#FFF9EF; border:2px solid #F1D19A; border-radius:12px; padding:10px 14px; color:#2C2419; width:fit-content; max-width:320px;">
-      </p>
-    </div>
-  </div>
-
-  <!-- About button -->
-  <div class="about-block">
-    <a href="our-story.html" class="btn">About</a>
-  </div>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-inner">
-
-      <!-- Frankiemoji logo under promo -->
-  <div style="display:flex; justify-content:center; align-items:center; margin-top:-2px; margin-bottom:-14px;">
-  <img src="images/frankiemoji-logo-main.png"
-       alt="Frankiemoji Logo"
-       style="max-width:200px; width:100%; height:auto;">
-</div>
-
-      <p style="margin-top:0;">© 2025 Frankiemoji™ Studios LLC. All Rights Reserved. Born with a Pencil. Evolved with Technology.</p>
-      <div class="footer-links">
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-        <a href="contact.html">Contact</a>
-      </div>
-    </div>
+  <footer>
+    © 2025 Frankiemoji™ Studios LLC. Born with a Pencil. Evolved with Technology.
   </footer>
 
-  <!-- Promo JS -->
+  <!-- modal -->
+  <div id="access-modal" class="access-backdrop">
+    <div class="access-box">
+      <h2>Pre-release access</h2>
+      <p>Enter your code to view the studio preview.</p>
+      <input type="password" id="access-input" placeholder="Enter code">
+      <button id="access-submit">Continue</button>
+      <button id="access-cancel" class="secondary">Cancel</button>
+      <p id="access-error" class="error-msg" style="display:none;">Code not recognized.</p>
+    </div>
+  </div>
+
   <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const applyBtn  = document.getElementById("apply-btn");
-    const promoInput = document.getElementById("promo-code");
-    const promoMsg   = document.getElementById("promo-message");
+    // countdown
+    const launchDate = new Date("2025-11-28T00:00:00").getTime();
+    const countdownEl = document.getElementById("countdown");
 
-    applyBtn.addEventListener("click", function () {
-      const code = promoInput.value.trim().toLowerCase();
+    const timer = setInterval(function() {
+      const now = new Date().getTime();
+      const distance = launchDate - now;
 
-      promoMsg.classList.remove("fade", "shake");
-      promoMsg.style.display = "none";
-
-      setTimeout(() => {
-        promoMsg.style.display = "block";
-
-        if (code === "frankiemoji10") {
-          promoMsg.innerHTML = "Promo applied! 10% off your pack.";
-          promoMsg.style.borderColor = "#F1D19A";
-          promoMsg.style.background  = "#FFF9EF";
-          promoMsg.style.color       = "#2C2419";
-          promoMsg.classList.add("fade");
-        } else {
-          promoMsg.innerHTML = "❌ Invalid code. Try again.";
-          promoMsg.style.borderColor = "#F1B0A0";
-          promoMsg.style.background  = "#FFF2EF";
-          promoMsg.style.color       = "#B84129";
-          promoMsg.classList.add("shake");
-        }
-      }, 30);
-    });
-  });
-  </script>
-
-  <!-- Marquee JS (unchanged) -->
-<script>
-  // GitHub: where emoji images actually live
-  const GH_OWNER = "martinez-frank";
-  const GH_REPO = "Emoji1";
-  const IMAGES_PATH = "images";
-
-  // fallback list in case GitHub doesn't return (still point to your images/ folder)
-  const FALLBACK_EMOJIS = [
-    "frankemoji-aaronfunny.webp",
-    "frankemoji-brockangry.webp",
-    "frankemoji-brocklaugh.webp",
-    "frankemoji-brockpointing.webp",
-    "frankemoji-corihappy.webp",
-    "frankemoji-coriheart.webp",
-    "frankemoji-dennishappy.webp",
-    "frankemoji-dennisho.webp",
-    "frankemoji-dennisunglassescool.webp",
-    "frankemoji-dennisthinking.webp",
-    "frankemoji-donprofessional.webp",
-    "frankemoji-donthumbsup.webp",
-    "frankemoji-frankcomputer.webp",
-    "frankemoji-frankdrawing.webp",
-    "frankemoji-frankfunny.webp",
-    "frankemoji-frankheart.webp",
-    "frankemoji-franklaugh.webp",
-    "frankemoji-frankohno.webp",
-    "frankemoji-frankside.webp",
-    "frankemoji-franksideeye.webp",
-    "frankemoji-franksquint.webp",
-    "frankemoji-franksweat.webp",
-    "frankemoji-frankthumbsup.webp",
-    "frankemoji-franktounge.webp",
-    "frankemoji-frankwow.webp",
-    "frankemoji-frankyawn.webp",
-    "frankemoji-greatidea.webp",
-    "frankemoji-happydonsmile.webp",
-    "frankemoji-kissingheart.webp",
-    "frankemoji-misshalo.webp",
-    "frankemoji-misslaughing.webp",
-    "frankemoji-missscared.webp",
-    "frankemoji-misssmile.webp",
-    "frankemoji-sisterangry.webp",
-    "frankemoji-sisterheart.webp",
-    "frankemoji-sisterkiss.webp",
-    "frankemoji-sisterthumbsup.webp",
-    "frankemoji-sisterwink.webp"
-  ].map(name => ({
-    src: `${IMAGES_PATH}/${name}`,
-    name
-  }));
-
-  async function loadMarqueeEmojis() {
-    let emojis = [];
-
-    try {
-      // add timestamp so Safari/desktop doesn’t cache the directory request
-      const res = await fetch(
-        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${IMAGES_PATH}?t=${Date.now()}`
-      );
-      const files = await res.json();
-
-      if (Array.isArray(files)) {
-        // ✅ use GitHub's download_url so the path is ALWAYS valid
-        emojis = files
-          .filter(f => f.type === "file")
-          .filter(f => f.name.toLowerCase().endsWith(".webp"))
-          .filter(f => !f.name.toLowerCase().includes("white"))
-          .map(f => ({
-            src: f.download_url,   // ← this is the important change
-            name: f.name
-          }));
+      if (distance < 0) {
+        clearInterval(timer);
+        countdownEl.innerHTML = "We are live 🎉";
+        return;
       }
-    } catch (e) {
-      console.warn("GitHub fetch failed, will use fallback.", e);
-    }
 
-    // if nothing came back from GitHub, use local list
-    if (!emojis.length) {
-      emojis = FALLBACK_EMOJIS;
-    }
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    // shuffle so faces are mixed
-    emojis = emojis.sort(() => Math.random() - 0.5);
+      document.getElementById("days").textContent = String(days).padStart(2,'0');
+      document.getElementById("hours").textContent = String(hours).padStart(2,'0');
+      document.getElementById("minutes").textContent = String(minutes).padStart(2,'0');
+      document.getElementById("seconds").textContent = String(seconds).padStart(2,'0');
 
-    const row1 = document.getElementById("emojiMarquee");
-    const row2 = document.getElementById("emojiMarquee2");
-    if (!row1 || !row2) return;
-
-    function addRun(el, list) {
-      list.forEach(item => {
-        const img = document.createElement("img");
-        img.src = item.src;
-        img.alt = item.name;
-        img.className = "marq-img";
-        el.appendChild(img);
+      // re-trigger pulse each tick
+      const boxes = countdownEl.querySelectorAll(".timebox");
+      boxes.forEach(box => {
+        box.classList.remove("pulse");
+        void box.offsetWidth;
+        box.classList.add("pulse");
       });
+    }, 1000);
+
+    // modal gate
+    const SECRET_CODE = "megusta";
+    const PREVIEW_URL = "index-main.html";
+
+    const modal = document.getElementById("access-modal");
+    const input = document.getElementById("access-input");
+    const submitBtn = document.getElementById("access-submit");
+    const cancelBtn = document.getElementById("access-cancel");
+    const errorMsg = document.getElementById("access-error");
+
+    function openAccessModal(){
+      modal.style.display = "flex";
+      errorMsg.style.display = "none";
+      input.value = "";
+      setTimeout(() => input.focus(), 50);
     }
 
-    // top row: normal, twice
-    addRun(row1, emojis);
-    addRun(row1, emojis);
+    submitBtn.addEventListener("click", checkCode);
+    input.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") checkCode();
+    });
+    cancelBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
 
-    // bottom row: reversed, twice
-    const reversed = [...emojis].reverse();
-    addRun(row2, reversed);
-    addRun(row2, reversed);
-  }
-
-  loadMarqueeEmojis();
-</script>
+    function checkCode(){
+      const attempt = input.value.trim();
+      if(attempt === SECRET_CODE){
+        window.location.href = PREVIEW_URL;
+      } else {
+        errorMsg.style.display = "block";
+      }
+    }
+  </script>
 </body>
 </html>
