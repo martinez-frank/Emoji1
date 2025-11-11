@@ -24,22 +24,22 @@
       flex-direction:column;
     }
 
-    /* emoji marquee */
+    /* === EMOJI MARQUEE === */
     .marquee-shell{
       background:rgba(254,250,243,.55);
       border-bottom:1px solid rgba(44,36,25,.03);
       overflow:hidden;
       white-space:nowrap;
-      padding:.55rem 0;
+      padding:.45rem 0;
     }
     .marquee-track{
       display:inline-block;
       animation:scroll 20s linear infinite;
     }
     .marquee-track img{
-      height:58px;
+      height:56px;
       width:auto;
-      margin:0 .55rem;
+      margin:0 .5rem;
       border-radius:1.1rem;
       background:#f6d9a9;
       object-fit:cover;
@@ -49,12 +49,13 @@
       100%{transform:translateX(-50%);}
     }
 
+    /* === LAYOUT === */
     main{
       flex:1;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:3.2rem 1.4rem 2.8rem;
+      padding:2.4rem 1.4rem 1.8rem; /* reduced top padding */
     }
     .card{
       background:var(--paper);
@@ -63,9 +64,11 @@
       max-width:650px;
       width:100%;
       text-align:center;
-      padding:2.7rem 2.4rem 2.5rem;
+      padding:2.1rem 2.4rem 2.2rem; /* reduced top and bottom padding */
       box-shadow:0 22px 60px rgba(44,36,25,.08);
     }
+
+    /* === HEADER TEXT === */
     .pill{
       display:inline-block;
       background:#FAF3E0;
@@ -76,36 +79,36 @@
       letter-spacing:0.12em;
       font-weight:600;
       border:1px solid rgba(44,36,25,0.04);
-      margin-bottom:1.5rem;
+      margin-bottom:1.1rem;
     }
     h1{
       font-family:"DM Serif Display",serif;
       font-size:2.4rem;
-      margin:0 0 .6rem;
+      margin:0 0 .4rem;
     }
     .subtitle{
       color:rgba(44,36,25,.65);
-      margin-bottom:2rem;
-      line-height:1.5;
+      margin-bottom:1.5rem;
+      line-height:1.45;
     }
 
-    /* bigger countdown */
+    /* === COUNTDOWN === */
     .countdown{
       display:flex;
       justify-content:center;
       gap:1.05rem;
       flex-wrap:wrap;
-      margin-bottom:1.7rem;
+      margin-bottom:1.5rem;
     }
     .timebox{
       background:#fff;
       border:1px solid rgba(44,36,25,.03);
       border-radius:1.3rem;
-      width:126px; /* 15% larger */
-      padding:1.05rem .2rem 1.05rem;
+      width:126px;
+      padding:1rem .2rem 1rem;
     }
     .timevalue{
-      font-size:2.35rem; /* 15% larger */
+      font-size:2.35rem;
       font-weight:700;
       line-height:1;
       color:var(--espresso);
@@ -120,23 +123,24 @@
     .go-live{
       font-size:.82rem;
       color:rgba(44,36,25,.55);
-      margin-bottom:0.4rem;
+      margin-bottom:0.35rem;
     }
     .black-friday{
       font-size:.8rem;
-      color:#000; /* you asked for black print */
-      margin-bottom:1.8rem;
+      color:#000;
+      margin-bottom:1.5rem;
+      font-weight:600;
     }
 
-    /* secret clickable logo */
+    /* === LOGO === */
     .secret-logo{
       text-align:center;
       margin-top:0;
       margin-bottom:.4rem;
-      cursor: default; /* staying sneaky */
+      cursor:default;
     }
     .secret-logo img{
-      max-width:220px;  /* 15% bigger from 190ish */
+      max-width:220px;
       height:auto;
       display:inline-block;
       filter:drop-shadow(0 10px 25px rgba(44,36,25,0.05));
@@ -144,22 +148,26 @@
 
     footer{
       text-align:center;
-      padding:1.8rem 1rem 2.3rem;
+      padding:1.2rem 1rem 1.8rem;
       font-size:.72rem;
       color:rgba(44,36,25,.45);
     }
 
+    /* === MOBILE OPTIMIZATION === */
     @media (max-width:540px){
+      main{padding:1.2rem 1rem 1.2rem;}   /* tighter top */
+      .card{padding:1.7rem 1rem 1.7rem;}  /* fits all in one view */
       h1{font-size:2.05rem;}
-      .card{padding:2.3rem 1.2rem 2.1rem;}
-      .timebox{width:114px;}
-      .timevalue{font-size:2.15rem;}
+      .subtitle{margin-bottom:1.2rem;}
+      .timebox{width:110px;}
+      .timevalue{font-size:2.1rem;}
+      .black-friday{margin-bottom:1.3rem;}
     }
   </style>
 </head>
 <body>
 
-  <!-- marquee -->
+  <!-- === MARQUEE === -->
   <div class="marquee-shell">
     <div class="marquee-track">
       <img src="images/emoji-1.webp" alt="">
@@ -175,13 +183,12 @@
     </div>
   </div>
 
+  <!-- === MAIN CARD === -->
   <main>
     <div class="card">
       <div class="pill">Launch Countdown</div>
       <h1>A World of Expressions.</h1>
-      <p class="subtitle">
-        We’re opening the emoji studio very soon.
-      </p>
+      <p class="subtitle">We’re opening the emoji studio very soon.</p>
 
       <div class="countdown" id="countdown">
         <div class="timebox">
@@ -205,9 +212,9 @@
       <p class="go-live">Going live: November 28, 2025</p>
       <p class="black-friday">Black Friday</p>
 
-      <!-- sneaky logo -->
+      <!-- === SECRET LOGO BUTTON === -->
       <div class="secret-logo" onclick="unlockPreview()">
-        <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji">
+        <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji logo">
       </div>
     </div>
   </main>
@@ -217,43 +224,34 @@
   </footer>
 
   <script>
-    // countdown to 2025-11-28 00:00:00
+    // Countdown timer
     const launchDate = new Date("2025-11-28T00:00:00").getTime();
-
     const timer = setInterval(function() {
       const now = new Date().getTime();
       const distance = launchDate - now;
-
       if (distance < 0) {
         clearInterval(timer);
         document.getElementById("countdown").innerHTML = "We are live 🎉";
         return;
       }
-
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
       document.getElementById("days").textContent = String(days).padStart(2,'0');
       document.getElementById("hours").textContent = String(hours).padStart(2,'0');
       document.getElementById("minutes").textContent = String(minutes).padStart(2,'0');
       document.getElementById("seconds").textContent = String(seconds).padStart(2,'0');
     }, 1000);
 
-    // secret gate
-    const SECRET_CODE = "frankiemoji2025";  // you can change this
-    const PREVIEW_URL = "index.html";       // later: put Vercel preview link
-
-    function unlockPreview() {
+    // Secret gate logic
+    const SECRET_CODE = "frankiemoji2025";
+    const PREVIEW_URL = "index.html";
+    function unlockPreview(){
       const attempt = prompt("Enter pre-release code:");
-      if (attempt === SECRET_CODE) {
-        window.location.href = PREVIEW_URL;
-      } else if (attempt) {
-        alert("Code not recognized.");
-      }
+      if(attempt === SECRET_CODE){window.location.href = PREVIEW_URL;}
+      else if(attempt){alert("Code not recognized.");}
     }
   </script>
 </body>
 </html>
-
