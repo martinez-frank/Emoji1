@@ -126,13 +126,128 @@
       text-transform:uppercase;
     }
 
-        <!-- logo trigger -->
-    <div class="secret-logo" onclick="openAccessModal()">
-      <img
-        src="images/frankiemoji-logo-main.webp"
-        onerror="this.src='images/frankiemoji-logo-main.png'"
-        alt="Frankiemoji Logo"
-      >
+    /* logo trigger */
+    .secret-logo{
+      text-align:center;
+      margin-top:0;
+      margin-bottom:.4rem;
+      cursor:pointer;
+      position:relative;
+    }
+    .secret-logo::before{
+      content:"";
+      position:absolute;
+      top:50%; left:50%;
+      transform:translate(-50%, -50%);
+      width:270px; height:270px;
+      background:radial-gradient(circle, rgba(250,243,224,0.6) 0%, transparent 70%);
+      z-index:-1;
+    }
+    .secret-logo img{
+      max-width:232px;
+      height:auto;
+      display:inline-block;
+      transition:transform .3s ease, filter .3s ease;
+      filter:drop-shadow(0 10px 25px rgba(44,36,25,0.05));
+    }
+    .secret-logo:hover img{
+      transform:scale(1.04);
+      filter:drop-shadow(0 14px 28px rgba(44,36,25,0.15));
+    }
+
+    footer{
+      text-align:center;
+      padding:1.2rem 1rem 1.5rem;
+      font-size:.72rem;
+      color:rgba(44,36,25,.45);
+    }
+
+    /* modal */
+    .access-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(44,36,25,.25);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:40;
+      backdrop-filter:blur(3px);
+    }
+    .access-box{
+      background:#fff;
+      border-radius:1.2rem;
+      padding:1.4rem 1.3rem 1.1rem;
+      width:92%;
+      max-width:340px;
+      text-align:left;
+      box-shadow:0 18px 50px rgba(44,36,25,.12);
+    }
+    .access-box h2{margin:0 0 .4rem;font-size:1.25rem;}
+    .access-box p{margin:0 0 .7rem;font-size:.8rem;color:rgba(44,36,25,.6);}
+    .access-box input{
+      width:100%;
+      padding:.55rem .6rem;
+      border:1px solid rgba(44,36,25,.12);
+      border-radius:.6rem;
+      font-size:.8rem;
+      margin-bottom:.6rem;
+    }
+    .access-box button{
+      display:inline-block;
+      background:#2C2419;
+      color:#fff;
+      border:none;
+      padding:.5rem 1.05rem;
+      border-radius:.5rem;
+      font-weight:600;
+      font-size:.78rem;
+      cursor:pointer;
+    }
+    .access-box button.secondary{
+      background:transparent;
+      color:rgba(44,36,25,.5);
+      margin-left:.35rem;
+    }
+    .error-msg{
+      color:#c0392b;
+      font-size:.72rem;
+      margin-top:.45rem;
+    }
+
+    @media (max-width:540px){
+      main{padding:1rem .9rem 1.1rem;}
+      .card{padding:1.6rem 1rem 1.6rem;}
+      h1{font-size:2.05rem;}
+      .subtitle{margin-bottom:1.1rem;}
+      .timebox{width:120px;}
+      .timevalue{font-size:2.25rem;}
+      .black-friday{margin-bottom:1.1rem;}
+      .secret-logo::before{width:210px; height:210px;}
+    }
+  </style>
+</head>
+<body>
+
+  <main>
+    <div class="card">
+      <div class="pill">Launch Countdown</div>
+      <h1>A World of Expressions.</h1>
+      <p class="subtitle">We’re opening the emoji studio very soon.</p>
+
+      <div class="countdown" id="countdown">
+        <div class="timebox"><div class="timevalue" id="days">00</div><div class="timelabel">days</div></div>
+        <div class="timebox"><div class="timevalue" id="hours">00</div><div class="timelabel">hrs</div></div>
+        <div class="timebox"><div class="timevalue" id="minutes">00</div><div class="timelabel">mins</div></div>
+        <div class="timebox"><div class="timevalue" id="seconds">00</div><div class="timelabel">secs</div></div>
+      </div>
+
+      <p class="go-live">Going live: November 28, 2025</p>
+      <p class="black-friday">Black Friday</p>
+
+      <!-- logo trigger -->
+      <div class="secret-logo" onclick="openAccessModal()">
+        <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji Logo">
+      </div>
     </div>
   </main>
 
@@ -140,39 +255,30 @@
     © 2025 Frankiemoji™ Studios LLC. Born with a Pencil. Evolved with Technology.
   </footer>
 
-  <!-- access modal -->
-  <div id="access-modal" class="access-backdrop" style="display:none;">
+  <!-- modal -->
+  <div id="access-modal" class="access-backdrop">
     <div class="access-box">
-      <h2>Private access</h2>
+      <h2>Pre-release access</h2>
       <p>Enter your code to view the studio preview.</p>
       <input type="password" id="access-input" placeholder="Enter code">
-      <button id="access-submit" class="primary">Continue</button>
+      <button id="access-submit">Continue</button>
       <button id="access-cancel" class="secondary">Cancel</button>
       <p id="access-error" class="error-msg" style="display:none;">Code not recognized.</p>
     </div>
   </div>
 
   <script>
-    // --------------------
-    // COUNTDOWN
-    // --------------------
-    // launch date (keep your Black Friday date)
+    // countdown
     const launchDate = new Date("2025-11-28T00:00:00").getTime();
-
-    const daysEl = document.getElementById("days");
-    const hoursEl = document.getElementById("hours");
-    const minutesEl = document.getElementById("minutes");
-    const secondsEl = document.getElementById("seconds");
     const countdownEl = document.getElementById("countdown");
 
-    function updateCountdown() {
+    const timer = setInterval(function() {
       const now = new Date().getTime();
       const distance = launchDate - now;
 
-      if (distance <= 0) {
-        // past launch — show we are live
-        countdownEl.innerHTML = "We are live 🎉";
+      if (distance < 0) {
         clearInterval(timer);
+        countdownEl.innerHTML = "We are live 🎉";
         return;
       }
 
@@ -181,29 +287,23 @@
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      daysEl.textContent = String(days).padStart(2, "0");
-      hoursEl.textContent = String(hours).padStart(2, "0");
-      minutesEl.textContent = String(minutes).padStart(2, "0");
-      secondsEl.textContent = String(seconds).padStart(2, "0");
+      document.getElementById("days").textContent = String(days).padStart(2,'0');
+      document.getElementById("hours").textContent = String(hours).padStart(2,'0');
+      document.getElementById("minutes").textContent = String(minutes).padStart(2,'0');
+      document.getElementById("seconds").textContent = String(seconds).padStart(2,'0');
 
-      // little pulse on each tick like before
+      // re-trigger pulse each tick
       const boxes = countdownEl.querySelectorAll(".timebox");
-      boxes.forEach((box) => {
+      boxes.forEach(box => {
         box.classList.remove("pulse");
-        // force reflow
         void box.offsetWidth;
         box.classList.add("pulse");
       });
-    }
+    }, 1000);
 
-    const timer = setInterval(updateCountdown, 1000);
-    updateCountdown(); // run once on load
-
-    // --------------------
-    // ACCESS MODAL (secret logo)
-    // --------------------
-    const SECRET_CODE = "megusta";            // your new code
-    const PREVIEW_URL = "index-main.html";    // where we send them
+    // modal gate
+    const SECRET_CODE = "frankiemoji2025";
+    const PREVIEW_URL = "index-main.html";
 
     const modal = document.getElementById("access-modal");
     const input = document.getElementById("access-input");
@@ -211,32 +311,29 @@
     const cancelBtn = document.getElementById("access-cancel");
     const errorMsg = document.getElementById("access-error");
 
-    function openAccessModal() {
+    function openAccessModal(){
       modal.style.display = "flex";
       errorMsg.style.display = "none";
       input.value = "";
-      input.focus();
+      setTimeout(() => input.focus(), 50);
     }
 
-    function closeAccessModal() {
+    submitBtn.addEventListener("click", checkCode);
+    input.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") checkCode();
+    });
+    cancelBtn.addEventListener("click", () => {
       modal.style.display = "none";
-    }
+    });
 
-    function checkCode() {
+    function checkCode(){
       const attempt = input.value.trim();
-      if (attempt === SECRET_CODE) {
+      if(attempt === SECRET_CODE){
         window.location.href = PREVIEW_URL;
       } else {
         errorMsg.style.display = "block";
       }
     }
-
-    submitBtn.addEventListener("click", checkCode);
-    cancelBtn.addEventListener("click", closeAccessModal);
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") checkCode();
-      if (e.key === "Escape") closeAccessModal();
-    });
   </script>
 </body>
 </html>
