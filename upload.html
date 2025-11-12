@@ -589,6 +589,28 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
   });
 </script>
 <div id="statusMsg" style="margin-top:.75rem"></div>
+<!-- PHASE 2 CLEANUP SHIM: disables legacy alerts & handlers -->
+<script>
+(function(){
+  const originalAlert = window.alert;
+  window.alert = function(msg){ console.log('[alert suppressed]', msg); };
+
+  const form = document.getElementById('uploadForm');
+  if (!form) { console.warn('[cleanup] #uploadForm not found'); return; }
+
+  form.removeAttribute('onsubmit');
+  form.setAttribute('action', '');
+  form.setAttribute('method', '');
+
+  const killer = function(e){
+    if (e.target === form) e.stopImmediatePropagation();
+  };
+  document.addEventListener('submit', killer, true);
+
+  window.__restoreAlert = () => (window.alert = originalAlert);
+  console.log('[cleanup] legacy alerts & submit handlers neutralized');
+})();
+</script>
 
 <script type="module">
 const form   = document.getElementById('uploadForm');
