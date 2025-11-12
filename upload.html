@@ -550,7 +550,7 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
   document.getElementById('send-btn').addEventListener('click', async () => {
     const packEl = document.getElementById('selected-pack');
     const pack = packEl ? (packEl.dataset.pack || 'standard') : 'standard';
-    const email = document.getElementById('delivery-email').value.trim();
+    const email = document.getElementById('email').value.trim();
     const expressions = getSelectedExpressions();
     const fileInput = document.getElementById('file-input');
     const file = fileInput && fileInput.files[0];
