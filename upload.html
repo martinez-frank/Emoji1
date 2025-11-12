@@ -508,6 +508,82 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
   });
 </script>
 <!-- === End Frankiemoji Upload Script === -->
+<script>
+  // get all expression pills and let user toggle them
+  document.querySelectorAll('.expression-pill, .expression-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('selected');
+      updateCount();
+    });
+  });
 
+  function updateCount() {
+    const count = document.querySelectorAll('.expression-pill.selected, .expression-btn.selected').length;
+    const counter = document.querySelector('#expr-count');
+    if (counter) counter.textContent = count;
+  }
+
+  function getSelectedExpressions() {
+    const selected = document.querySelectorAll('.expression-pill.selected, .expression-btn.selected');
+    return Array.from(selected).map(el => el.textContent.trim());
+  }
+
+  async function getSignedUploadUrl() {
+    const res = await fetch('/api/get-upload-url', { method: 'POST' });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Could not get upload URL');
+    return data;
+  }
+
+  async function uploadFile(file, uploadUrl) {
+    const res = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': file.type },
+      body: file
+    });
+    if (!res.ok) throw new Error('Upload failed');
+  }
+
+  document.getElementById('send-btn').addEventListener('click', async () => {
+    const packEl = document.getElementById('selected-pack');
+    const pack = packEl ? (packEl.dataset.pack || 'standard') : 'standard';
+    const email = document.getElementById('delivery-email').value.trim();
+    const expressions = getSelectedExpressions();
+    const fileInput = document.getElementById('file-input');
+    const file = fileInput && fileInput.files[0];
+
+    try {
+      let imagePath = null;
+
+      if (file) {
+        const { upload_url, object_path } = await getSignedUploadUrl();
+        await uploadFile(file, upload_url);
+        imagePath = object_path;
+      }
+
+      const res = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pack_type: pack,
+          expressions: expressions,
+          email: email,
+          phone: '',        // hook up your mobile input here later
+          image_path: imagePath
+        })
+      });
+
+      const data = await res.json();
+      if (data.ok) {
+        alert('✅ Your emoji pack request has been submitted!');
+      } else {
+        alert('Error: ' + (data.error || 'unknown'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('❌ ' + err.message);
+    }
+  });
+</script>
 </body>
 </html>
