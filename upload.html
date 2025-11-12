@@ -455,9 +455,10 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
         };
         try { localStorage.setItem('franki:order', JSON.stringify(order)); } catch(_){}
 
-        qs('#success').style.display='block';
-        this.closest('.row').style.display='none';
-        qs('#success').scrollIntoView({behavior:'smooth'});
+        const actionsRow = document.getElementById('actions-row');
+          document.getElementById('success').style.display = 'block';
+          if (actionsRow) actionsRow.style.display = 'none';
+          document.getElementById('success').scrollIntoView({ behavior: 'smooth' });
       });
     });
   })();
