@@ -564,7 +564,7 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
         await uploadFile(file, upload_url);
         imagePath = object_path;
       }
-
+      /*
       const res = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -576,6 +576,7 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
           image_path: imagePath
         })
       });
+      */
 
       const data = await res.json();
       if (data.ok) {
