@@ -20,12 +20,27 @@ export default async function handler(req) {
 
     if (!file || typeof file === 'string') return new Response('No file', { status: 400 });
 
-    // 1) create order
-    const { data: ins, error: insErr } = await sb
-      .from('orders')
-      .insert({ email, phone, status: 'received', expressions })
-      .select('id')
-      .single();
+   // 1) create order in emoji_orders
+const pack_type = (req.headers.get('x-pack') || 'standard'); // fallback if you’re not sending it yet
+const image_path_to_save = (pub?.publicUrl /* if you got it */) || path || '';
+
+const { data: ins, error: insErr } = await sb
+  .from('emoji_orders')
+  .insert([{
+    pack_type,                // 'starter' | 'standard' | 'premium' (or 'standard' fallback)
+    expressions,              // array or JSON string you collected
+    email,
+    phone,
+    image_path: image_path_to_save,
+    status: 'received'        // your default workflow status
+  }])
+  .select('id')
+  .single();
+
+if (insErr) throw insErr;
+
+const orderId = ins.id;
+
     if (insErr) throw insErr;
 
     const orderId = ins.id;
@@ -33,17 +48,22 @@ export default async function handler(req) {
     const path = `${orderId}/${filename}`;
 
     // 2) upload selfie
-    const { error: upErr } = await sb.storage.from('emoji_uploads').upload(
+    const { error: upErr } = await sb.storage.from('emoji-uploads').upload(
       path, file, { contentType: file.type || 'application/octet-stream', upsert: false }
     );
     if (upErr) throw upErr;
 
     // 3) public URL + update row
     const { data: pub } = sb.storage.from('emoji_uploads').getPublicUrl(path);
-    const { error: updErr } = await sb.from('orders')
-      .update({ filename, file_url: pub.publicUrl, status: 'queued' })
-      .eq('id', orderId);
-    if (updErr) throw updErr;
+    const { error: updErr } = await sb
+     .from('emoji_orders')
+     .update({ 
+     image_path: pub.publicUrl, 
+     status: 'queued' 
+  })
+  .eq('id', orderId);
+
+if (updErr) throw updErr;
 
     return new Response(JSON.stringify({ ok: true, order_id: orderId }), {
       status: 200, headers: { 'content-type': 'application/json' }
