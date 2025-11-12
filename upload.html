@@ -585,5 +585,64 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     }
   });
 </script>
+<div id="statusMsg" style="margin-top:.75rem"></div>
+
+<script type="module">
+const form   = document.getElementById('uploadForm');
+const fileI  = document.getElementById('file');
+const emailI = document.getElementById('email');
+const phoneI = document.getElementById('phone');
+const statusMsg = document.getElementById('statusMsg');
+
+function setStatus(t){ statusMsg.textContent = t; }
+function normalizePhone(p){
+  const d = (p||'').replace(/\D/g,'');
+  return d.length >= 10 ? d : '';
+}
+
+if (!form) console.warn('uploadForm not found');
+
+form?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const file = fileI?.files?.[0];
+  if(!file){ setStatus('Choose a file'); return; }
+
+  // collect selected expressions if you use pills with data-key
+  const selections = [...document.querySelectorAll('.expr.selected')].map(x=>x.dataset.key);
+
+  // guardrails
+  if (!file.type.startsWith('image/')) { setStatus('Please upload an image'); return; }
+  if (file.size > 10*1024*1024) { setStatus('File too large (>10MB)'); return; }
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('email', emailI?.value?.trim() || '');
+  fd.append('phone', normalizePhone(phoneI?.value));
+  fd.append('expressions', JSON.stringify(selections));
+
+  try {
+    setStatus('Uploading file…');
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const text = await res.text();           // read raw text for easier debugging
+    if (!res.ok) throw new Error(text || 'Upload failed');
+
+    let data = {};
+    try { data = JSON.parse(text); } catch { /* ignore */ }
+
+    // show the order id loudly
+    const msg = data.order_id ? `Done 🎉 Order # ${data.order_id}` : 'Done 🎉';
+    setStatus(msg);
+
+    // also pop an alert (until you see it working)
+    if (data.order_id) alert('Order ID: ' + data.order_id);
+
+    console.log('Upload response:', data);
+  } catch (err) {
+    console.error(err);
+    setStatus('❌ ' + (err.message || 'Upload failed'));
+  }
+});
+</script>
 </body>
 </html>
