@@ -1,9 +1,9 @@
 // /api/upload.js — Vercel Edge Function
 import { createClient } from '@supabase/supabase-js';
+
 export const config = { runtime: 'edge' };
 
-const TABLE = 'emoji_orders';         // ← your table
-const BUCKET = 'emoji-uploads';       // ← matches your Supabase bucket (dash, not underscore)
+const TABLE = 'emoji_orders';
 
 export default async function handler(req) {
   if (req.method !== 'POST') {
@@ -18,27 +18,38 @@ export default async function handler(req) {
       { auth: { persistSession: false } }
     );
 
-    // 2) Read form
-    const form = await req.formData();
-    const file = form.get('file');                     // File (Blob)
-    const email = (form.get('email') || '').toString();
-    const phone = (form.get('phone') || '').toString();
-    const expressions = JSON.parse(form.get('expressions') || '[]');
-    const packType = req.headers.get('x-pack') || 'standard';
+    // 2) Read JSON body from front-end
+    const body = await req.json().catch(() => null);
 
-    if (!file || typeof file === 'string') {
-      return new Response('No file', { status: 400 });
+    if (!body) {
+      return new Response('Invalid JSON', { status: 400 });
     }
 
-    // 3) Create the order row first
+    const {
+      pack = 'starter',        // "starter" | "standard" | "premium"
+      email = '',
+      phone = '',
+      file_url,
+      expressions = []
+    } = body;
+
+    if (!file_url) {
+      return new Response('Missing file_url', { status: 400 });
+    }
+
+    if (!email) {
+      return new Response('Missing email', { status: 400 });
+    }
+
+    // 3) Create the order row
     const { data: ins, error: insErr } = await sb
       .from(TABLE)
       .insert({
-        pack_type: packType,
+        pack_type: pack,
         expressions,
         email,
         phone,
-        image_path: null,
+        image_path: file_url,  // store Uploadcare URL here
         status: 'received'
       })
       .select('id')
@@ -47,32 +58,7 @@ export default async function handler(req) {
     if (insErr) throw insErr;
     const orderId = ins.id;
 
-    // 4) Upload selfie to storage
-    const filename = (file.name || 'upload').toString();
-    const path = `${orderId}/${filename}`;
-
-    const { error: upErr } = await sb
-      .storage
-      .from(BUCKET)
-      .upload(path, file, {
-        contentType: file.type || 'application/octet-stream',
-        upsert: false
-      });
-
-    if (upErr) throw upErr;
-
-    // 5) Make public URL & update order with image_path + status
-    const { data: pub } = sb.storage.from(BUCKET).getPublicUrl(path);
-    const publicUrl = pub?.publicUrl || null;
-
-    const { error: updErr } = await sb
-      .from(TABLE)
-      .update({ image_path: publicUrl, status: 'queued' })
-      .eq('id', orderId);
-
-    if (updErr) throw updErr;
-
-    // 6) Done
+    // 4) Respond OK
     return new Response(JSON.stringify({ ok: true, order_id: orderId }), {
       status: 200,
       headers: { 'content-type': 'application/json' }
@@ -80,6 +66,9 @@ export default async function handler(req) {
 
   } catch (e) {
     console.error(e);
-    return new Response('Upload failed', { status: 500 });
+    return new Response(
+      JSON.stringify({ ok: false, error: 'Upload failed' }),
+      { status: 500, headers: { 'content-type': 'application/json' } }
+    );
   }
 }
