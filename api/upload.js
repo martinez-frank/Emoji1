@@ -13,34 +13,26 @@ export default async function handler(req) {
     );
   }
 
-    try {
+  try {
     // 1) Supabase client (service role)
-      try {
-    // --- FIXED ENV VARIABLES ---
-    const url =
-      process.env.SUPABASE_URL ||
-      process.env.NEXT_PUBLIC_SUPABASE_URL; // fallback (rare)
-
-    const key =
-      process.env.SUPABASE_SERVICE_KEY ||
-      process.env.SUPABASE_SERVICE_ROLE; // both now supported
+    // *** USE ONLY THESE TWO VARS ***
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE;
 
     if (!url || !key) {
       return new Response(
         JSON.stringify({
           ok: false,
-          error: "Missing SUPABASE_URL or SUPABASE_SERVICE_KEY env vars",
+          error: 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE env vars',
         }),
-        { status: 500, headers: { "content-type": "application/json" } }
+        { status: 500, headers: { 'content-type': 'application/json' } }
       );
     }
 
     const sb = createClient(url, key, { auth: { persistSession: false } });
 
-
     // 2) Read JSON body
     const body = await req.json().catch(() => null);
-
     if (!body) {
       return new Response(
         JSON.stringify({ ok: false, error: 'Invalid JSON body' }),
@@ -49,11 +41,11 @@ export default async function handler(req) {
     }
 
     const {
-      pack = 'starter',          // "starter" | "standard" | "premium"
+      pack = 'starter',      // "starter" | "standard" | "premium"
       email = '',
       phone = '',
       file_url,
-      expressions = []
+      expressions = [],
     } = body;
 
     if (!file_url) {
@@ -74,12 +66,12 @@ export default async function handler(req) {
     const { data: ins, error: insErr } = await sb
       .from(TABLE)
       .insert({
-        pack_type: pack,        // make sure this column exists
-        expressions,            // JSON or text[] column
+        pack_type: pack,          // make sure this column exists
+        expressions,              // JSON or text[] column
         email,
         phone,
-        image_path: file_url,   // make sure this column exists
-        status: 'received'
+        image_path: file_url,     // make sure this column exists
+        status: 'received',
       })
       .select('id')
       .single();
@@ -87,26 +79,19 @@ export default async function handler(req) {
     if (insErr) {
       console.error('Supabase insert error:', insErr);
       return new Response(
-        JSON.stringify({
-          ok: false,
-          error: insErr.message || 'Supabase insert failed'
-        }),
+        JSON.stringify({ ok: false, error: 'Supabase insert failed' }),
         { status: 500, headers: { 'content-type': 'application/json' } }
       );
     }
 
-    const orderId = ins.id;
-
-    // 4) Success
     return new Response(
-      JSON.stringify({ ok: true, order_id: orderId }),
+      JSON.stringify({ ok: true, order_id: ins.id }),
       { status: 200, headers: { 'content-type': 'application/json' } }
     );
-
   } catch (e) {
-    console.error('Upload handler exception:', e);
+    console.error('Upload handler fatal error:', e);
     return new Response(
-      JSON.stringify({ ok: false, error: e.message || 'Upload failed' }),
+      JSON.stringify({ ok: false, error: 'Upload failed' }),
       { status: 500, headers: { 'content-type': 'application/json' } }
     );
   }
