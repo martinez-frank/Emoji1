@@ -233,22 +233,27 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
           </label>
         </div>
 
-        <!-- Uploadcare picker + preview -->
-        <div class="row">
-          <input
-            id="u-file"
-            type="hidden"
-            role="uploadcare-uploader"
-            data-clearable=""
-            data-tabs="file camera"
-            data-images-only="true"
-            data-multiple="false"
-            data-preview-step="true"
-          />
-        </div>
-        <div id="u-preview-wrap" style="display:none;margin:10px 0 16px;">
-          <img id="u-preview" alt="preview" style="max-width:100%;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);" />
-        </div>
+       <!-- Uploadcare picker + preview -->
+       <div class="row">
+       <!-- Uploadcare widget input -->
+         <input
+       id="u-file"
+       type="hidden"
+       role="uploadcare-uploader"
+       data-clearable=""
+       data-tabs="file camera"
+       data-images-only="true"
+       data-multiple="false"
+       data-preview-step="true"
+       />
+
+       <!-- Where we store the picked CDN URL from Uploadcare -->
+       <input id="fileUrl" type="hidden" />
+      </div>
+
+      <div id="u-preview-wrap" style="display:none;margin:10px 0 16px;">
+       <img id="u-preview" alt="preview" style="max-width:100%;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.18);" />
+      </div>
 
         <!-- Actions -->
         <div class="row" style="justify-content:flex-end">
@@ -413,56 +418,50 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     });
     render();
 
-    // Uploadcare widget + preview
-    const widget = uploadcare.Widget('#u-file');
-    let filePromise = null;
-    function showPreview(cdnUrl){
-      const wrap = qs('#u-preview-wrap'), img = qs('#u-preview');
-      if (!cdnUrl){ wrap.style.display='none'; return; }
-      img.src = cdnUrl + '-/preview/800x800/-/quality/smart/'; wrap.style.display='block';
+   <script>
+   // Uploadcare widget + preview
+     const widget = uploadcare.Widget('#u-file');
+
+    const fileUrlInput  = document.getElementById('fileUrl');
+    const previewWrap   = document.getElementById('u-preview-wrap');
+    const previewImg    = document.getElementById('u-preview');
+
+    function showPreview(cdnUrl) {
+    if (!previewWrap || !previewImg) return;
+
+    if (!cdnUrl) {
+      // Hide preview if nothing selected
+      previewWrap.style.display = 'none';
+      previewImg.removeAttribute('src');
+      return;
     }
-    widget.onChange(function(file){
-      filePromise = file || null;
-      if (!file){ showPreview(''); return; }
-      file.done(function(info){ showPreview(info.cdnUrl); });
+
+    // Nice sized preview
+    previewImg.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
+    previewWrap.style.display = 'block';
+  }
+
+    widget.onChange(function (file) {
+    // reset value first
+    if (fileUrlInput) fileUrlInput.value = '';
+
+    if (!file) {
+      showPreview('');
+      return;
+    }
+
+    file.done(function (info) {
+      if (!info || !info.cdnUrl) return;
+
+      // 🔑 Save CDN URL for the /api/upload call
+      if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
+
+      // Update preview
+      showPreview(info.cdnUrl);
     });
+  });
+</script>
 
-    // Send
-    qs('#send-btn').addEventListener('click', function(e){
-      e.preventDefault();
-      const email = (qs('#email').value||'').trim();
-      if (!email){ alert('Please enter your email.'); qs('#email').focus(); return; }
-
-      try { localStorage.setItem('franki:start', JSON.stringify({ email })); } catch(_){}
-
-      let phone='', sms_optin=false;
-      if (optin && optin.checked){
-        sms_optin = true;
-        phone = (qs('#phone').value||'').trim();
-        const d = phone.replace(/\D/g,'');
-        if (!d || d.length < 10 || d.length > 15){ alert('Please enter a valid mobile number (10–15 digits) or uncheck SMS.'); return; }
-      }
-
-      if (!filePromise){ alert('Please choose a photo first.'); return; }
-
-      filePromise.done(function(info){
-        if (!info || !info.cdnUrl){ alert('Upload is still processing.'); return; }
-
-        const order = {
-          email, sms_optin, phone,
-          pack, expressions: (qs('#expressions').value||'').split(',').filter(Boolean),
-          upload: { cdnUrl: info.cdnUrl, uuid: info.uuid, size: info.size, name: info.name, mime: info.mimeType }
-        };
-        try { localStorage.setItem('franki:order', JSON.stringify(order)); } catch(_){}
-
-        const actionsRow = document.getElementById('actions-row');
-          document.getElementById('success').style.display = 'block';
-          if (actionsRow) actionsRow.style.display = 'none';
-          document.getElementById('success').scrollIntoView({ behavior: 'smooth' });
-      });
-    });
-  })();
-  </script>
   <!-- === Frankiemoji Upload Script === -->
   <!-- <script>
   const sendBtn = document.getElementById("sendBtn");
