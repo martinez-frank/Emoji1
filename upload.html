@@ -441,9 +441,9 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
   <script>window.UPLOADCARE_PUBLIC_KEY='demopublickey';</script>
 
-  <!-- Page logic: pack, expressions, email/sms, upload, send -->
+    <!-- Page logic: pack, expressions, email/sms, upload, send -->
   <script>
-  // Small helper for querySelector
+// Small helper for querySelector
 const qs = (s) => document.querySelector(s);
 
 // ----- Pack mapping (Starter / Standard / Premium) -----
@@ -508,24 +508,36 @@ const EXPRESSIONS = [
 ];
 
 const chipsEl   = document.getElementById('expr-chips');
-const thumbEl   = document.getElementById('expr-thumbs');
+const thumbEl   = document.getElementById('expr-thumbs');   // currently hidden by CSS — OK
 const counterEl = document.getElementById('expr-count');
 
 // Shared Set of selected expressions
 const selected = new Set();
 
-// Build chips in the DOM
+// Build chips in the DOM programmatically (even though you have static buttons,
+// this keeps logic consistent; or you can skip this part if you prefer static HTML)
+//
+// If you want to KEEP the static <button> list you already have, you can
+// comment this block out and attach listeners to existing buttons instead.
+/*
 if (chipsEl) {
+  chipsEl.innerHTML = '';
   EXPRESSIONS.forEach((name) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'expression-pill expression-btn';
     b.textContent = name;
-
     b.addEventListener('click', () => toggleChip(name, b));
     chipsEl.appendChild(b);
   });
 }
+*/
+
+// Attach listeners to any existing .expression-btn buttons
+document.querySelectorAll('.expression-btn').forEach((btn) => {
+  const name = btn.textContent.trim();
+  btn.addEventListener('click', () => toggleChip(name, btn));
+});
 
 // Re-render counter + thumbnail row
 function render() {
@@ -567,104 +579,48 @@ function toggleChip(name, chip) {
 // Initial render so "0 / MAX selected" shows correctly
 render();
 
-// Expose selected set so the upload script can read it
+// Expose selected set so other scripts can use it if needed
 window.frankiSelectedExpressions = selected;
 
-    
-   <script>
-   // Uploadcare widget + preview
-     const widget = uploadcare.Widget('#u-file');
+// ----- Uploadcare widget + preview -----
+const widget = uploadcare.Widget('#u-file');
 
-    const fileUrlInput  = document.getElementById('fileUrl');
-    const previewWrap   = document.getElementById('u-preview-wrap');
-    const previewImg    = document.getElementById('u-preview');
+const fileUrlInput  = document.getElementById('fileUrl');
+const previewWrap   = document.getElementById('u-preview-wrap');
+const previewImg    = document.getElementById('u-preview');
 
-    function showPreview(cdnUrl) {
-    if (!previewWrap || !previewImg) return;
+function showPreview(cdnUrl) {
+  if (!previewWrap || !previewImg) return;
 
-    if (!cdnUrl) {
-      // Hide preview if nothing selected
-      previewWrap.style.display = 'none';
-      previewImg.removeAttribute('src');
-      return;
-    }
-
-    // Nice sized preview
-    previewImg.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
-    previewWrap.style.display = 'block';
+  if (!cdnUrl) {
+    previewWrap.style.display = 'none';
+    previewImg.removeAttribute('src');
+    return;
   }
 
-    widget.onChange(function (file) {
-    // reset value first
-    if (fileUrlInput) fileUrlInput.value = '';
+  // Nice sized preview
+  previewImg.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
+  previewWrap.style.display = 'block';
+}
 
-    if (!file) {
-      showPreview('');
-      return;
-    }
+widget.onChange(function (file) {
+  if (fileUrlInput) fileUrlInput.value = '';
 
-    file.done(function (info) {
-      if (!info || !info.cdnUrl) return;
+  if (!file) {
+    showPreview('');
+    return;
+  }
 
-      // 🔑 Save CDN URL for the /api/upload call
-      if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
+  file.done(function (info) {
+    if (!info || !info.cdnUrl) return;
 
-      // Update preview
-      showPreview(info.cdnUrl);
-    });
+    if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
+    showPreview(info.cdnUrl);
   });
-</script>
+});
+  </script>
+  <!-- === End Frankiemoji Upload Script === -->
 
-  <!-- === Frankiemoji Upload Script === -->
-  <!-- <script>
-  const sendBtn = document.getElementById("sendBtn");
-  const fileUrlInput = document.getElementById("fileUrl");
-  const noteInput = document.getElementById("note");
-  const statusMsg = document.getElementById("statusMsg");
-
-  sendBtn.addEventListener("click", async () => {
-    const fileUrl = fileUrlInput.value.trim();
-    const note = noteInput.value.trim();
-
-    if (!fileUrl) {
-      statusMsg.textContent = "Please enter an image URL first.";
-      statusMsg.style.color = "#c0392b";
-      return;
-    }
-
-    statusMsg.textContent = "Sending to Frankiemoji studio…";
-    statusMsg.style.color = "#444";
-
-    try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          file_url: fileUrl,
-          note: note || null
-        })
-      });
-      const data = await res.json();
-      console.log('Upload response:', data);
-
-      if (res.ok && data.ok) {
-        statusMsg.textContent = "✅ Upload received. We’ll start the emoji magic.";
-        statusMsg.style.color = "#2ecc71";
-        console.log("Server Response:", data);
-      } else {
-        statusMsg.textContent = "⚠️ Server responded but with an error.";
-        statusMsg.style.color = "#e67e22";
-        console.log("Server Error:", data);
-      }
-    } catch (err) {
-      statusMsg.textContent = "❌ Could not reach the Frankiemoji API.";
-      statusMsg.style.color = "#c0392b";
-      console.error(err);
-    }
-  });
-  </script> -->
-</script>
-<!-- === End Frankiemoji Upload Script === -->
 <script>
 
   // Use the shared Set as the single source of truth
