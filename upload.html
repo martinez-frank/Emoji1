@@ -493,6 +493,7 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
         })
       });
       const data = await res.json();
+      console.log('Upload response:', data);
 
       if (res.ok && data.ok) {
         statusMsg.textContent = "✅ Upload received. We’ll start the emoji magic.";
@@ -548,47 +549,50 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     if (!res.ok) throw new Error('Upload failed');
   }
 
-  document.getElementById('send-btn').addEventListener('click', async () => {
-    const packEl = document.getElementById('selected-pack');
-    const pack = packEl ? (packEl.dataset.pack || 'standard') : 'standard';
-    const email = document.getElementById('email').value.trim();
-    const expressions = getSelectedExpressions();
-    const fileInput = document.getElementById('file-input');
-    const file = fileInput && fileInput.files[0];
+document.getElementById('send-btn').addEventListener('click', async () => {
+  const packEl = document.getElementById('selected-pack');
+  const pack = (packEl?.dataset.pack || 'standard');
+  const email = document.getElementById('email').value.trim();
+  const expressions = getSelectedExpressions(); // your existing helper
+  const fileInput = document.getElementById('file-input');
+  const file = fileInput && fileInput.files && fileInput.files[0];
 
-    try {
-      let imagePath = null;
+  // basic guards
+  if (!file) { alert('Please choose a photo first.'); return; }
+  if (!email) { alert('Please enter your email.'); return; }
 
-      if (file) {
-        const { upload_url, object_path } = await getSignedUploadUrl();
-        await uploadFile(file, upload_url);
-        imagePath = object_path;
-      }
-      /*
-      const res = await fetch('/api/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pack_type: pack,
-          expressions: expressions,
-          email: email,
-          phone: '',        // hook up your mobile input here later
-          image_path: imagePath
-        })
-      });
+  // status message (optional)
+  const statusMsg = document.getElementById('statusMsg');
+  if (statusMsg) { statusMsg.textContent = 'Sending to Frankiemojis…'; }
 
-      const data = await res.json();
-      if (data.ok) {
-        alert('✅ Your emoji pack request has been submitted!');
-      } else {
-        alert('Error: ' + (data.error || 'unknown'));
-      }
-      */
-    } catch (err) {
-      console.error(err);
-      alert('❌ ' + err.message);
+  try {
+    const fd = new FormData();
+    fd.append('file', file);                       // <- Blob/File
+    fd.append('email', email);
+    fd.append('phone', (document.getElementById('phone')?.value || '').trim());
+    fd.append('expressions', JSON.stringify(expressions));
+
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { 'x-pack': pack },                 // starter | standard | premium
+      body: fd
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data?.ok) {
+      throw new Error(data?.error || `Server returned ${res.status}`);
     }
-  });
+
+    // success UI
+    if (statusMsg) { statusMsg.textContent = '✅ Upload received. We\'ll start the emoji magic.'; }
+    document.getElementById('success')?.style?.setProperty('display','block');
+
+  } catch (err) {
+    console.error(err);
+    if (statusMsg) { statusMsg.textContent = `❌ ${err.message}`; }
+    alert('Upload failed.');
+  }
+});
 </script>
 <div id="statusMsg" style="margin-top:.75rem"></div>
 <!-- PHASE 2 CLEANUP SHIM: disables legacy alerts & handlers -->
