@@ -15,17 +15,28 @@ export default async function handler(req) {
 
     try {
     // 1) Supabase client (service role)
-    const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE;
+      try {
+    // --- FIXED ENV VARIABLES ---
+    const url =
+      process.env.SUPABASE_URL ||
+      process.env.NEXT_PUBLIC_SUPABASE_URL; // fallback (rare)
+
+    const key =
+      process.env.SUPABASE_SERVICE_KEY ||
+      process.env.SUPABASE_SERVICE_ROLE; // both now supported
 
     if (!url || !key) {
       return new Response(
-        JSON.stringify({ ok: false, error: 'Supabase env vars missing (SUPABASE_URL / SUPABASE_SERVICE_KEY)' }),
-        { status: 500, headers: { 'content-type': 'application/json' } }
+        JSON.stringify({
+          ok: false,
+          error: "Missing SUPABASE_URL or SUPABASE_SERVICE_KEY env vars",
+        }),
+        { status: 500, headers: { "content-type": "application/json" } }
       );
     }
 
     const sb = createClient(url, key, { auth: { persistSession: false } });
+
 
     // 2) Read JSON body
     const body = await req.json().catch(() => null);
