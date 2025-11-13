@@ -361,8 +361,6 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     </div>
   </div>
 </footer>
-
-
   <!-- Marquee loader (manifest → GitHub → hard fallback) -->
   <script>
   (function () {
@@ -388,7 +386,6 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     };
 
     async function fromManifest(){
-      // support: array OR {stickers:[…]}
       try{
         const res = await fetch("images/manifest.json?cb="+Date.now(), {cache:"no-store"});
         if(!res.ok) throw 0;
@@ -428,7 +425,6 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
       row1.style.animationDuration = (50 + Math.random()*2).toFixed(2) + "s";
       row2.style.animationDuration = (53 + Math.random()*2).toFixed(2) + "s";
 
-      // pause on hover
       document.querySelectorAll(".marquee").forEach(m=>{
         m.addEventListener("mouseenter", ()=> m.style.animationPlayState="paused");
         m.addEventListener("mouseleave", ()=> m.style.animationPlayState="running");
@@ -441,331 +437,221 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
   <script>window.UPLOADCARE_PUBLIC_KEY='demopublickey';</script>
 
-    <!-- Page logic: pack, expressions, email/sms, upload, send -->
+  <!-- Page logic: pack, expressions, email/sms, Uploadcare, send -->
   <script>
-// Small helper for querySelector
-const qs = (s) => document.querySelector(s);
+  // Small helper for querySelector
+  const qs = (s) => document.querySelector(s);
 
-// ----- Pack mapping (Starter / Standard / Premium) -----
-const PACK_LABEL = {
-  starter: 'Starter',
-  standard: 'Standard',
-  premium: 'Premium',
-};
+  // ----- Pack mapping (Starter / Standard / Premium) -----
+  const PACK_LABEL = {
+    starter: 'Starter',
+    standard: 'Standard',
+    premium: 'Premium',
+  };
 
-const PACK_MAX = {
-  starter: 3,
-  standard: 9,
-  premium: 18,
-};
+  const PACK_MAX = {
+    starter: 3,
+    standard: 9,
+    premium: 18,
+  };
 
-// Read ?pack= from the URL (default to starter)
-const params = new URLSearchParams(window.location.search);
-const pack = (params.get('pack') || 'starter').toLowerCase();
+  // Read ?pack= from the URL (default to starter)
+  const params = new URLSearchParams(window.location.search);
+  const pack = (params.get('pack') || 'starter').toLowerCase();
 
-// How many expressions allowed for this pack
-const MAX = PACK_MAX[pack] || 3;
+  // How many expressions allowed for this pack
+  const MAX = PACK_MAX[pack] || 3;
 
-// ----- Update “Selected: …” text at the top -----
-const packNote = document.getElementById('pack-note');
-if (packNote) {
-  packNote.textContent = `Selected: ${PACK_LABEL[pack] || 'Starter'}`;
-}
-
-// ----- Prefill email if we have it in localStorage -----
-let start = {};
-try {
-  start = JSON.parse(localStorage.getItem('franki:start') || '{}');
-} catch (_) {}
-
-if (start.email && qs('#email')) {
-  qs('#email').value = start.email;
-}
-
-// ----- SMS toggle -----
-const optin = qs('#sms-optin');
-const smsRow = qs('#sms-row');
-
-if (optin && smsRow) {
-  // initial state
-  smsRow.style.display = optin.checked ? '' : 'none';
-
-  optin.addEventListener('change', () => {
-    smsRow.style.display = optin.checked ? '' : 'none';
-  });
-}
-
-// ----- Expression chips -----
-const EXPRESSIONS = [
-  'Happy', 'Laughing', 'Wink', 'Big Grin',
-  'Smirk', 'Thumbs Up', 'Heart Eyes',
-  'Surprised', 'Face Palm', 'Eye Roll',
-  'Tired', 'Sad', 'Tearful', 'Angry',
-  'Mind Blown', 'Cool (Sunglasses)',
-  'Confident', 'Skeptical', 'Thinking',
-  'Cheeky Tongue', 'Shy', 'Kiss',
-  'Celebrating', 'Coffee', 'Prayer Hands'
-];
-
-const chipsEl   = document.getElementById('expr-chips');
-const thumbEl   = document.getElementById('expr-thumbs');   // currently hidden by CSS — OK
-const counterEl = document.getElementById('expr-count');
-
-// Shared Set of selected expressions
-const selected = new Set();
-
-// Build chips in the DOM programmatically (even though you have static buttons,
-// this keeps logic consistent; or you can skip this part if you prefer static HTML)
-//
-// If you want to KEEP the static <button> list you already have, you can
-// comment this block out and attach listeners to existing buttons instead.
-/*
-if (chipsEl) {
-  chipsEl.innerHTML = '';
-  EXPRESSIONS.forEach((name) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'expression-pill expression-btn';
-    b.textContent = name;
-    b.addEventListener('click', () => toggleChip(name, b));
-    chipsEl.appendChild(b);
-  });
-}
-*/
-
-// Attach listeners to any existing .expression-btn buttons
-document.querySelectorAll('.expression-btn').forEach((btn) => {
-  const name = btn.textContent.trim();
-  btn.addEventListener('click', () => toggleChip(name, btn));
-});
-
-// Re-render counter + thumbnail row
-function render() {
-  const count = selected.size;
-
-  // Update "x / MAX selected"
-  if (counterEl) {
-    counterEl.textContent = `${count} / ${MAX} selected`;
+  // ----- Update “Selected: …” text at the top -----
+  const packNote = document.getElementById('pack-note');
+  if (packNote) {
+    packNote.textContent = `Selected: ${PACK_LABEL[pack] || 'Starter'}`;
   }
 
-  // Optional thumbnails under the counter
-  if (thumbEl) {
-    thumbEl.innerHTML = '';
-    selected.forEach((name) => {
-      const span = document.createElement('span');
-      span.className = 'expr-thumb';
-      span.textContent = name;
-      thumbEl.appendChild(span);
-    });
-  }
-}
-
-// Toggle a chip on / off, respecting MAX
-function toggleChip(name, chip) {
-  if (selected.has(name)) {
-    // Unselect this expression
-    selected.delete(name);
-    chip.classList.remove('selected');
-  } else {
-    // Respect pack limit (3 / 9 / 18)
-    if (selected.size >= MAX) return;
-    selected.add(name);
-    chip.classList.add('selected');
-  }
-
-  render();
-}
-
-// Initial render so "0 / MAX selected" shows correctly
-render();
-
-// Expose selected set so other scripts can use it if needed
-window.frankiSelectedExpressions = selected;
-
-// ----- Uploadcare widget + preview -----
-const widget = uploadcare.Widget('#u-file');
-
-const fileUrlInput  = document.getElementById('fileUrl');
-const previewWrap   = document.getElementById('u-preview-wrap');
-const previewImg    = document.getElementById('u-preview');
-
-function showPreview(cdnUrl) {
-  if (!previewWrap || !previewImg) return;
-
-  if (!cdnUrl) {
-    previewWrap.style.display = 'none';
-    previewImg.removeAttribute('src');
-    return;
-  }
-
-  // Nice sized preview
-  previewImg.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
-  previewWrap.style.display = 'block';
-}
-
-widget.onChange(function (file) {
-  if (fileUrlInput) fileUrlInput.value = '';
-
-  if (!file) {
-    showPreview('');
-    return;
-  }
-
-  file.done(function (info) {
-    if (!info || !info.cdnUrl) return;
-
-    if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
-    showPreview(info.cdnUrl);
-  });
-});
-  </script>
-  <!-- === End Frankiemoji Upload Script === -->
-
-<script>
-
-  // Use the shared Set as the single source of truth
-
-  async function getSignedUploadUrl() {
-    const res = await fetch('/api/get-upload-url', { method: 'POST' });
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Could not get upload URL');
-    return data;
-  }
-
-  async function uploadFile(file, uploadUrl) {
-    const res = await fetch(uploadUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': file.type },
-      body: file
-    });
-    if (!res.ok) throw new Error('Upload failed');
-  }
-
-document.getElementById('send-btn').addEventListener('click', async () => {
-  const packEl = document.getElementById('selected-pack');
-  const pack = (packEl?.dataset.pack || 'standard');
-  const email = document.getElementById('email').value.trim();
-  const expressions = getSelectedExpressions(); // your existing helper
-  const fileInput = document.getElementById('file-input');
-  const file = fileInput && fileInput.files && fileInput.files[0];
-
-  // basic guards
-  if (!file) { alert('Please choose a photo first.'); return; }
-  if (!email) { alert('Please enter your email.'); return; }
-
-  // status message (optional)
-  const statusMsg = document.getElementById('statusMsg');
-  if (statusMsg) { statusMsg.textContent = 'Sending to Frankiemojis…'; }
-
+  // ----- Prefill email if we have it in localStorage -----
+  let start = {};
   try {
-    const fd = new FormData();
-    fd.append('file', file);                       // <- Blob/File
-    fd.append('email', email);
-    fd.append('phone', (document.getElementById('phone')?.value || '').trim());
-    fd.append('expressions', JSON.stringify(expressions));
+    start = JSON.parse(localStorage.getItem('franki:start') || '{}');
+  } catch (_) {}
 
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      headers: { 'x-pack': pack },                 // starter | standard | premium
-      body: fd
+  if (start.email && qs('#email')) {
+    qs('#email').value = start.email;
+  }
+
+  // ----- SMS toggle -----
+  const optin = qs('#sms-optin');
+  const smsRow = qs('#sms-row');
+
+  if (optin && smsRow) {
+    smsRow.style.display = optin.checked ? '' : 'none';
+    optin.addEventListener('change', () => {
+      smsRow.style.display = optin.checked ? '' : 'none';
     });
+  }
 
-    const data = await res.json();
-    if (!res.ok || !data?.ok) {
-      throw new Error(data?.error || `Server returned ${res.status}`);
+  // ----- Expression chips -----
+  const EXPRESSIONS = [
+    'Happy', 'Laughing', 'Wink', 'Big Grin',
+    'Smirk', 'Thumbs Up', 'Heart Eyes',
+    'Surprised', 'Face Palm', 'Eye Roll',
+    'Tired', 'Sad', 'Tearful', 'Angry',
+    'Mind Blown', 'Cool (Sunglasses)',
+    'Confident', 'Skeptical', 'Thinking',
+    'Cheeky Tongue', 'Shy', 'Kiss',
+    'Celebrating', 'Coffee', 'Prayer Hands'
+  ];
+
+  const chipsEl   = document.getElementById('expr-chips');
+  const counterEl = document.getElementById('expr-count');
+  const thumbEl   = document.getElementById('expr-thumbs'); // OK if null
+
+  const selected  = new Set();
+
+  function renderExpressions() {
+    const count = selected.size;
+    if (counterEl) {
+      counterEl.textContent = `${count} / ${MAX} selected`;
+    }
+    if (thumbEl) {
+      thumbEl.innerHTML = '';
+      selected.forEach((name) => {
+        const span = document.createElement('span');
+        span.className = 'expr-thumb';
+        span.textContent = name;
+        thumbEl.appendChild(span);
+      });
+    }
+  }
+
+  function toggleChip(name, chip) {
+    if (selected.has(name)) {
+      selected.delete(name);
+      chip.classList.remove('selected');
+    } else {
+      if (selected.size >= MAX) return;
+      selected.add(name);
+      chip.classList.add('selected');
+    }
+    renderExpressions();
+  }
+
+  // Attach listeners to existing buttons
+  document.querySelectorAll('.expression-btn').forEach((btn) => {
+    const name = btn.textContent.trim();
+    btn.addEventListener('click', () => toggleChip(name, btn));
+  });
+
+  // Initial counter
+  renderExpressions();
+
+  // Make selected accessible if needed elsewhere
+  window.frankiSelectedExpressions = selected;
+
+  // ----- Uploadcare widget + preview -----
+  const widget      = uploadcare.Widget('#u-file');
+  const fileUrlInput = document.getElementById('fileUrl');
+  const previewWrap  = document.getElementById('u-preview-wrap');
+  const previewImg   = document.getElementById('u-preview');
+
+  function showPreview(cdnUrl) {
+    if (!previewWrap || !previewImg) return;
+
+    if (!cdnUrl) {
+      previewWrap.style.display = 'none';
+      previewImg.removeAttribute('src');
+      return;
     }
 
-    // success UI
-    if (statusMsg) { statusMsg.textContent = '✅ Upload received. We\'ll start the emoji magic.'; }
-    document.getElementById('success')?.style?.setProperty('display','block');
-
-  } catch (err) {
-    console.error(err);
-    if (statusMsg) { statusMsg.textContent = `❌ ${err.message}`; }
-    alert('Upload failed.');
+    previewImg.src = cdnUrl + '-/preview/800x800/-/quality/smart/';
+    previewWrap.style.display = 'block';
   }
-});
-</script>
-<div id="statusMsg" style="margin-top:.75rem"></div>
-<!-- PHASE 2 CLEANUP SHIM: disables legacy alerts & handlers -->
-<script>
-(function(){
-  const originalAlert = window.alert;
-  window.alert = function(msg){ console.log('[alert suppressed]', msg); };
 
-  const form = document.getElementById('uploadForm');
-  if (!form) { console.warn('[cleanup] #uploadForm not found'); return; }
+  widget.onChange(function (file) {
+    if (fileUrlInput) fileUrlInput.value = '';
 
-  form.removeAttribute('onsubmit');
-  form.setAttribute('action', '');
-  form.setAttribute('method', '');
+    if (!file) {
+      showPreview('');
+      return;
+    }
 
-  const killer = function(e){
-    if (e.target === form) e.stopImmediatePropagation();
-  };
-  document.addEventListener('submit', killer, true);
+    file.done(function (info) {
+      if (!info || !info.cdnUrl) return;
+      if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
+      showPreview(info.cdnUrl);
+    });
+  });
 
-  window.__restoreAlert = () => (window.alert = originalAlert);
-  console.log('[cleanup] legacy alerts & submit handlers neutralized');
-})();
-</script>
+  // ----- Submit to /api/upload (JSON) -----
+  const formEl    = document.getElementById('uploadForm');
+  const successEl = document.getElementById('success');
+  const statusEl  = document.getElementById('statusMsg');
 
-<script type="module">
-const form   = document.getElementById('uploadForm');
-const fileI  = document.getElementById('file');
-const emailI = document.getElementById('email');
-const phoneI = document.getElementById('phone');
-const statusMsg = document.getElementById('statusMsg');
-
-function setStatus(t){ statusMsg.textContent = t; }
-function normalizePhone(p){
-  const d = (p||'').replace(/\D/g,'');
-  return d.length >= 10 ? d : '';
-}
-
-if (!form) console.warn('uploadForm not found');
-
-form?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const file = fileI?.files?.[0];
-  if(!file){ setStatus('Choose a file'); return; }
-
-  // collect selected expressions if you use pills with data-key
-  const selections = [...document.querySelectorAll('.expr.selected')].map(x=>x.dataset.key);
-
-  // guardrails
-  if (!file.type.startsWith('image/')) { setStatus('Please upload an image'); return; }
-  if (file.size > 10*1024*1024) { setStatus('File too large (>10MB)'); return; }
-
-  const fd = new FormData();
-  fd.append('file', file);
-  fd.append('email', emailI?.value?.trim() || '');
-  fd.append('phone', normalizePhone(phoneI?.value));
-  fd.append('expressions', JSON.stringify(selections));
-
-  try {
-    setStatus('Uploading file…');
-    const res = await fetch('/api/upload', { method: 'POST', body: fd });
-    const text = await res.text();           // read raw text for easier debugging
-    if (!res.ok) throw new Error(text || 'Upload failed');
-
-    let data = {};
-    try { data = JSON.parse(text); } catch { /* ignore */ }
-
-    // show the order id loudly
-    const msg = data.order_id ? `Done 🎉 Order # ${data.order_id}` : 'Done 🎉';
-    setStatus(msg);
-
-    // also pop an alert (until you see it working)
-    if (data.order_id) alert('Order ID: ' + data.order_id);
-
-    console.log('Upload response:', data);
-  } catch (err) {
-    console.error(err);
-    setStatus('❌ ' + (err.message || 'Upload failed'));
+  function setStatus(msg, color) {
+    if (!statusEl) return;
+    statusEl.textContent = msg;
+    statusEl.style.color = color || '#2C2419';
   }
-});
-</script>
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+
+    const email = emailInput?.value.trim();
+    const phone = phoneInput?.value.trim() || null;
+    const fileUrl = fileUrlInput?.value;
+
+    if (!fileUrl) {
+      setStatus('Please choose an image first.', '#c0392b');
+      return;
+    }
+    if (!email) {
+      setStatus('Please enter your email.', '#c0392b');
+      return;
+    }
+    if (!selected.size) {
+      setStatus('Please pick at least one expression.', '#c0392b');
+      return;
+    }
+
+    const payload = {
+      pack,
+      email,
+      phone,
+      file_url: fileUrl,
+      expressions: Array.from(selected)
+    };
+
+    try {
+      setStatus('Sending your pack details…');
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || `Server returned ${res.status}`);
+      }
+
+      setStatus('✅ All set! We’ll start the emoji magic shortly.', '#2ecc71');
+      if (successEl) successEl.style.display = 'block';
+    } catch (err) {
+      console.error(err);
+      setStatus('❌ ' + (err.message || 'Upload failed'), '#c0392b');
+    }
+  }
+
+  if (formEl) {
+    formEl.addEventListener('submit', handleSubmit);
+  }
+  </script>
+
+  <!-- Status message area -->
+  <div id="statusMsg" style="margin-top:.75rem;text-align:center;font-size:0.9rem;"></div>
 </body>
 </html>
