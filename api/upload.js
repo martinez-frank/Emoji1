@@ -13,14 +13,14 @@ export default async function handler(req) {
     );
   }
 
-  try {
+    try {
     // 1) Supabase client (service role)
-    const url  = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key  = process.env.SUPABASE_SERVICE_ROLE;
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE;
 
     if (!url || !key) {
       return new Response(
-        JSON.stringify({ ok: false, error: 'Supabase env vars missing' }),
+        JSON.stringify({ ok: false, error: 'Supabase env vars missing (SUPABASE_URL / SUPABASE_SERVICE_KEY)' }),
         { status: 500, headers: { 'content-type': 'application/json' } }
       );
     }
