@@ -22,7 +22,10 @@ export default async function handler(req) {
     const body = await req.json().catch(() => null);
 
     if (!body) {
-      return new Response('Invalid JSON', { status: 400 });
+      return new Response(
+        JSON.stringify({ ok: false, error: 'Invalid JSON' }),
+        { status: 400, headers: { 'content-type': 'application/json' } }
+      );
     }
 
     const {
@@ -34,11 +37,17 @@ export default async function handler(req) {
     } = body;
 
     if (!file_url) {
-      return new Response('Missing file_url', { status: 400 });
+      return new Response(
+        JSON.stringify({ ok: false, error: 'Missing file_url' }),
+        { status: 400, headers: { 'content-type': 'application/json' } }
+      );
     }
 
     if (!email) {
-      return new Response('Missing email', { status: 400 });
+      return new Response(
+        JSON.stringify({ ok: false, error: 'Missing email' }),
+        { status: 400, headers: { 'content-type': 'application/json' } }
+      );
     }
 
     // 3) Create the order row
@@ -49,20 +58,21 @@ export default async function handler(req) {
         expressions,
         email,
         phone,
-        image_path: file_url,  // store Uploadcare URL here
+        image_path: file_url,   // store Uploadcare URL directly
         status: 'received'
       })
       .select('id')
       .single();
 
     if (insErr) throw insErr;
+
     const orderId = ins.id;
 
     // 4) Respond OK
-    return new Response(JSON.stringify({ ok: true, order_id: orderId }), {
-      status: 200,
-      headers: { 'content-type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({ ok: true, order_id: orderId }),
+      { status: 200, headers: { 'content-type': 'application/json' } }
+    );
 
   } catch (e) {
     console.error(e);
