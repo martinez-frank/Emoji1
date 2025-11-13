@@ -469,29 +469,72 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
       "Cool (Sunglasses)","Confident","Skeptical","Thinking","Cheeky Tongue",
       "Shy","Kiss","Celebrating","Coffee","Prayer Hands"
     ];
-    const MAX = MAX_BY_PACK[pack] || 3;
-    const chipsEl = qs('#expr-chips'), thumbsEl = qs('#expr-thumbs'), hiddenEl = qs('#expressions'), countEl = qs('#expr-count');
-    const selected = new Set();
-    function render(){
-      hiddenEl.value = Array.from(selected).join(',');
-      if (countEl) countEl.textContent = `${selected.size} / ${MAX} selected`;
-      thumbsEl.innerHTML = '';
-      selected.forEach(n=>{ const t=document.createElement('span'); t.className='expr-thumb'; t.textContent=n; thumbsEl.appendChild(t); });
-    }
-    function toggle(name, chip){
-      if (selected.has(name)){ selected.delete(name); chip.classList.remove('selected'); }
-      else {
-        if (selected.size >= MAX){ chip.style.transform='translateY(-1px) scale(0.98)'; setTimeout(()=>chip.style.transform='',150); return; }
-        selected.add(name); chip.classList.add('selected');
-      }
-      render();
+    // Pack logic: starter / standard / premium
+      const PACK_MAX = { starter: 3, standard: 9, premium: 18 };
+      const PACK_LABEL = { starter: 'Starter', standard: 'Standard', premium: 'Premium' };
+
+      const params = new URLSearchParams(location.search);
+      const pack = params.get('pack') || 'starter';
+
+      const MAX = PACK_MAX[pack] || 3;
+
+    // Update "Selected: —" at top of page
+      const packNote = document.getElementById('pack-note');
+      if (packNote) {
+      packNote.textContent = `Selected: ${PACK_LABEL[pack] || 'Starter'}`;
+}
+
+// Elements for counting & thumbnails
+      const chipsEl   = document.getElementById('expr-chips');
+      const thumbEl   = document.getElementById('expr-thumb');
+      const counterEl = document.getElementById('expr-count');
+
+      const selected = new Set();
+
     }
     EXPRESSIONS.forEach(name=>{
       const b=document.createElement('button'); b.type='button'; b.className='expr-chip'; b.textContent=name;
       b.addEventListener('click',()=>toggle(name,b)); chipsEl.appendChild(b);
     });
+    
     render();
+    
+    function render() {
+     const count = selected.size;
 
+  // Update counter label: "x / MAX selected"
+     if (counterEl) {
+    counterEl.textContent = `${count} / ${MAX} selected`;
+  }
+
+  // Show thumbnails under counter (optional)
+     if (thumbEl) {
+    thumbEl.innerHTML = '';
+    selected.forEach(name => {
+      const span = document.createElement('span');
+      span.className = 'expr-thumb';
+      span.textContent = name;
+      thumbEl.appendChild(span);
+    });
+  }
+}
+function toggle(name, chip) {
+  if (selected.has(name)) {
+    // Unselect this expression
+    selected.delete(name);
+    chip.classList.remove('selected');
+  } else {
+    // Respect the MAX per pack (3 / 9 / 18)
+    if (selected.size >= MAX) return;
+
+    selected.add(name);
+    chip.classList.add('selected');
+  }
+
+  // Re-draw counter + thumbnails
+  render();
+}
+    
    <script>
    // Uploadcare widget + preview
      const widget = uploadcare.Widget('#u-file');
@@ -587,24 +630,11 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
 </script>
 <!-- === End Frankiemoji Upload Script === -->
 <script>
-  // get all expression pills and let user toggle them
-  document.querySelectorAll('.expression-pill, .expression-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      btn.classList.toggle('selected');
-      updateCount();
-    });
-  });
 
-  function updateCount() {
-    const count = document.querySelectorAll('.expression-pill.selected, .expression-btn.selected').length;
-    const counter = document.querySelector('#expr-count');
-    if (counter) counter.textContent = count;
-  }
-
-  function getSelectedExpressions() {
-    const selected = document.querySelectorAll('.expression-pill.selected, .expression-btn.selected');
-    return Array.from(selected).map(el => el.textContent.trim());
-  }
+  // Use the shared Set as the single source of truth
+function getSelectedExpressions() {
+  return Array.from(selected);
+}
 
   async function getSignedUploadUrl() {
     const res = await fetch('/api/get-upload-url', { method: 'POST' });
