@@ -16,6 +16,10 @@
   ],
   "routes": [
     {
+      "src": "/api/upload",
+      "dest": "/api/upload.js"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/main.py"
     },
@@ -24,7 +28,7 @@
       "dest": "/images/$1"
     },
     {
-      "src": "/(.+\\.html)",
+      "src": "/(.*\\.html)",
       "dest": "/$1"
     },
     {
