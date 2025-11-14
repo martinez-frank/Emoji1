@@ -6,6 +6,10 @@
       "use": "@vercel/python"
     },
     {
+      "src": "api/upload.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "*.html",
       "use": "@vercel/static"
     },
