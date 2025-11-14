@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Orders — Frankiemoji Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --cream:#FAF3E0;
+      --espresso:#2C2419;
+      --graphite:#5A5350;
+      --accent:#F5A623;
+      --pill:#FFF8EC;
+      --border:#E2D4BE;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--cream);
+      color:var(--espresso);
+      min-height:100vh;
+    }
+    .shell{
+      max-width:1100px;
+      margin:2.5rem auto 3rem;
+      padding:0 1.25rem;
+    }
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      margin-bottom:1.5rem;
+      gap:1rem;
+    }
+    header h1{
+      font-family:"DM Serif Display",serif;
+      font-size:2.1rem;
+      letter-spacing:0.03em;
+    }
+    header span.badge{
+      background:var(--pill);
+      border-radius:999px;
+      padding:0.35rem 0.9rem;
+      font-size:0.8rem;
+      border:1px solid var(--border);
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+    }
+
+    .card{
+      background:#FFF7EA;
+      border-radius:18px;
+      border:1px solid var(--border);
+      padding:1.25rem 1.5rem;
+      box-shadow:0 10px 30px rgba(44,36,25,0.06);
+      margin-bottom:1.25rem;
+    }
+    .card h2{
+      font-size:1rem;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      font-weight:600;
+      color:var(--graphite);
+      margin-bottom:0.5rem;
+    }
+    .auth-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.75rem;
+      align-items:center;
+    }
+    .auth-row input{
+      flex:1;
+      min-width:220px;
+      padding:0.55rem 0.75rem;
+      border-radius:10px;
+      border:1px solid var(--border);
+      font-size:0.9rem;
+      background:white;
+    }
+    button.primary{
+      border:none;
+      border-radius:999px;
+      padding:0.55rem 1.2rem;
+      font-size:0.9rem;
+      font-weight:600;
+      cursor:pointer;
+      background:var(--espresso);
+      color:#fff;
+      display:inline-flex;
+      align-items:center;
+      gap:0.4rem;
+      transition:transform 0.08s ease,box-shadow 0.08s ease,background 0.15s ease;
+    }
+    button.primary:hover{
+      transform:translateY(-1px);
+      box-shadow:0 6px 14px rgba(44,36,25,0.18);
+      background:#221A11;
+    }
+    .status{
+      margin-top:0.4rem;
+      font-size:0.85rem;
+    }
+    .status.ok{color:#137D3B;}
+    .status.err{color:#B02020;}
+
+    .table-wrap{
+      margin-top:0.5rem;
+      border-radius:18px;
+      border:1px solid var(--border);
+      overflow:auto;
+      background:#FFFDF7;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:0.85rem;
+      min-width:800px;
+    }
+    thead{
+      background:#F2E5CF;
+      position:sticky;
+      top:0;
+      z-index:1;
+    }
+    th,td{
+      padding:0.55rem 0.7rem;
+      border-bottom:1px solid #EDE0CC;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+      font-size:0.75rem;
+      color:var(--graphite);
+      white-space:nowrap;
+    }
+    tbody tr:nth-child(even){
+      background:#FFF9EF;
+    }
+    .chip-pack{
+      display:inline-flex;
+      align-items:center;
+      gap:0.25rem;
+      padding:0.1rem 0.55rem;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#FFF;
+      font-size:0.78rem;
+      text-transform:capitalize;
+    }
+    .chip-pack span.dot{
+      width:7px;
+      height:7px;
+      border-radius:999px;
+      background:var(--accent);
+    }
+    .expr{
+      max-width:280px;
+      white-space:normal;
+    }
+    .expr span{
+      display:inline-block;
+      padding:0.08rem 0.4rem;
+      margin:0.06rem 0.14rem 0.06rem 0;
+      border-radius:999px;
+      background:#FFF2D8;
+      border:1px solid #F1D7A5;
+      font-size:0.75rem;
+    }
+    .pill-meta{
+      font-size:0.78rem;
+      color:var(--graphite);
+    }
+    footer{
+      margin-top:1.75rem;
+      text-align:center;
+      font-size:0.78rem;
+      color:var(--graphite);
+      opacity:0.8;
+    }
+    @media (max-width:720px){
+      header{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      header h1{font-size:1.7rem;}
+      .card{padding:1rem 1rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <h1>Frankiemoji Orders</h1>
+      <span class="badge">Internal · Admin View</span>
+    </header>
+
+    <!-- Auth card -->
+    <section class="card">
+      <h2>Access</h2>
+      <p style="font-size:0.9rem;margin-bottom:0.6rem;">
+        Enter your admin passphrase to view the latest emoji pack orders.
+      </p>
+      <div class="auth-row">
+        <input type="password" id="adminKey" placeholder="Admin passphrase" autocomplete="current-password" />
+        <button class="primary" id="loadBtn">
+          <span>View orders</span> <span>📦</span>
+        </button>
+      </div>
+      <div id="authStatus" class="status"></div>
+    </section>
+
+    <!-- Orders table -->
+    <section class="card" id="ordersCard" style="display:none;">
+      <h2>Recent Orders</h2>
+      <p class="pill-meta" id="summary"></p>
+      <div class="table-wrap">
+        <table id="ordersTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Created</th>
+              <th>Pack</th>
+              <th>Expressions</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Order&nbsp;ID</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      Internal tooling for Frankiemoji™ Studios. Do not share this URL publicly.
+    </footer>
+  </div>
+
+  <script>
+    const adminInput  = document.getElementById('adminKey');
+    const loadBtn     = document.getElementById('loadBtn');
+    const statusEl    = document.getElementById('authStatus');
+    const ordersCard  = document.getElementById('ordersCard');
+    const tbody       = document.querySelector('#ordersTable tbody');
+    const summaryEl   = document.getElementById('summary');
+
+    function setStatus(msg, type){
+      statusEl.textContent = msg || '';
+      statusEl.className = 'status' + (type ? ' ' + type : '');
+    }
+
+    function renderOrders(orders){
+      tbody.innerHTML = '';
+      if (!orders || !orders.length){
+        summaryEl.textContent = 'No orders yet. Once packs start flowing, they will appear here.';
+        return;
+      }
+      summaryEl.textContent = `${orders.length} most recent orders (newest first).`;
+
+      orders.forEach((o, idx) => {
+        const tr = document.createElement('tr');
+
+        const created = o.created_at
+          ? new Date(o.created_at).toLocaleString()
+          : '';
+
+        const exprList = Array.isArray(o.expressions) ? o.expressions : [];
+        const exprHtml = exprList.map(e =>
+          `<span>${e}</span>`
+        ).join('');
+
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${created}</td>
+          <td>
+            <span class="chip-pack">
+              <span class="dot"></span>
+              <span>${o.pack_type || 'starter'}</span>
+            </span>
+          </td>
+          <td class="expr">${exprHtml}</td>
+          <td>${o.email || ''}</td>
+          <td>${o.phone || ''}</td>
+          <td style="font-family:monospace;font-size:0.78rem;">${o.id}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadOrders(){
+      const key = adminInput.value.trim();
+      if (!key){
+        setStatus('Please enter your admin passphrase.', 'err');
+        return;
+      }
+      setStatus('Loading orders…', '');
+      ordersCard.style.display = 'none';
+
+      try{
+        const res  = await fetch('/api/orders', {
+          headers: { 'x-admin-key': key }
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || !data.ok){
+          throw new Error(data.error || `Request failed (${res.status})`);
+        }
+
+        renderOrders(data.orders || []);
+        setStatus('Access granted. Orders loaded.', 'ok');
+        ordersCard.style.display = 'block';
+      } catch (err){
+        console.error('loadOrders error', err);
+        setStatus(err.message || 'Failed to load orders.', 'err');
+        ordersCard.style.display = 'none';
+      }
+    }
+
+    loadBtn.addEventListener('click', loadOrders);
+    adminInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') loadOrders();
+    });
+  </script>
+</body>
+</html>
