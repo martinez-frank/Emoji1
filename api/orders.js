@@ -1,3 +1,4 @@
+export const config = { runtime: 'nodejs' };
 // api/orders.js – List recent emoji orders for admin
 import { createClient } from '@supabase/supabase-js';
 
