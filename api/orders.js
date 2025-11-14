@@ -1,7 +1,8 @@
 // /api/orders.js — List recent emoji orders for admin
 import { createClient } from '@supabase/supabase-js';
 
-export const config = { runtime: 'edge' };
+import { createClient } from '@supabase/supabase-js';
+// (no export const config here)
 
 const TABLE = 'emoji_orders';
 
