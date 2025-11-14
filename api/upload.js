@@ -1,10 +1,12 @@
 // /api/upload.js — Vercel Edge Function (JSON, not FormData)
-import { createClient } from '@supabase/supabase-js';
 
+// This is your Supabase table name
 const TABLE = 'emoji_orders';
 
+export const config = { runtime: 'edge' };
+
 export default async function handler(req) {
-  // 0) Only allow POST
+  // 1) Only allow POST
   if (req.method !== 'POST') {
     return new Response(
       JSON.stringify({ ok: false, error: 'Method not allowed' }),
@@ -13,16 +15,15 @@ export default async function handler(req) {
   }
 
   try {
-    // 1) Supabase client (service role)
+    // 2) Read env vars that Vercel injects
     const url = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE;
 
-    // Debug: log whether env vars are present
-    console.log('[upload] SUPABASE_URL present?', !!url);
-    console.log('[upload] SUPABASE_SERVICE_ROLE length:', key ? key.length : 0);
-
     if (!url || !key) {
-      console.error('[upload] Missing Supabase env vars');
+      console.error('[upload] Missing Supabase env vars', {
+        hasUrl: !!url,
+        hasKey: !!key,
+      });
       return new Response(
         JSON.stringify({
           ok: false,
@@ -32,11 +33,7 @@ export default async function handler(req) {
       );
     }
 
-    const sb = createClient(url, key, {
-      auth: { persistSession: false },
-    });
-
-    // 2) Read JSON body
+    // 3) Parse JSON body from the client
     const body = await req.json().catch(() => null);
     if (!body) {
       return new Response(
@@ -45,11 +42,12 @@ export default async function handler(req) {
       );
     }
 
+    // Expected payload from upload.html
     const {
-      pack = 'starter',   // "starter" | "standard" | "premium"
+      pack = 'starter',          // "starter" | "standard" | "premium"
       email = '',
       phone = '',
-      file_url,
+      file_url = '',
       expressions = [],
     } = body;
 
@@ -67,35 +65,57 @@ export default async function handler(req) {
       );
     }
 
-    // 3) Insert order row
-    const { data, error: insErr } = await sb
-      .from(TABLE)
-      .insert({
-        pack_type: pack,       // make sure this column exists
-        expressions,           // JSON or text[] column
-        email,
-        phone,
-        image_path: file_url,  // make sure this column exists
-        status: 'received',
-      })
-      .select('id')
-      .single();
+    // 4) Build the row for your emoji_orders table.
+    //    Column names here must match Supabase exactly.
+    const row = {
+      pack_type: pack,      // column: pack_type
+      email,                // column: email
+      phone,                // column: phone
+      image_path: file_url, // column: image_path
+      expressions,          // column: expressions (json/text[])
+      status: 'received',   // column: status
+    };
 
-    if (insErr) {
-      console.error('Supabase insert error:', insErr);
+    // 5) Insert into Supabase via REST API (no supabase-js client needed)
+    const insertRes = await fetch(`${url}/rest/v1/${TABLE}`, {
+      method: 'POST',
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation',
+      },
+      body: JSON.stringify([row]), // REST API expects an array of rows
+    });
+
+    const data = await insertRes.json().catch(() => null);
+
+    if (!insertRes.ok) {
+      console.error('[upload] Supabase insert failed', {
+        status: insertRes.status,
+        data,
+      });
       return new Response(
-        JSON.stringify({ ok: false, error: 'Supabase insert failed' }),
+        JSON.stringify({
+          ok: false,
+          error:
+            (data && data.message) ||
+            `Supabase insert failed (${insertRes.status})`,
+        }),
         { status: 500, headers: { 'content-type': 'application/json' } }
       );
     }
 
-    // 4) Success
+    // data is an array of inserted rows because of "return=representation"
+    const inserted = Array.isArray(data) ? data[0] : data;
+    const orderId = inserted && inserted.id ? inserted.id : null;
+
     return new Response(
-      JSON.stringify({ ok: true, order_id: data.id }),
+      JSON.stringify({ ok: true, order_id: orderId }),
       { status: 200, headers: { 'content-type': 'application/json' } }
     );
   } catch (err) {
-    console.error('Upload handler fatal error', err);
+    console.error('[upload] Handler fatal error', err);
     return new Response(
       JSON.stringify({ ok: false, error: 'Upload failed' }),
       { status: 500, headers: { 'content-type': 'application/json' } }
