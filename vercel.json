@@ -8,12 +8,11 @@
     { "src": "images/**", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/api/upload", "dest": "/api/upload.js" },
-    { "src": "/api/orders", "dest": "/api/orders.js" },
-    { "src": "/api/(.*)", "dest": "/api/main.py" },
+    { "src": "/api/upload(.*)", "dest": "/api/upload.js" },
+    { "src": "/api/orders(.*)", "dest": "/api/orders.js" },
+    { "src": "/api/main(.*)", "dest": "/api/main.py" },
     { "src": "/images/(.*)", "dest": "/images/$1" },
-    { "src": "/(.*\\.html)", "dest": "/$1" },
+    { "src": "/([^\\.]+\\.html)", "dest": "/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
-
