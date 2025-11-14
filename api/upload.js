@@ -1,8 +1,6 @@
 // /api/upload.js — Vercel Edge Function (JSON, not FormData)
 import { createClient } from '@supabase/supabase-js';
 
-export const config = { runtime: 'edge' };
-
 const TABLE = 'emoji_orders';
 
 export default async function handler(req) {
