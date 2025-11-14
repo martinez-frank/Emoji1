@@ -13,11 +13,15 @@ export default async function handler(req) {
     );
   }
 
-  try {
+   try {
     // 1) Supabase client (service role)
     // *** USE ONLY THESE TWO VARS ***
     const url = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE;
+
+    // Debug: log whether env vars are present, and key length
+    console.log('[upload] SUPABASE_URL present?', !!url);
+    console.log('[upload] SUPABASE_SERVICE_ROLE length:', key ? key.length : 0);
 
     if (!url || !key) {
       return new Response(
@@ -26,6 +30,10 @@ export default async function handler(req) {
           error: 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE env vars',
         }),
         { status: 500, headers: { 'content-type': 'application/json' } }
+      );
+    }
+
+    const sb = createClient(url, key, { auth: { persistSession: false } });
       );
     }
 
