@@ -1,74 +1,83 @@
-// api/orders.js – List recent emoji orders for admin (Edge Function)
-import { createClient } from 'supabase/supabase-js';
-
-export const config = { runtime: 'edge' };
+// api/orders.js – List recent emoji orders for admin using Supabase REST
 
 const TABLE = 'emoji_orders';
 
-// Small helper to return JSON responses
-function json(body, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json' },
-  });
-}
-
-export default async function handler(req) {
+module.exports = async (req, res) => {
   try {
     // 1) Only allow GET
     if (req.method !== 'GET') {
-      return json({ ok: false, error: 'Method not allowed' }, 405);
+      return res.status(405).json({
+        ok: false,
+        error: 'Method not allowed',
+      });
     }
 
     // 2) Simple admin auth via header
-    //    Accept both lowercase and capitalized header names
-    const adminHeader =
-      (req.headers.get('x-admin-key') ||
-        req.headers.get('X-Admin-Key') ||
-        '').toString();
-
+    // Node lowercases all header names: "x-admin-key"
+    const adminHeader = (req.headers['x-admin-key'] || '').toString();
     const adminSecret = process.env.ADMIN_ORDERS_KEY || '';
 
-    if (!adminHeader || adminHeader !== adminSecret) {
-      return json({ ok: false, error: 'Unauthorized' }, 401);
+    if (!adminSecret || adminHeader !== adminSecret) {
+      return res.status(401).json({
+        ok: false,
+        error: 'Unauthorized',
+      });
     }
 
     // 3) Supabase env vars (service role)
     const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE; // same as upload.js
+    const key = process.env.SUPABASE_SERVICE_ROLE;
 
     if (!url || !key) {
       console.error('[orders] Missing Supabase env vars', {
         hasUrl: !!url,
         hasKey: !!key,
       });
-      return json(
-        { ok: false, error: 'Server misconfigured: missing Supabase env vars' },
-        500
-      );
+      return res.status(500).json({
+        ok: false,
+        error: 'Server misconfigured: missing Supabase env vars',
+      });
     }
 
-    // 4) Supabase client (service role, no session)
-    const sb = createClient(url, key, {
-      auth: { persistSession: false },
+    // 4) Build Supabase REST URL
+    const base = url.replace(/\/$/, ''); // remove trailing slash if any
+    const restUrl =
+      `${base}/rest/v1/${TABLE}` +
+      `?select=id,created_at,pack_type,expressions,email,phone` +
+      `&order=created_at.desc` +
+      `&limit=100`;
+
+    // 5) Call Supabase REST
+    const supaRes = await fetch(restUrl, {
+      method: 'GET',
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+      },
     });
 
-    // 5) Query latest orders
-    const { data, error } = await sb
-      .from(TABLE)
-      .select('id, created_at, pack_type, expressions, email, phone')
-      .order('created_at', { ascending: false })
-      .limit(100);
-
-    if (error) {
-      console.error('[orders] Supabase select error:', error);
-      return json({ ok: false, error: 'Failed to load orders' }, 500);
+    if (!supaRes.ok) {
+      const text = await supaRes.text().catch(() => '');
+      console.error('[orders] Supabase REST error', supaRes.status, text);
+      return res.status(500).json({
+        ok: false,
+        error: 'Failed to load orders',
+      });
     }
 
+    const data = await supaRes.json();
+
     // 6) Success
-    return json({ ok: true, orders: data || [] }, 200);
+    return res.status(200).json({
+      ok: true,
+      orders: data || [],
+    });
   } catch (err) {
     console.error('[orders] handler fatal error:', err);
-    return json({ ok: false, error: 'Orders endpoint failed' }, 500);
+    return res.status(500).json({
+      ok: false,
+      error: 'Orders endpoint failed',
+    });
   }
-}
+};
