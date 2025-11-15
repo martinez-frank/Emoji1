@@ -1,124 +1,81 @@
-// /api/upload.js — Vercel Edge Function (JSON, not FormData)
+// api/orders.js – List recent emoji orders for admin (Node.js Function)
+const { createClient } = require('@supabase/supabase-js');
 
-// This is your Supabase table name
 const TABLE = 'emoji_orders';
 
-export const config = { runtime: 'edge' };
+// Optional: tell Vercel this is a Node runtime
+module.exports.config = {
+  runtime: 'nodejs',
+};
 
-export default async function handler(req) {
-  // 1) Only allow POST
-  if (req.method !== 'POST') {
-    return new Response(
-      JSON.stringify({ ok: false, error: 'Method not allowed' }),
-      { status: 405, headers: { 'content-type': 'application/json' } }
-    );
-  }
-
+module.exports = async (req, res) => {
   try {
-    // 2) Read env vars that Vercel injects
+    // 1) Only allow GET
+    if (req.method !== 'GET') {
+      return res.status(405).json({
+        ok: false,
+        error: 'Method not allowed',
+      });
+    }
+
+    // 2) Simple admin auth via header
+    //   – Node normalizes header names to lowercase,
+    //     so "x-admin-key" is the one that matters.
+    const adminHeader = (req.headers['x-admin-key'] || '').toString();
+    const adminSecret = process.env.ADMIN_ORDERS_KEY || '';
+
+    if (!adminHeader || adminHeader !== adminSecret) {
+      return res.status(401).json({
+        ok: false,
+        error: 'Unauthorized',
+      });
+    }
+
+    // 3) Supabase env vars (service role)
     const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE;
+    const key = process.env.SUPABASE_SERVICE_ROLE; // same as upload.js
 
     if (!url || !key) {
-      console.error('[upload] Missing Supabase env vars', {
+      console.error('[orders] Missing Supabase env vars', {
         hasUrl: !!url,
         hasKey: !!key,
       });
-      return new Response(
-        JSON.stringify({
-          ok: false,
-          error: 'Server misconfigured: missing Supabase env vars',
-        }),
-        { status: 500, headers: { 'content-type': 'application/json' } }
-      );
+      return res.status(500).json({
+        ok: false,
+        error: 'Server misconfigured: missing Supabase env vars',
+      });
     }
 
-    // 3) Parse JSON body from the client
-    const body = await req.json().catch(() => null);
-    if (!body) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'Invalid JSON body' }),
-        { status: 400, headers: { 'content-type': 'application/json' } }
-      );
-    }
-
-    // Expected payload from upload.html
-    const {
-      pack = 'starter',          // "starter" | "standard" | "premium"
-      email = '',
-      phone = '',
-      file_url = '',
-      expressions = [],
-    } = body;
-
-    if (!file_url) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'Missing file_url' }),
-        { status: 400, headers: { 'content-type': 'application/json' } }
-      );
-    }
-
-    if (!email) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'Missing email' }),
-        { status: 400, headers: { 'content-type': 'application/json' } }
-      );
-    }
-
-    // 4) Build the row for your emoji_orders table.
-    //    Column names here must match Supabase exactly.
-    const row = {
-      pack_type: pack,      // column: pack_type
-      email,                // column: email
-      phone,                // column: phone
-      image_path: file_url, // column: image_path
-      expressions,          // column: expressions (json/text[])
-      status: 'received',   // column: status
-    };
-
-    // 5) Insert into Supabase via REST API (no supabase-js client needed)
-    const insertRes = await fetch(`${url}/rest/v1/${TABLE}`, {
-      method: 'POST',
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        'Content-Type': 'application/json',
-        Prefer: 'return=representation',
-      },
-      body: JSON.stringify([row]), // REST API expects an array of rows
+    // 4) Supabase client (service role, no session)
+    const sb = createClient(url, key, {
+      auth: { persistSession: false },
     });
 
-    const data = await insertRes.json().catch(() => null);
+    // 5) Query latest orders
+    const { data, error } = await sb
+      .from(TABLE)
+      .select('id, created_at, pack_type, expressions, email, phone')
+      .order('created_at', { ascending: false })
+      .limit(100);
 
-    if (!insertRes.ok) {
-      console.error('[upload] Supabase insert failed', {
-        status: insertRes.status,
-        data,
+    if (error) {
+      console.error('[orders] Supabase select error:', error);
+      return res.status(500).json({
+        ok: false,
+        error: 'Failed to load orders',
       });
-      return new Response(
-        JSON.stringify({
-          ok: false,
-          error:
-            (data && data.message) ||
-            `Supabase insert failed (${insertRes.status})`,
-        }),
-        { status: 500, headers: { 'content-type': 'application/json' } }
-      );
     }
 
-    // data is an array of inserted rows because of "return=representation"
-    const inserted = Array.isArray(data) ? data[0] : data;
-    const orderId = inserted && inserted.id ? inserted.id : null;
-
-    return new Response(
-      JSON.stringify({ ok: true, order_id: orderId }),
-      { status: 200, headers: { 'content-type': 'application/json' } }
-    );
+    // 6) Success
+    return res.status(200).json({
+      ok: true,
+      orders: data || [],
+    });
   } catch (err) {
-    console.error('[upload] Handler fatal error', err);
-    return new Response(
-      JSON.stringify({ ok: false, error: 'Upload failed' }),
-      { status: 500, headers: { 'content-type': 'application/json' } }
-    );
+    console.error('[orders] handler fatal error:', err);
+    return res.status(500).json({
+      ok: false,
+      error: 'Orders endpoint failed',
+    });
   }
-}
+};
