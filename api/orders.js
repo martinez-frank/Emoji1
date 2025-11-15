@@ -1,8 +1,9 @@
-// api/orders.js – List recent emoji orders for admin using Supabase REST
+// api/orders.js — List recent emoji orders for admin using Supabase REST (Node + node-fetch)
+import fetch from 'node-fetch';
 
 const TABLE = 'emoji_orders';
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   try {
     // 1) Only allow GET
     if (req.method !== 'GET') {
@@ -13,7 +14,7 @@ module.exports = async (req, res) => {
     }
 
     // 2) Simple admin auth via header
-    // Node lowercases all header names: "x-admin-key"
+    // Node lowercases all header names to "x-admin-key"
     const adminHeader = (req.headers['x-admin-key'] || '').toString();
     const adminSecret = process.env.ADMIN_ORDERS_KEY || '';
 
@@ -33,6 +34,7 @@ module.exports = async (req, res) => {
         hasUrl: !!url,
         hasKey: !!key,
       });
+
       return res.status(500).json({
         ok: false,
         error: 'Server misconfigured: missing Supabase env vars',
@@ -60,6 +62,7 @@ module.exports = async (req, res) => {
     if (!supaRes.ok) {
       const text = await supaRes.text().catch(() => '');
       console.error('[orders] Supabase REST error', supaRes.status, text);
+
       return res.status(500).json({
         ok: false,
         error: 'Failed to load orders',
@@ -74,10 +77,11 @@ module.exports = async (req, res) => {
       orders: data || [],
     });
   } catch (err) {
-    console.error('[orders] handler fatal error:', err);
+    console.error('[orders] handler fatal error', err);
+
     return res.status(500).json({
       ok: false,
       error: 'Orders endpoint failed',
     });
   }
-};
+}
