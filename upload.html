@@ -455,6 +455,18 @@ document.addEventListener("DOMContentLoaded", function () {
     })();
   })();
   </script>
+<script>
+     // Auto-fill promo code on the upload page
+     document.addEventListener("DOMContentLoaded", function () {
+     const savedPromo = localStorage.getItem("frankie_promo");
+     const promoHidden = document.getElementById("promo-code-hidden");
+
+     if (savedPromo && promoHidden) {
+     promoHidden.value = savedPromo;
+     console.log("Promo loaded on upload:", savedPromo);
+  }
+});
+</script>
 
   <!-- Uploadcare -->
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
