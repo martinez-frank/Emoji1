@@ -290,23 +290,41 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
            <input type="hidden" name="promo_code" id="promo-code-hidden" value="">
 
         <!-- Email + SMS -->
-        <div class="row"><input id="email" type="email" placeholder="Email for delivery  •  you@example.com" /></div>
+       <div class="row">
+  <input
+    id="email"
+    type="email"
 
-        <div class="row">
-          <label class="small" style="display:flex;align-items:center;gap:8px;">
-            <input type="checkbox" id="sms-optin" style="transform:scale(1.2);" />
-            Also text my emoji pack
-          </label>
-        </div>
-        <div class="row" id="sms-row" style="display:none;">
-          <input id="phone" type="tel" placeholder="Mobile number (optional)" />
-        </div>
-        <div class="row">
-          <label class="small" style="font-size:11px;color:#5F5B53;">
-            By providing your number, you agree to receive a one-time text message from Frankiemoji to deliver your emoji pack.
-            Standard message rates may apply.
-          </label>
-        </div>
+    placeholder="Email for delivery  •  you@example.com"
+    required
+  >
+</div>
+
+<div class="row" style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+  <input
+    type="checkbox"
+    id="sms-optin"
+    style="transform:scale(1.2);"
+  >
+  <label for="sms-optin" class="small">
+    Also text my emoji pack
+  </label>
+</div>
+
+<div class="row" id="sms-row" style="display:none; margin-top:8px;">
+  <input
+    id="phone"
+    type="tel"
+    placeholder="Mobile number (optional)"
+  >
+</div>
+
+<div class="row" style="margin-top:4px;">
+  <label class="small" style="font-size:11px;color:#5F5B53;">
+    By providing your number, you agree to receive a one-time text message from
+    Frankiemoji to deliver your emoji pack. Standard message rates may apply.
+  </label>
+</div>
 
        <!-- Uploadcare picker + preview -->
        <div class="row">
