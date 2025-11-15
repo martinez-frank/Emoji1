@@ -1,21 +1,54 @@
-// /api/upload.js — Vercel Edge Function (JSON, not FormData)
-
-// This is your Supabase table name
 const TABLE = 'emoji_orders';
 
-export const config = { runtime: 'edge' };
-
-export default async function handler(req) {
-  // 1) Only allow POST
-  if (req.method !== 'POST') {
-    return new Response(
-      JSON.stringify({ ok: false, error: 'Method not allowed' }),
-      { status: 405, headers: { 'content-type': 'application/json' } }
-    );
-  }
-
+export default async function handler(req, res) {
   try {
-    // 2) Read env vars that Vercel injects
+    // 1) Only allow POST
+    if (req.method !== 'POST') {
+      return res.status(405).json({
+        ok: false,
+        error: 'Method not allowed',
+      });
+    }
+
+    // 2) Read JSON body (works for Next/Vercel body or raw stream)
+    const body =
+      req.body && Object.keys(req.body).length
+        ? req.body
+        : await readBody(req);
+
+    if (!body) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Invalid JSON body',
+      });
+    }
+
+    // 3) Expected fields from the upload form
+    const {
+      pack = 'starter',      // "starter" | "standard" | "premium"
+      email = '',
+      phone = '',
+      file_url = '',
+      expressions = [],
+      promo_code = '',       // <-- new field
+    } = body;
+
+    // 4) Basic validation
+    if (!file_url) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Missing file_url',
+      });
+    }
+
+    if (!email) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Missing email',
+      });
+    }
+
+    // 5) Supabase env vars (service role)
     const url = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE;
 
@@ -24,63 +57,29 @@ export default async function handler(req) {
         hasUrl: !!url,
         hasKey: !!key,
       });
-      return new Response(
-        JSON.stringify({
-          ok: false,
-          error: 'Server misconfigured: missing Supabase env vars',
-        }),
-        { status: 500, headers: { 'content-type': 'application/json' } }
-      );
+
+      return res.status(500).json({
+        ok: false,
+        error: 'Server misconfigured: missing Supabase env vars',
+      });
     }
 
-    // 3) Parse JSON body from the client
-    const body = await req.json().catch(() => null);
-    if (!body) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'Invalid JSON body' }),
-        { status: 400, headers: { 'content-type': 'application/json' } }
-      );
-    }
-
-    // Expected payload from upload.html
-    const {
-    pack = 'starter',
-    email = '',
-    phone = '',
-    file_url = '',
-    expressions = [],
-    promo_code = '',       // ← ADD THIS
-    } = body;
-
-    if (!file_url) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'Missing file_url' }),
-        { status: 400, headers: { 'content-type': 'application/json' } }
-      );
-    }
-
-    if (!email) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'Missing email' }),
-        { status: 400, headers: { 'content-type': 'application/json' } }
-      );
-    }
-
-    // 4) Build the row for your emoji_orders table.
-    //    Column names here must match Supabase exactly.
+    // 6) Build the row exactly to match your `emoji_orders` columns
     const row = {
-    pack_type: pack,
-    email,
-    phone,
-    promo_code,            
-    image_path: file_url,
-    expressions,          
-    status: 'received',
-    };
+      pack_type:   pack,
+      email,
+      phone,
+      promo_code,          // <-- stored in Supabase
+      image_path:  file_url,
+      expressions,
+      status:      'received',
     };
 
-    // 5) Insert into Supabase via REST API (no supabase-js client needed)
-    const insertRes = await fetch(`${url}/rest/v1/${TABLE}`, {
+    // 7) Call Supabase REST
+    const base    = url.replace(/\/$/, ''); // remove trailing slash
+    const restUrl = `${base}/rest/v1/${TABLE}`;
+
+    const insertRes = await fetch(restUrl, {
       method: 'POST',
       headers: {
         apikey: key,
@@ -98,30 +97,46 @@ export default async function handler(req) {
         status: insertRes.status,
         data,
       });
-      return new Response(
-        JSON.stringify({
-          ok: false,
-          error:
-            (data && data.message) ||
-            `Supabase insert failed (${insertRes.status})`,
-        }),
-        { status: 500, headers: { 'content-type': 'application/json' } }
-      );
+
+      return res.status(insertRes.status || 500).json({
+        ok: false,
+        error:
+          (data && data.message) ||
+          `Supabase insert failed (${insertRes.status})`,
+      });
     }
 
-    // data is an array of inserted rows because of "return=representation"
+    // 8) Success — return the new order id
     const inserted = Array.isArray(data) ? data[0] : data;
-    const orderId = inserted && inserted.id ? inserted.id : null;
+    const orderId  = inserted && inserted.id ? inserted.id : null;
 
-    return new Response(
-      JSON.stringify({ ok: true, order_id: orderId }),
-      { status: 200, headers: { 'content-type': 'application/json' } }
-    );
+    return res.status(200).json({
+      ok: true,
+      order_id: orderId,
+    });
   } catch (err) {
-    console.error('[upload] Handler fatal error', err);
-    return new Response(
-      JSON.stringify({ ok: false, error: 'Upload failed' }),
-      { status: 500, headers: { 'content-type': 'application/json' } }
-    );
+    console.error('[upload] handler fatal error', err);
+
+    return res.status(500).json({
+      ok: false,
+      error: 'Upload failed',
+    });
   }
+}
+
+// Helper to read raw JSON body if req.body is empty
+async function readBody(req) {
+  return new Promise((resolve) => {
+    let raw = '';
+    req.on('data', (chunk) => {
+      raw += chunk;
+    });
+    req.on('end', () => {
+      try {
+        resolve(JSON.parse(raw || '{}'));
+      } catch {
+        resolve(null);
+      }
+    });
+  });
 }
