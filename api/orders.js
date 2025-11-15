@@ -1,36 +1,34 @@
 // api/orders.js – List recent emoji orders for admin (Node.js Function)
-
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require('@supabase/supabase-js');
 
 const TABLE = 'emoji_orders';
 
-// Optional, but fine to keep
-export const config = {
+// Optional: tell Vercel this is a Node runtime
+module.exports.config = {
   runtime: 'nodejs',
 };
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   try {
     // 1) Only allow GET
     if (req.method !== 'GET') {
-      return res
-        .status(405)
-        .json({ ok: false, error: 'Method not allowed' });
+      return res.status(405).json({
+        ok: false,
+        error: 'Method not allowed',
+      });
     }
 
     // 2) Simple admin auth via header
-    // Accept both lowercase and capitalized header names
-    const adminHeader =
-      req.headers['x-admin-key'] ||
-      req.headers['X-Admin-Key'] ||
-      '';
-
+    //   – Node normalizes header names to lowercase,
+    //     so "x-admin-key" is the one that matters.
+    const adminHeader = (req.headers['x-admin-key'] || '').toString();
     const adminSecret = process.env.ADMIN_ORDERS_KEY || '';
 
-    if (!adminSecret || adminHeader !== adminSecret) {
-      return res
-        .status(401)
-        .json({ ok: false, error: 'Unauthorized' });
+    if (!adminHeader || adminHeader !== adminSecret) {
+      return res.status(401).json({
+        ok: false,
+        error: 'Unauthorized',
+      });
     }
 
     // 3) Supabase env vars (service role)
@@ -48,7 +46,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // 4) Supabase client (service role)
+    // 4) Supabase client (service role, no session)
     const sb = createClient(url, key, {
       auth: { persistSession: false },
     });
@@ -80,4 +78,4 @@ export default async function handler(req, res) {
       error: 'Orders endpoint failed',
     });
   }
-}
+};
