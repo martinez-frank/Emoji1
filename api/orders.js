@@ -42,12 +42,12 @@ export default async function handler(req, res) {
     }
 
     // 4) Build Supabase REST URL
-    const base = url.replace(/\/$/, ''); // remove trailing slash if any
-    const restUrl =
-      `${base}/rest/v1/${TABLE}` +
-      `?select=id,created_at,pack_type,expressions,email,phone` +
-      `&order=created_at.desc` +
-      `&limit=100`;
+const base = url.replace(/\/$/, ''); // remove trailing slash if any
+const restUrl =
+  `${base}/rest/v1/${TABLE}` +
+  `?select=id,created_at,pack_type,expressions,email,phone,promo_code` +
+  `&order=created_at.desc` +
+  `&limit=100`;
 
     // 5) Call Supabase REST
     const supaRes = await fetch(restUrl, {
