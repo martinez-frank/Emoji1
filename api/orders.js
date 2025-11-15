@@ -1,14 +1,9 @@
-// api/orders.js – List recent emoji orders for admin (Node.js Function)
-const { createClient } = require('@supabase/supabase-js');
+// api/orders.js – List recent emoji orders for admin (Node.js / ESM style)
+import { createClient } from '@supabase/supabase-js';
 
 const TABLE = 'emoji_orders';
 
-// Optional: tell Vercel this is a Node runtime
-module.exports.config = {
-  runtime: 'nodejs',
-};
-
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   try {
     // 1) Only allow GET
     if (req.method !== 'GET') {
@@ -19,8 +14,7 @@ module.exports = async (req, res) => {
     }
 
     // 2) Simple admin auth via header
-    //   – Node normalizes header names to lowercase,
-    //     so "x-admin-key" is the one that matters.
+    // Node normalises header names to lowercase, so this is the one that matters.
     const adminHeader = (req.headers['x-admin-key'] || '').toString();
     const adminSecret = process.env.ADMIN_ORDERS_KEY || '';
 
@@ -33,13 +27,14 @@ module.exports = async (req, res) => {
 
     // 3) Supabase env vars (service role)
     const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE; // same as upload.js
+    const key = process.env.SUPABASE_SERVICE_ROLE; // same value as SUPABASE_SERVICE_KEY
 
     if (!url || !key) {
       console.error('[orders] Missing Supabase env vars', {
         hasUrl: !!url,
         hasKey: !!key,
       });
+
       return res.status(500).json({
         ok: false,
         error: 'Server misconfigured: missing Supabase env vars',
@@ -60,6 +55,7 @@ module.exports = async (req, res) => {
 
     if (error) {
       console.error('[orders] Supabase select error:', error);
+
       return res.status(500).json({
         ok: false,
         error: 'Failed to load orders',
@@ -73,9 +69,10 @@ module.exports = async (req, res) => {
     });
   } catch (err) {
     console.error('[orders] handler fatal error:', err);
+
     return res.status(500).json({
       ok: false,
       error: 'Orders endpoint failed',
     });
   }
-};
+}
