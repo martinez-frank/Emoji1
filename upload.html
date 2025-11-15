@@ -57,6 +57,80 @@
 .hero{text-align:center;padding:32px 0 8px}
 .hero h1{margin:0 0 6px;font-size:42px}
 .hero-sub{color:var(--graphite);max-width:520px;margin:0 auto}
+    /* Pack badge under hero */
+.hero-pack {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--graphite);
+}
+
+.pack-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #FFE7C2;
+  color: #A35A00;
+  font-size: 13px;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+/* Expressions area */
+#expr-row {
+  flex-direction: column;
+  align-items: center;
+  margin: 12px 0 18px;
+}
+
+#expr-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+#expr-label strong {
+  font-size: 14px;
+}
+
+#expr-count {
+  font-size: 12px;
+  color: var(--graphite);
+  opacity: .8;
+}
+
+#expr-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Primary buttons – match Home / About */
+.btn {
+  display: inline-block;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .2s;
+}
+
+.btn:hover {
+  background: #b85f22;
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: scale(.97);
+}
 .marquee-wrap{overflow:hidden;margin:10px 0 22px}
 .marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
 .marq-img{width:110px;height:110px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
@@ -228,12 +302,18 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
 
   <!-- Hero -->
   <section class="hero">
-    <div class="container" style="max-width:620px;margin:0 auto;">
-      <h1>Start your pack</h1>
-      <p class="hero-sub">Upload a selfie, add your email, and we’ll get your <strong>hand-drawn inspired emojis</strong> started.</p>
-      <p id="pack-note" style="color:#D8742B;font-weight:600;margin-top:8px;">Selected: —</p>
-    </div>
-  </section>
+  <div class="container" style="max-width:620px;margin:0 auto;">
+    <h1>Start your pack</h1>
+    <p class="hero-sub">
+      Upload a selfie, add your email, and we’ll get your
+      <strong>hand-drawn inspired emojis</strong> started.
+    </p>
+    <p class="hero-pack">
+      Selected pack:
+      <span id="pack-note" class="pack-pill">Starter</span>
+    </p>
+  </div>
+</section>
 
   <!-- Upload + Expressions card -->
   <section class="upload-wrap">
@@ -242,52 +322,48 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
        <div class="card upload">
          
         <!-- Expressions -->
-   <div class="row" id="expr-row" style="margin:6px 0 6px;">
-     <div id="expr-wrap" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-     <div id="expr-label">
-       <strong>Pick your expressions</strong>
-       <span id="expr-count" style="font-size:12px;opacity:.7;">0 / 0 selected</span>
-     </div>
-     </div>
+<div class="row" id="expr-row">
+  <div id="expr-label">
+    <strong>Pick your expressions</strong>
+    <span id="expr-count">0 / 0 selected</span>
+  </div>
 
-    <div id="expr-chips" style="display:flex;flex-wrap:wrap;gap:8px;">
-       <button type="button" class="expression-pill expression-btn">Happy</button>
-       <button type="button" class="expression-pill expression-btn">Laughing</button>
-       <button type="button" class="expression-pill expression-btn">Wink</button>
-       <button type="button" class="expression-pill expression-btn">Big Grin</button>
-       <button type="button" class="expression-pill expression-btn">Smirk</button>
+  <div id="expr-chips">
+    <button type="button" class="expression-pill expression-btn">Happy</button>
+    <button type="button" class="expression-pill expression-btn">Laughing</button>
+    <button type="button" class="expression-pill expression-btn">Wink</button>
+    <button type="button" class="expression-pill expression-btn">Big Grin</button>
+    <button type="button" class="expression-pill expression-btn">Smirk</button>
 
-       <button type="button" class="expression-pill expression-btn">Thumbs Up</button>
-       <button type="button" class="expression-pill expression-btn">Heart Eyes</button>
-       <button type="button" class="expression-pill expression-btn">Surprised</button>
-       <button type="button" class="expression-pill expression-btn">Face Palm</button>
-       <button type="button" class="expression-pill expression-btn">Eye Roll</button>
+    <button type="button" class="expression-pill expression-btn">Thumbs Up</button>
+    <button type="button" class="expression-pill expression-btn">Heart Eyes</button>
+    <button type="button" class="expression-pill expression-btn">Surprised</button>
+    <button type="button" class="expression-pill expression-btn">Face Palm</button>
+    <button type="button" class="expression-pill expression-btn">Eye Roll</button>
 
-       <button type="button" class="expression-pill expression-btn">Tired</button>
-       <button type="button" class="expression-pill expression-btn">Sad</button>
-       <button type="button" class="expression-pill expression-btn">Tearful</button>
-       <button type="button" class="expression-pill expression-btn">Angry</button>
-       <button type="button" class="expression-pill expression-btn">Mind Blown</button>
+    <button type="button" class="expression-pill expression-btn">Tired</button>
+    <button type="button" class="expression-pill expression-btn">Sad</button>
+    <button type="button" class="expression-pill expression-btn">Tearful</button>
+    <button type="button" class="expression-pill expression-btn">Angry</button>
+    <button type="button" class="expression-pill expression-btn">Mind Blown</button>
 
-       <button type="button" class="expression-pill expression-btn">Cool (Sunglasses)</button>
-       <button type="button" class="expression-pill expression-btn">Confident</button>
-       <button type="button" class="expression-pill expression-btn">Skeptical</button>
-       <button type="button" class="expression-pill expression-btn">Thinking</button>
+    <button type="button" class="expression-pill expression-btn">Cool (Sunglasses)</button>
+    <button type="button" class="expression-pill expression-btn">Confident</button>
+    <button type="button" class="expression-pill expression-btn">Skeptical</button>
+    <button type="button" class="expression-pill expression-btn">Thinking</button>
 
-       <button type="button" class="expression-pill expression-btn">Cheeky Tongue</button>
-       <button type="button" class="expression-pill expression-btn">Shy</button>
-       <button type="button" class="expression-pill expression-btn">Kiss</button>
-       <button type="button" class="expression-pill expression-btn">Celebrating</button>
+    <button type="button" class="expression-pill expression-btn">Cheeky Tongue</button>
+    <button type="button" class="expression-pill expression-btn">Shy</button>
+    <button type="button" class="expression-pill expression-btn">Kiss</button>
+    <button type="button" class="expression-pill expression-btn">Celebrating</button>
 
-       <button type="button" class="expression-pill expression-btn">Coffee</button>
-       <button type="button" class="expression-pill expression-btn">Prayer Hands</button>
-     </div>
+    <button type="button" class="expression-pill expression-btn">Coffee</button>
+    <button type="button" class="expression-pill expression-btn">Prayer Hands</button>
+  </div>
 
   <!-- Hidden field we fill on submit -->
   <input type="hidden" id="expressions" name="expressions" value="">
 </div>
-
-
         <!-- Email + SMS -->
         <div class="row"><input id="email" type="email" placeholder="Email for delivery  •  you@example.com" /></div>
 
@@ -329,11 +405,18 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
        <img id="u-preview" alt="preview" style="max-width:100%;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.18);" />
       </div>
 
-        <!-- Actions -->
-        <div class="row" style="justify-content:flex-end">
-          <a class="btn" href="index.html" style="background:#fff;color:var(--espresso);border:1px solid #eadfca;">Back</a>
-          <button class="btn" id="send-btn">Send</button>
-        </div>
+        <!-- Expressions -->
+<div class="row" id="expr-row">
+  <div id="expr-label">
+    <strong>Pick your expressions</strong>
+    <span id="expr-count">0 / 0 selected</span>
+  </div>
+
+<!-- Actions -->
+<div class="row" style="justify-content:flex-end; gap:10px;">
+  <a class="btn" href="index.html">Back</a>
+  <button type="submit" class="btn" id="send-btn">Send</button>
+</div>
 
         <!-- Success -->
         <div class="success" id="success">
