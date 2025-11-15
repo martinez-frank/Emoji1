@@ -44,11 +44,12 @@ export default async function handler(req) {
 
     // Expected payload from upload.html
     const {
-      pack = 'starter',          // "starter" | "standard" | "premium"
-      email = '',
-      phone = '',
-      file_url = '',
-      expressions = [],
+    pack = 'starter',
+    email = '',
+    phone = '',
+    file_url = '',
+    expressions = [],
+    promo_code = '',       // ← ADD THIS
     } = body;
 
     if (!file_url) {
@@ -68,12 +69,14 @@ export default async function handler(req) {
     // 4) Build the row for your emoji_orders table.
     //    Column names here must match Supabase exactly.
     const row = {
-      pack_type: pack,      // column: pack_type
-      email,                // column: email
-      phone,                // column: phone
-      image_path: file_url, // column: image_path
-      expressions,          // column: expressions (json/text[])
-      status: 'received',   // column: status
+    pack_type: pack,
+    email,
+    phone,
+    promo_code,            
+    image_path: file_url,
+    expressions,          
+    status: 'received',
+    };
     };
 
     // 5) Insert into Supabase via REST API (no supabase-js client needed)
