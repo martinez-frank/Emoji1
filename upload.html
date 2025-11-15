@@ -361,6 +361,28 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     </div>
   </div>
 </footer>
+  <!-- Promo loader -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const promo = localStorage.getItem("frankie_promo");
+  const promoInput = document.getElementById("promo-code");
+  const promoMsg = document.getElementById("promo-message");
+
+  // Only run if input + message elements exist
+  if (!promoInput || !promoMsg) return;
+
+  if (promo === "frankiemoj10") {
+    promoInput.value = promo;
+
+    promoMsg.style.display = "block";
+    promoMsg.innerHTML = "Promo applied! 10% off your pack.";
+    promoMsg.style.borderColor = "#F1D19A";
+    promoMsg.style.background = "#FFF9EF";
+    promoMsg.style.color = "#2C2419";
+    promoMsg.classList.add("fade");
+  }
+});
+</script>
   <!-- Marquee loader (manifest → GitHub → hard fallback) -->
   <script>
   (function () {
