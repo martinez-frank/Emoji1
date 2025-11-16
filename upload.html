@@ -751,7 +751,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-  // ----- Submit to /api/upload (JSON) -----
+    // ----- Submit to /api/upload (JSON) -----
   const formEl    = document.getElementById('uploadForm');
   const successEl = document.getElementById('success');
   const statusEl  = document.getElementById('statusMsg');
@@ -760,8 +760,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!statusEl) return;
     statusEl.textContent = msg;
     statusEl.style.color = color || '#2C2419';
-    
-    // Live-clear email error as the user types
+  }
+
+  // Live-clear email error as the user types
   const emailInputLive = document.getElementById('email');
   if (emailInputLive) {
     emailInputLive.addEventListener('input', () => {
@@ -769,7 +770,8 @@ document.addEventListener("DOMContentLoaded", function () {
       setStatus('', '#2C2419');
     });
   }
-    async function handleSubmit(e) {
+
+  async function handleSubmit(e) {
     e.preventDefault();
 
     // Grab inputs
@@ -780,8 +782,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (emailInput) emailInput.classList.remove('field-error');
     if (cardEl) cardEl.classList.remove('field-error');
 
-    const email = emailInput?.value.trim();
-    const phone = phoneInput?.value.trim() || null;
+    const email  = emailInput?.value.trim();
+    const phone  = phoneInput?.value.trim() || null;
     const fileUrl = fileUrlInput?.value;
 
     // Validate file
@@ -838,9 +840,3 @@ document.addEventListener("DOMContentLoaded", function () {
   if (formEl) {
     formEl.addEventListener('submit', handleSubmit);
   }
-  </script>
-
-  <!-- Status message area -->
-  <div id="statusMsg" style="margin-top:.75rem;text-align:center;font-size:0.9rem;"></div>
-</body>
-</html>
