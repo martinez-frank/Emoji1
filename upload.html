@@ -595,6 +595,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // Small helper for querySelector
   const qs = (s) => document.querySelector(s);
 
+  // Reference to the main upload card (for error highlighting)
+  const cardEl = document.querySelector('.card.upload');
+
   // ----- Pack mapping (Starter / Standard / Premium) -----
   const PACK_LABEL = {
     starter: 'Starter',
