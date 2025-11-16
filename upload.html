@@ -59,22 +59,27 @@
 .hero-sub{color:var(--graphite);max-width:520px;margin:0 auto}
     /* Pack badge under hero */
 .hero-pack {
-  margin-top: 10px;
-  font-size: 14px;
-  color: var(--graphite);
+  margin-top: 14px;
+  text-align: center;
 }
 
 .pack-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
   background: #FFE7C2;
   color: #A35A00;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  margin-left: 6px;
+}
+
+/* Larger version for hero */
+.pack-pill-large {
+  padding: 8px 20px;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 /* Expressions area */
@@ -309,9 +314,8 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
       <strong>hand-drawn inspired emojis</strong> started.
     </p>
     <p class="hero-pack">
-      Selected pack:
-      <span id="pack-note" class="pack-pill">Starter</span>
-    </p>
+  <span id="pack-note" class="pack-pill pack-pill-large">Starter</span>
+</p>
   </div>
 </section>
 
