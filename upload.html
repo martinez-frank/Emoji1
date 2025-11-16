@@ -724,20 +724,26 @@ document.addEventListener("DOMContentLoaded", function () {
     previewWrap.style.display = 'block';
   }
 
-  widget.onChange(function (file) {
-    if (fileUrlInput) fileUrlInput.value = '';
+ widget.onChange(function (file) {
+  if (fileUrlInput) fileUrlInput.value = '';
 
-    if (!file) {
-      showPreview('');
-      return;
-    }
+  if (!file) {
+    // No file selected: hide preview, keep any existing status
+    showPreview('');
+    return;
+  }
 
-    file.done(function (info) {
-      if (!info || !info.cdnUrl) return;
-      if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
-      showPreview(info.cdnUrl);
-    });
+  file.done(function (info) {
+    if (!info || !info.cdnUrl) return;
+
+    if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
+    showPreview(info.cdnUrl);
+
+    // ✔ Clear any card-level error once a valid image is chosen
+    if (cardEl) cardEl.classList.remove('field-error');
+    setStatus('', '#2C2419'); // wipe “Please choose an image first.”
   });
+});
 
   // ----- Submit to /api/upload (JSON) -----
   const formEl    = document.getElementById('uploadForm');
