@@ -681,7 +681,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function toggleChip(name, chip) {
+    function toggleChip(name, chip) {
     if (selected.has(name)) {
       selected.delete(name);
       chip.classList.remove('selected');
@@ -690,7 +690,13 @@ document.addEventListener("DOMContentLoaded", function () {
       selected.add(name);
       chip.classList.add('selected');
     }
+
     renderExpressions();
+
+    // If they now have at least 1 expression, clear any error message
+    if (selected.size > 0) {
+      setStatus('', '#2C2419');
+    }
   }
 
   // Attach listeners to existing buttons
@@ -728,7 +734,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (fileUrlInput) fileUrlInput.value = '';
 
   if (!file) {
-    // No file selected: hide preview, keep any existing status
+    // No file selected: hide preview
     showPreview('');
     return;
   }
@@ -739,9 +745,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
     showPreview(info.cdnUrl);
 
-    // ✔ Clear any card-level error once a valid image is chosen
+    // ✅ Clear card error + status once a valid image is chosen
     if (cardEl) cardEl.classList.remove('field-error');
-    setStatus('', '#2C2419'); // wipe “Please choose an image first.”
+    setStatus('', '#2C2419');
   });
 });
 
@@ -754,6 +760,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!statusEl) return;
     statusEl.textContent = msg;
     statusEl.style.color = color || '#2C2419';
+    
+    // Live-clear email error as the user types
+  const emailInputLive = document.getElementById('email');
+  if (emailInputLive) {
+    emailInputLive.addEventListener('input', () => {
+      emailInputLive.classList.remove('field-error');
+      setStatus('', '#2C2419');
+    });
   }
     async function handleSubmit(e) {
     e.preventDefault();
