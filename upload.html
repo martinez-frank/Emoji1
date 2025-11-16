@@ -63,23 +63,41 @@
   text-align: center;
 }
 
+/* Pack badge under hero */
+.hero-pack {
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* Base pill style – matches button color */
 .pack-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 14px;
+  padding: 10px 22px;
   border-radius: 999px;
-  background: #FFE7C2;
-  color: #A35A00;
-  font-size: 14px;
+
+  background: var(--accent); /* same orange as Home/About */
+  color: #fff;
+
+  font-size: 15px;
   font-weight: 600;
+  letter-spacing: 0.2px;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+  transition: transform .15s ease, box-shadow .15s ease;
 }
 
-/* Larger version for hero */
+/* Slightly larger for the hero badge */
 .pack-pill-large {
-  padding: 8px 20px;
-  font-size: 16px;
+  padding: 12px 28px;
+  font-size: 17px;
   font-weight: 700;
+}
+
+.pack-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,.16);
 }
 
 /* Expressions area */
