@@ -747,25 +747,36 @@ document.addEventListener("DOMContentLoaded", function () {
     statusEl.textContent = msg;
     statusEl.style.color = color || '#2C2419';
   }
-
-  async function handleSubmit(e) {
+    async function handleSubmit(e) {
     e.preventDefault();
 
+    // Grab inputs
     const emailInput = document.getElementById('email');
     const phoneInput = document.getElementById('phone');
+
+    // Clear previous error outlines
+    if (emailInput) emailInput.classList.remove('field-error');
+    if (cardEl) cardEl.classList.remove('field-error');
 
     const email = emailInput?.value.trim();
     const phone = phoneInput?.value.trim() || null;
     const fileUrl = fileUrlInput?.value;
 
+    // Validate file
     if (!fileUrl) {
       setStatus('Please choose an image first.', '#c0392b');
+      if (cardEl) cardEl.classList.add('field-error');
       return;
     }
+
+    // Validate email
     if (!email) {
       setStatus('Please enter your email.', '#c0392b');
+      if (emailInput) emailInput.classList.add('field-error');
       return;
     }
+
+    // Validate expressions
     if (!selected.size) {
       setStatus('Please pick at least one expression.', '#c0392b');
       return;
