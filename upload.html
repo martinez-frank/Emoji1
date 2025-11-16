@@ -613,6 +613,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // Reference to the main upload card (for error highlighting)
   const cardEl = document.querySelector('.card.upload');
 
+  // Will hold the hidden Uploadcare URL input (set later)
+  let fileUrlInput = null;
+
   // ----- Pack mapping (Starter / Standard / Premium) -----
   const PACK_LABEL = {
     starter: 'Starter',
@@ -749,9 +752,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ----- Uploadcare widget + preview -----
   const widget      = uploadcare.Widget('#u-file');
-  const fileUrlInput = document.getElementById('fileUrl');
-  const previewWrap  = document.getElementById('u-preview-wrap');
-  const previewImg   = document.getElementById('u-preview');
+  fileUrlInput      = document.getElementById('fileUrl');  // <- no const
+  const previewWrap = document.getElementById('u-preview-wrap');
+  const previewImg  = document.getElementById('u-preview');
 
   function showPreview(cdnUrl) {
     if (!previewWrap || !previewImg) return;
