@@ -215,9 +215,22 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     0 0 0 2px rgba(192,57,43,.65),
     0 0 14px rgba(192,57,43,.45);
 }
-/* Expression chips */
-.expr-chip,
-.expression-pill {
+    .field-error{
+  border-color:#c0392b !important;
+  box-shadow:
+    0 0 0 2px rgba(192,57,43,.65),
+    0 0 14px rgba(192,57,43,.45);
+}
+.field-ready{
+  border-color:#27ae60 !important;
+  box-shadow:
+    0 0 0 2px rgba(39,174,96,.55),
+    0 0 14px rgba(39,174,96,.38);
+}
+
+ /* Expression chips */
+  .expr-chip,
+  .expression-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -664,6 +677,32 @@ document.addEventListener("DOMContentLoaded", function () {
   const thumbEl   = document.getElementById('expr-thumbs'); // OK if null
 
   const selected  = new Set();
+    
+  // Turn green when everything is valid (email + image + at least 1 expression)
+  function updateReadyState() {
+  const emailEl = document.getElementById('email');
+  const hasEmail = !!(emailEl && emailEl.value.trim());
+  const hasImage = !!(fileUrlInput && fileUrlInput.value);
+  const hasExpressions = selected.size > 0;
+
+  const isReady = hasEmail && hasImage && hasExpressions;
+
+  if (!emailEl || !cardEl) return;
+
+  // Clear any previous state
+  emailEl.classList.remove('field-ready');
+  cardEl.classList.remove('field-ready');
+
+  if (isReady) {
+    // Also clear errors when we're “ready”
+    emailEl.classList.remove('field-error');
+    cardEl.classList.remove('field-error');
+
+    emailEl.classList.add('field-ready');
+    cardEl.classList.add('field-ready');
+  }
+}
+
 
   function renderExpressions() {
     const count = selected.size;
@@ -679,6 +718,9 @@ document.addEventListener("DOMContentLoaded", function () {
         thumbEl.appendChild(span);
       });
     }
+    
+  // Re-check if the form is ready
+     updateReadyState();
   }
 
   function toggleChip(name, chip) {
@@ -738,6 +780,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
     showPreview(info.cdnUrl);
+    
+    // ✅ Clear card error + status once a valid image is chosen
+    if (cardEl) cardEl.classList.remove('field-error');
+    setStatus('', '#2C2419');
+  });
+});
 
     // ✔ Clear any card-level error once a valid image is chosen
     if (cardEl) cardEl.classList.remove('field-error');
@@ -755,6 +803,20 @@ document.addEventListener("DOMContentLoaded", function () {
     statusEl.textContent = msg;
     statusEl.style.color = color || '#2C2419';
   }
+    // Live email validation + clear error + update green-ready state
+   const emailInputLive = document.getElementById('email');
+   if (emailInputLive) {
+   emailInputLive.addEventListener('input', () => {
+    // remove red error if present
+    emailInputLive.classList.remove('field-error');
+    setStatus('', '#2C2419');
+
+    // check if the form is ready to turn green
+    if (typeof updateReadyState === 'function') {
+      updateReadyState();
+    }
+  });
+}
     async function handleSubmit(e) {
     e.preventDefault();
 
@@ -789,7 +851,14 @@ document.addEventListener("DOMContentLoaded", function () {
       setStatus('Please pick at least one expression.', '#c0392b');
       return;
     }
-
+   
+    // ✅ All good – mark card as "ready" (green outline)
+    if (cardEl) {
+     cardEl.classList.remove('field-error');
+     cardEl.classList.add('field-ready');
+      }
+    setStatus('Looks good! Ready to send.', '#2C7A3F');
+      
     const payload = {
       pack,
       email,
