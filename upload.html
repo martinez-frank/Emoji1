@@ -681,7 +681,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-    function toggleChip(name, chip) {
+  function toggleChip(name, chip) {
     if (selected.has(name)) {
       selected.delete(name);
       chip.classList.remove('selected');
@@ -690,13 +690,7 @@ document.addEventListener("DOMContentLoaded", function () {
       selected.add(name);
       chip.classList.add('selected');
     }
-
     renderExpressions();
-
-    // If they now have at least 1 expression, clear any error message
-    if (selected.size > 0) {
-      setStatus('', '#2C2419');
-    }
   }
 
   // Attach listeners to existing buttons
@@ -734,7 +728,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (fileUrlInput) fileUrlInput.value = '';
 
   if (!file) {
-    // No file selected: hide preview
+    // No file selected: hide preview, keep any existing status
     showPreview('');
     return;
   }
@@ -745,13 +739,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
     showPreview(info.cdnUrl);
 
-    // ✅ Clear card error + status once a valid image is chosen
+    // ✔ Clear any card-level error once a valid image is chosen
     if (cardEl) cardEl.classList.remove('field-error');
-    setStatus('', '#2C2419');
+    setStatus('', '#2C2419'); // wipe “Please choose an image first.”
   });
 });
 
-    // ----- Submit to /api/upload (JSON) -----
+  // ----- Submit to /api/upload (JSON) -----
   const formEl    = document.getElementById('uploadForm');
   const successEl = document.getElementById('success');
   const statusEl  = document.getElementById('statusMsg');
@@ -761,17 +755,7 @@ document.addEventListener("DOMContentLoaded", function () {
     statusEl.textContent = msg;
     statusEl.style.color = color || '#2C2419';
   }
-
-  // Live-clear email error as the user types
-  const emailInputLive = document.getElementById('email');
-  if (emailInputLive) {
-    emailInputLive.addEventListener('input', () => {
-      emailInputLive.classList.remove('field-error');
-      setStatus('', '#2C2419');
-    });
-  }
-
-  async function handleSubmit(e) {
+    async function handleSubmit(e) {
     e.preventDefault();
 
     // Grab inputs
@@ -782,8 +766,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (emailInput) emailInput.classList.remove('field-error');
     if (cardEl) cardEl.classList.remove('field-error');
 
-    const email  = emailInput?.value.trim();
-    const phone  = phoneInput?.value.trim() || null;
+    const email = emailInput?.value.trim();
+    const phone = phoneInput?.value.trim() || null;
     const fileUrl = fileUrlInput?.value;
 
     // Validate file
@@ -840,3 +824,9 @@ document.addEventListener("DOMContentLoaded", function () {
   if (formEl) {
     formEl.addEventListener('submit', handleSubmit);
   }
+  </script>
+
+  <!-- Status message area -->
+  <div id="statusMsg" style="margin-top:.75rem;text-align:center;font-size:0.9rem;"></div>
+</body>
+</html>
