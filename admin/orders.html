@@ -53,20 +53,25 @@ async function load(){
   const r = await fetch('/api/orders/list?'+p.toString());
   const j = await r.json();
 
-    (j.data || []).forEach(o => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${new Date(o.created_at).toLocaleString()}</td>
-      <td style="font-family:monospace">${o.id}</td>
-      <td>${o.email || ''}</td>
-      <td>${o.phone || ''}</td>
-      <td>${o.status || ''}</td>
-      <td>${o.promo_code || ''}</td>
-      <td>${Array.isArray(o.expressions) ? o.expressions.join(', ') : ''}</td>
-      <td>${o.file_url ? `<a href="${o.file_url}" target="_blank">view</a>` : ''}</td>
-    `;
-    tbody.appendChild(tr);
-  });
+    const j = await r.json();
+
+// Clear existing rows before adding new ones
+tbody.innerHTML = '';
+
+(j.data || []).forEach(o => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${new Date(o.created_at).toLocaleString()}</td>
+    <td style="font-family:monospace">${o.id}</td>
+    <td>${o.email || ''}</td>
+    <td>${o.phone || ''}</td>
+    <td>${o.status || ''}</td>
+    <td>${o.promo_code || ''}</td>
+    <td>${Array.isArray(o.expressions) ? o.expressions.join(', ') : ''}</td>
+    <td>${o.file_url ? `<a href="${o.file_url}" target="_blank">view</a>` : ''}</td>
+  `;
+  tbody.appendChild(tr);
+});
 }
 document.getElementById('btnLoad').addEventListener('click', load);
 load();
