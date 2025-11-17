@@ -161,36 +161,6 @@
 @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
 .track-left{animation:scrollLeft 50s linear infinite}
 .track-right{animation:scrollRight 53s linear infinite}
-
-<!-- === Frankiemoji Upload Test Section === -->
-<section class="upload-section" style="text-align:center; padding:48px 0;">
-  <h2 style="font-family:'DM Serif Display',serif; color:var(--espresso);">
-    Send Your Frankiemoji Reference
-  </h2>
-  <p style="max-width:480px; margin:12px auto; color:var(--graphite);">
-    Paste an image URL for now — Uploadcare or file picker coming next.
-  </p>
-
-  <input id="fileUrl" type="text"
-         placeholder="https://example.com/your-image.png"
-         style="width:80%; max-width:480px; padding:12px; border-radius:8px; border:1px solid #ccc;" />
-
-  <br /><br />
-
-  <textarea id="note" rows="3"
-            placeholder="Add notes for the artist (optional)"
-            style="width:80%; max-width:480px; padding:12px; border-radius:8px; border:1px solid #ccc;"></textarea>
-
-  <br /><br />
-
-  <button id="sendBtn"
-          style="background:var(--accent); color:white; padding:12px 32px; border:none; border-radius:8px; font-weight:600;">
-    Send to Studio
-  </button>
-
-  <p id="statusMsg" style="margin-top:16px; font-family:'Inter',sans-serif;"></p>
-</section>
-<!-- === End Upload Section === -->
     
 /* Buttons */
 .btn{display:inline-block;border:none;padding:12px 20px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;transition:all .2s}
