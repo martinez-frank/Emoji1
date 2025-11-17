@@ -173,7 +173,18 @@
   padding:24px 0 48px;
 }
 .card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-.card.upload{margin:0 auto;max-width:560px;padding:20px}
+.card.upload{
+  margin:0 auto;
+  max-width:560px;
+  padding:20px;
+}
+/* Success state for the whole card */
+.card.upload.success-state{
+  box-shadow:
+    0 0 0 2px rgba(46,204,113,.65),
+    0 10px 30px rgba(46,204,113,.25);
+  border:1px solid #2ecc71;
+}
 .row{display:flex;gap:12px;align-items:center;margin:8px 0}
 label.small{font-size:12px;color:var(--graphite)}
 
@@ -736,7 +747,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Clear previous error outlines
     if (emailInput) emailInput.classList.remove('field-error');
-    if (cardEl) cardEl.classList.remove('field-error');
+    if (cardEl) cardEl.classList.remove('field-error', 'success-state');
+
 
     const email = emailInput?.value.trim();
     const phone = phoneInput?.value.trim() || null;
@@ -781,12 +793,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const data = await res.json().catch(() => ({}));
 
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || `Server returned ${res.status}`);
-      }
+     if (!res.ok || !data.ok) {
+     throw new Error(data.error || `Server returned ${res.status}`);
+     }
 
-      setStatus('✅ All set! We’ll start the emoji magic shortly.', '#2ecc71');
-      if (successEl) successEl.style.display = 'block';
+    // Success: clear status text, turn card green, show success block
+      setStatus('', '#2C2419');
+    if (cardEl) {
+      cardEl.classList.remove('field-error');
+      cardEl.classList.add('success-state');
+    }
+    if (successEl) successEl.style.display = 'block';
+
     } catch (err) {
       console.error(err);
       setStatus('❌ ' + (err.message || 'Upload failed'), '#c0392b');
