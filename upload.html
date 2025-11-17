@@ -417,9 +417,31 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
     <button type="button" class="expression-pill expression-btn">Prayer Hands</button>
   </div>
 
-  <!-- Hidden field we fill on submit -->
+    <!-- Hidden field we fill on submit -->
   <input type="hidden" id="expressions" name="expressions" value="">
-</div>
+  </div>
+
+    <!-- Promo summary (only visible if a promo exists) -->
+        <div class="row" id="promo-row" style="display:none;">
+          <p
+            id="promo-applied"
+            style="
+              font-size:12px;
+              font-weight:500;
+              margin:2px 0 6px;
+              padding:8px 10px;
+              border-radius:10px;
+              border:1px solid #F1D19A;
+              background:#FFF9EF;
+              color:#2C2419;
+            "
+          >
+            Promo applied:
+            <strong id="promo-code-label"></strong>
+            — 10% off your pack.
+          </p>
+        </div>
+
         <!-- Email + SMS -->
         <div class="row"><input id="email" type="email" placeholder="Email for delivery  •  you@example.com" /></div>
 
@@ -655,10 +677,24 @@ document.addEventListener("DOMContentLoaded", function () {
   <script>window.UPLOADCARE_PUBLIC_KEY='demopublickey';</script>
   
   <!-- Page logic: pack, expressions, email/sms, Uploadcare, send -->
-  <script>
+    <script>
   // Small helper for querySelector
   const qs = (s) => document.querySelector(s);
-    let isSubmitting = false; // prevent double submits
+  let isSubmitting = false; // prevent double submits
+
+  // ----- Show promo banner (if a promo is stored) -----
+  (function () {
+    const promo = localStorage.getItem('frankie_promo') || '';
+    if (!promo) return;
+
+    const promoRow   = document.getElementById('promo-row');
+    const promoLabel = document.getElementById('promo-code-label');
+
+    if (promoRow && promoLabel) {
+      promoLabel.textContent = promo;
+      promoRow.style.display = 'flex'; // matches .row layout
+    }
+  })();
 
   // Reference to the main upload card (for error highlighting)
   const cardEl = document.querySelector('.card.upload');
@@ -901,14 +937,18 @@ document.addEventListener("DOMContentLoaded", function () {
       throw new Error(data.error || `Server returned ${res.status}`);
     }
 
-    // Success: clear status text, turn card green, show success block
+        // Success: clear status text, turn card green, show success block
     setStatus('', '#2C2419');
     if (cardEl) {
       cardEl.classList.remove('field-error');
       cardEl.classList.add('success-state');
     }
 
-    if (successEl) successEl.style.display = 'block';
+    if (successEl) {
+      successEl.style.display = 'block';
+      // Smoothly scroll the success message into view (nice on mobile)
+      successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     // Hide Back / Send so user doesn’t resubmit
     const backBtn = document.getElementById('back-btn');
