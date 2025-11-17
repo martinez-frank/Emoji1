@@ -447,10 +447,12 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
             <a class="btn" href="our-story.html">About</a>
           </div>
         </div>
-      </div>
-    </div>
       </div> <!-- /card upload -->
-</form>
+    </form>
+  
+   <!-- Status message area -->
+    <div id="statusMsg"
+     style="margin-top:1.25rem;text-align:center;font-size:0.9rem;"></div>
   </section>
 
   <!-- Footer -->
@@ -561,9 +563,6 @@ document.addEventListener("DOMContentLoaded", function () {
   <!-- Uploadcare -->
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
   <script>window.UPLOADCARE_PUBLIC_KEY='demopublickey';</script>
-
-  <!-- Status message area -->
-  <div id="statusMsg" style="margin-top:.75rem;text-align:center;font-size:0.9rem;"></div>
   
   <!-- Page logic: pack, expressions, email/sms, Uploadcare, send -->
   <script>
