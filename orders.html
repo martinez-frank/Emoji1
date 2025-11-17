@@ -229,6 +229,7 @@
               <th>Expressions</th>
               <th>Email</th>
               <th>Phone</th>
+              <th>Promo</th>
               <th>Order&nbsp;ID</th>
             </tr>
           </thead>
@@ -287,6 +288,7 @@
           <td class="expr">${exprHtml}</td>
           <td>${o.email || ''}</td>
           <td>${o.phone || ''}</td>
+          <td>${o.promo_code || ''}</td>
           <td style="font-family:monospace;font-size:0.78rem;">${o.id}</td>
         `;
         tbody.appendChild(tr);
