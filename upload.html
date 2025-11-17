@@ -658,6 +658,7 @@ document.addEventListener("DOMContentLoaded", function () {
   <script>
   // Small helper for querySelector
   const qs = (s) => document.querySelector(s);
+    let isSubmitting = false; // prevent double submits
 
   // Reference to the main upload card (for error highlighting)
   const cardEl = document.querySelector('.card.upload');
@@ -811,6 +812,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const formEl    = document.getElementById('uploadForm');
   const successEl = document.getElementById('success');
   const statusEl  = document.getElementById('statusMsg');
+  const sendBtn   = document.getElementById('send-btn');
 
   function setStatus(msg, color) {
     if (!statusEl) return;
@@ -818,84 +820,111 @@ document.addEventListener("DOMContentLoaded", function () {
     statusEl.style.color = color || '#2C2419';
   }
     async function handleSubmit(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Grab inputs
-    const emailInput = document.getElementById('email');
-    const phoneInput = document.getElementById('phone');
+  // Prevent double-submits
+  if (isSubmitting) return;
 
-    // Clear previous error outlines
-    if (emailInput) emailInput.classList.remove('field-error');
-    if (cardEl) cardEl.classList.remove('field-error', 'success-state');
+  // Grab inputs
+  const emailInput = document.getElementById('email');
+  const phoneInput = document.getElementById('phone');
 
+  // Clear previous error outlines
+  if (emailInput) emailInput.classList.remove('field-error');
+  if (cardEl) cardEl.classList.remove('field-error', 'success-state');
 
-    const email = emailInput?.value.trim();
-    const phone = phoneInput?.value.trim() || null;
-    const fileUrl = fileUrlInput?.value;
+  const email  = emailInput?.value.trim();
+  const phone  = phoneInput?.value.trim() || null;
+  const fileUrl = fileUrlInput?.value;
 
-    // Validate file
-    if (!fileUrl) {
-      setStatus('Please choose an image first.', '#c0392b');
-      if (cardEl) cardEl.classList.add('field-error');
-      return;
+  // ----- Validation order -----
+  // 1) Image
+  if (!fileUrl) {
+    setStatus('Please choose an image first.', '#c0392b');
+    if (cardEl) cardEl.classList.add('field-error');
+    return;
+  }
+
+  // 2) Expressions
+  if (!selected.size) {
+    setStatus('Please pick at least one expression.', '#c0392b');
+    return;
+  }
+
+  // 3) Email
+  if (!email) {
+    setStatus('Please enter your email.', '#c0392b');
+    if (emailInput) emailInput.classList.add('field-error');
+    return;
+  }
+
+  // (optional) basic email format check
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    setStatus('Please enter a valid email address.', '#c0392b');
+    if (emailInput) emailInput.classList.add('field-error');
+    return;
+  }
+
+  // 4) (Optional) later we can require phone if SMS opt-in is checked
+
+  // Pull promo code from localStorage (for now)
+  const promo = localStorage.getItem('frankie_promo') || '';
+
+  const payload = {
+    pack,
+    email,
+    phone,
+    file_url: fileUrl,
+    expressions: Array.from(selected),
+    promo_code: promo, // <-- matches /api/upload.js
+  };
+
+  try {
+    isSubmitting = true;
+
+    setStatus('Sending your pack details…');
+    if (sendBtn) {
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Sending...';
     }
 
-    // Validate email
-    if (!email) {
-      setStatus('Please enter your email.', '#c0392b');
-      if (emailInput) emailInput.classList.add('field-error');
-      return;
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || !data.ok) {
+      throw new Error(data.error || `Server returned ${res.status}`);
     }
 
-    // Validate expressions
-    if (!selected.size) {
-      setStatus('Please pick at least one expression.', '#c0392b');
-      return;
+    // Success: clear status text, turn card green, show success block
+    setStatus('', '#2C2419');
+    if (cardEl) {
+      cardEl.classList.remove('field-error');
+      cardEl.classList.add('success-state');
     }
 
-    const payload = {
-      pack,
-      email,
-      phone,
-      file_url: fileUrl,
-      expressions: Array.from(selected)
-    };
+    if (successEl) successEl.style.display = 'block';
 
-    try {
-      setStatus('Sending your pack details…');
-
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json().catch(() => ({}));
-
-     if (!res.ok || !data.ok) {
-     throw new Error(data.error || `Server returned ${res.status}`);
-    }
-
-   // Success: clear status text, turn card green, show success block
-     setStatus('', '#2C2419');
-   if (cardEl) {
-    cardEl.classList.remove('field-error');
-    cardEl.classList.add('success-state');
-   }
-
-   if (successEl) successEl.style.display = 'block';
-
-   // Hide Back / Send buttons so user doesn’t resubmit
-   const backBtn = document.getElementById('back-btn');
-   const sendBtn = document.getElementById('send-btn');
-   if (backBtn) backBtn.style.display = 'none';
-   if (sendBtn) sendBtn.style.display = 'none';
-
-    } catch (err) {
-      console.error(err);
-      setStatus('❌ ' + (err.message || 'Upload failed'), '#c0392b');
+    // Hide Back / Send so user doesn’t resubmit
+    const backBtn = document.getElementById('back-btn');
+    if (backBtn) backBtn.style.display = 'none';
+    if (sendBtn) sendBtn.style.display = 'none';
+  } catch (err) {
+    console.error(err);
+    setStatus('❌ ' + (err.message || 'Upload failed'), '#c0392b');
+  } finally {
+    isSubmitting = false;
+    if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send';
     }
   }
+}
 
   if (formEl) {
     formEl.addEventListener('submit', handleSubmit);
