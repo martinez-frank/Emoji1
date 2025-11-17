@@ -445,9 +445,9 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
 
         <!-- Actions -->
       <div class="row" style="justify-content:flex-end; gap:10px;">
-       <a class="btn" href="index.html">Back</a>
+        <a class="btn" href="index.html" id="back-btn">Back</a>
         <button type="submit" class="btn" id="send-btn">Send</button>
-         </div>
+      </div>
 
         <!-- Success -->
         <div class="success" id="success">
@@ -795,15 +795,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
      if (!res.ok || !data.ok) {
      throw new Error(data.error || `Server returned ${res.status}`);
-     }
-
-    // Success: clear status text, turn card green, show success block
-      setStatus('', '#2C2419');
-    if (cardEl) {
-      cardEl.classList.remove('field-error');
-      cardEl.classList.add('success-state');
     }
-    if (successEl) successEl.style.display = 'block';
+
+   // Success: clear status text, turn card green, show success block
+     setStatus('', '#2C2419');
+   if (cardEl) {
+    cardEl.classList.remove('field-error');
+    cardEl.classList.add('success-state');
+   }
+
+   if (successEl) successEl.style.display = 'block';
+
+   // Hide Back / Send buttons so user doesn’t resubmit
+   const backBtn = document.getElementById('back-btn');
+   const sendBtn = document.getElementById('send-btn');
+   if (backBtn) backBtn.style.display = 'none';
+   if (sendBtn) sendBtn.style.display = 'none';
 
     } catch (err) {
       console.error(err);
