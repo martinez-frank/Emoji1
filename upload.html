@@ -240,7 +240,25 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
 }
 
 /* Success state */
-.success{display:none;text-align:center;padding:24px 12px}
+.success{
+  display:none;
+  text-align:center;
+  padding:18px 12px 24px; /* slightly less top padding */
+}
+
+/* Emoji fade-in animation */
+.success-emoji{
+  opacity:0;
+  transform:translateY(4px);
+  animation:successFade .15s ease-out forwards;
+}
+
+@keyframes successFade{
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
 
 /* Footer */
 .site-footer {
@@ -473,28 +491,53 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
   </p>
 
   <!-- Branded thank-you emoji -->
-  <img
+    <img
+    class="success-emoji"
     src="images/success-heart-hands.webp"
     alt="Thank you from Frankiemoji"
     style="
       width:120px;
       height:auto;
-      margin:0 auto 12px;
+      margin:4px auto 10px;
       display:block;
       border-radius:18px;
       box-shadow:0 6px 18px rgba(0,0,0,.15);
     "
   />
-
-  <p style="opacity:.85;margin:0 12px 12px;">
+   <p
+    style="
+      opacity:.85;
+      margin:0 16px 10px;
+      line-height:1.45;
+      font-size:13px;
+    "
+  >
+    We saved your contact details. You’ll receive your one-of-a-kind emoji portraits soon!
+    <p
+    style="
+      opacity:.85;
+      margin:0 16px 10px;
+      line-height:1.45;
+      font-size:13px;
+    "
+  >
     We saved your contact details. You’ll receive your one-of-a-kind emoji portraits soon!
   </p>
+
+  <hr
+    style="
+      margin:14px auto 14px;
+      border:none;
+      border-top:1px solid rgba(0,0,0,.06);
+      width:72%;
+    "
+  />
 
   <div style="display:flex;gap:10px;justify-content:center;">
     <a class="btn" href="index.html#pricing">Home</a>
     <a class="btn" href="our-story.html">About</a>
   </div>
-</div>
+
       </div> <!-- /card upload -->
     </form>
   
