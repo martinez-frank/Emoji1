@@ -1,5 +1,45 @@
 const TABLE = 'emoji_orders';
 
+// --- Pack prices in cents ---
+const PACK_PRICES = {
+  starter: 500,   // $5
+  standard: 1500, // $15
+  premium: 2500,  // $25
+};
+
+// --- Promo definitions: all percent discounts ---
+const PROMO_DEFINITIONS = {
+  frankie10:   { type: 'percent', value: 10 },
+  // Backwards-compat alias in case anyone still uses it
+  frankiemoj10:{ type: 'percent', value: 10 },
+
+  holiday15:   { type: 'percent', value: 15 },
+  crew100:     { type: 'percent', value: 100 },
+
+  aaronemoji10:{ type: 'percent', value: 10 },
+  donniemoji10:{ type: 'percent', value: 10 },
+};
+
+function calculatePriceForPack(packKeyRaw, promoRaw) {
+  const packKey = (packKeyRaw || 'starter').toLowerCase();
+  const base = PACK_PRICES[packKey] ?? PACK_PRICES.starter;
+
+  let final = base;
+  let appliedPromo = '';
+
+  const code = (promoRaw || '').trim().toLowerCase();
+  if (code) {
+    const def = PROMO_DEFINITIONS[code];
+    if (def && def.type === 'percent') {
+      const discount = Math.round(base * (def.value / 100));
+      final = Math.max(0, base - discount);
+      appliedPromo = code; // normalized code we actually applied
+    }
+  }
+
+  return { base, final, appliedPromo };
+}
+
 export default async function handler(req, res) {
   try {
     // 1) Only allow POST
@@ -30,7 +70,7 @@ export default async function handler(req, res) {
       phone = '',
       file_url = '',
       expressions = [],
-      promo_code = '',       // <-- new field
+      promo_code = '',       // raw promo from frontend/localStorage
     } = body;
 
     // 4) Basic validation
@@ -64,20 +104,30 @@ export default async function handler(req, res) {
       });
     }
 
-    // 6) Build the row exactly to match your `emoji_orders` columns
+    // 6) Price calculation (base + final, with promo)
+    const { base, final, appliedPromo } = calculatePriceForPack(
+      pack,
+      promo_code
+    );
+
+    // 7) Build the row exactly to match your `emoji_orders` columns
     const row = {
-      pack_type:   pack,
+      pack_type:         (pack || 'starter').toLowerCase(),
       email,
       phone,
-      promo_code,          // <-- stored in Supabase
-      image_path:  file_url,
+      image_path:        file_url,
       expressions,
-      status:      'received',
+      status:            'received',
+
+      // promo + pricing fields
+      promo_code:        appliedPromo,       // normalized or '' if none
+      base_price_cents:  base,              // e.g. 500, 1500, 2500
+      final_price_cents: final,             // after promo applied
     };
 
-    // 7) Call Supabase REST
-    const base    = url.replace(/\/$/, ''); // remove trailing slash
-    const restUrl = `${base}/rest/v1/${TABLE}`;
+    // 8) Call Supabase REST
+    const baseUrl = url.replace(/\/$/, ''); // remove trailing slash
+    const restUrl = `${baseUrl}/rest/v1/${TABLE}`;
 
     const insertRes = await fetch(restUrl, {
       method: 'POST',
@@ -106,7 +156,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // 8) Success — return the new order id
+    // 9) Success — return the new order id
     const inserted = Array.isArray(data) ? data[0] : data;
     const orderId  = inserted && inserted.id ? inserted.id : null;
 
