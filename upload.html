@@ -886,16 +886,13 @@ function updatePriceSummaryUI() {
   });
 
   // Initial counter
-  renderExpressions();
+renderExpressions();
 
-  // Initial price + promo summary
-updatePriceSummary();
-  
-  // Make selected accessible if needed elsewhere
-  window.frankiSelectedExpressions = selected;
+// Set initial price + promo summary
+updatePriceSummaryUI();
 
-  // Set initial price + promo summary
-  updatePriceSummaryUI();
+// Make selected accessible if needed elsewhere
+window.frankiSelectedExpressions = selected;
 
   // ----- Uploadcare widget + preview -----
   const widget       = uploadcare.Widget('#u-file');
