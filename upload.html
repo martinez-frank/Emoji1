@@ -26,10 +26,10 @@
       display: none !important;
     }
     
-/* hide duplicate row of selected expressions */
-#expr-thumbs {
-  display: none !important;
-}
+    /* hide duplicate row of selected expressions */
+    #expr-thumbs {
+      display: none !important;
+    }
 
     * { box-sizing:border-box; }
     html, body {
@@ -42,303 +42,316 @@
     img { display:block; max-width:100%; }
     .container { max-width:1100px; margin:0 auto; padding:0 24px; }
 
-    /* now keep the rest of your existing styles: top bar, marquee, card, rows, form, footer... */
-  
-</head>
-<body>
+    /* Top bar */
+    .topbar{position:sticky;top:0;z-index:50;background:rgba(250,243,224,.97);backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc}
+    .topbar-inner{display:flex;justify-content:center;gap:16px;padding:10px 0}
+    .nav-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:12px;font-weight:600;cursor:pointer;transition:all .2s}
+    .nav-btn:hover{background:#b85f22;transform:translateY(-1px)}
 
-/* Top bar */
-.topbar{position:sticky;top:0;z-index:50;background:rgba(250,243,224,.97);backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid #e8dfcc}
-.topbar-inner{display:flex;justify-content:center;gap:16px;padding:10px 0}
-.nav-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:12px;font-weight:600;cursor:pointer;transition:all .2s}
-.nav-btn:hover{background:#b85f22;transform:translateY(-1px)}
+    /* Hero + marquee */
+    .hero{text-align:center;padding:32px 0 8px}
+    .hero h1{margin:0 0 6px;font-size:42px}
+    .hero-sub{color:var(--graphite);max-width:520px;margin:0 auto}
 
-/* Hero + marquee */
-.hero{text-align:center;padding:32px 0 8px}
-.hero h1{margin:0 0 6px;font-size:42px}
-.hero-sub{color:var(--graphite);max-width:520px;margin:0 auto}
     /* Pack badge under hero */
-.hero-pack {
-  margin-top: 14px;
-  text-align: center;
-}
+    .hero-pack {
+      margin-top: 16px;
+      text-align: center;
+    }
 
-/* Pack badge under hero */
-.hero-pack {
-  margin-top: 16px;
-  text-align: center;
-}
+    /* Base pill style – matches button color */
+    .pack-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 22px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.12);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
 
-/* Base pill style – matches button color */
-.pack-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 22px;
-  border-radius: 999px;
+    /* Slightly larger for the hero badge */
+    .pack-pill-large {
+      padding: 12px 28px;
+      font-size: 17px;
+      font-weight: 700;
+    }
 
-  background: var(--accent); /* same orange as Home/About */
-  color: #fff;
+    .pack-pill:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0,0,0,.16);
+    }
 
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
+    /* Expressions area */
+    #expr-row {
+      flex-direction: column;
+      align-items: center;
+      margin: 12px 0 18px;
+    }
 
-  box-shadow: 0 2px 6px rgba(0,0,0,.12);
-  transition: transform .15s ease, box-shadow .15s ease;
-}
+    #expr-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
 
-/* Slightly larger for the hero badge */
-.pack-pill-large {
-  padding: 12px 28px;
-  font-size: 17px;
-  font-weight: 700;
-}
+    #expr-label strong {
+      font-size: 14px;
+    }
 
-.pack-pill:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0,0,0,.16);
-}
+    #expr-count {
+      font-size: 12px;
+      color: var(--graphite);
+      opacity: .8;
+    }
 
-/* Expressions area */
-#expr-row {
-  flex-direction: column;
-  align-items: center;
-  margin: 12px 0 18px;
-}
+    #expr-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
 
-#expr-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 10px;
-}
+    /* Primary buttons – match Home / About */
+    .btn {
+      display: inline-block;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+    }
 
-#expr-label strong {
-  font-size: 14px;
-}
+    .btn:hover {
+      background: #b85f22;
+      transform: translateY(-1px);
+    }
 
-#expr-count {
-  font-size: 12px;
-  color: var(--graphite);
-  opacity: .8;
-}
+    .btn:active {
+      transform: scale(.97);
+    }
 
-#expr-chips {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-
-/* Primary buttons – match Home / About */
-.btn {
-  display: inline-block;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 12px;
-  background: var(--accent);
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all .2s;
-}
-
-.btn:hover {
-  background: #b85f22;
-  transform: translateY(-1px);
-}
-
-.btn:active {
-  transform: scale(.97);
-}
-.marquee-wrap{overflow:hidden;margin:10px 0 22px}
-.marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
-.marq-img{width:110px;height:110px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
-@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-@keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-.track-left{animation:scrollLeft 50s linear infinite}
-.track-right{animation:scrollRight 53s linear infinite}
+    .marquee-wrap{overflow:hidden;margin:10px 0 22px}
+    .marquee{display:flex;gap:16px;padding:8px 0;will-change:transform}
+    .marq-img{width:110px;height:110px;object-fit:contain;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);background:#fff;flex:0 0 auto}
+    @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+    .track-left{animation:scrollLeft 50s linear infinite}
+    .track-right{animation:scrollRight 53s linear infinite}
     
-/* Buttons */
-.btn{display:inline-block;border:none;padding:12px 20px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;transition:all .2s}
-.btn:hover{background:#b85f22;transform:translateY(-1px)}
-.btn:active{transform:scale(.97)}
-.btn.ghost{background:var(--accent);color:#fff}
+    /* Buttons */
+    .btn{display:inline-block;border:none;padding:12px 20px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;transition:all .2s}
+    .btn:hover{background:#b85f22;transform:translateY(-1px)}
+    .btn:active{transform:scale(.97)}
+    .btn.ghost{background:var(--accent);color:#fff}
 
-/* Card + rows */
-.upload-wrap{
-  padding:24px 0 48px;
-}
-.card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-.card.upload{
-  margin:0 auto;
-  max-width:560px;
-  padding:20px;
-}
-/* Success state for the whole card */
-.card.upload.success-state{
-  box-shadow:
-    0 0 0 2px rgba(46,204,113,.65),
-    0 10px 30px rgba(46,204,113,.25);
-  border:1px solid #2ecc71;
-}
-.row{display:flex;gap:12px;align-items:center;margin:8px 0}
-label.small{font-size:12px;color:var(--graphite)}
+    /* Card + rows */
+    .upload-wrap{
+      padding:24px 0 48px;
+    }
+    .card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    .card.upload{
+      margin:0 auto;
+      max-width:560px;
+      padding:20px;
+    }
 
-/* Inputs */
-input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #e6e0cf;border-radius:10px}
-.field-error{
-  border-color:#c0392b !important;
-  box-shadow:
-    0 0 0 2px rgba(192,57,43,.65),
-    0 0 14px rgba(192,57,43,.45);
-}
-/* Expression chips */
-.expr-chip,
-.expression-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 999px;
-  font-size: 13px;
-  background: #f7f3ea;
-  cursor: pointer;
-  transition:
-    transform .12s ease,
-    box-shadow .12s ease,
-    background .12s ease,
-    color .12s ease;
-}
+    /* Price summary pill */
+    .price-summary-card{
+      margin:8px 0 16px;
+      padding:10px 14px;
+      border-radius:18px;
+      background:rgba(44,36,25,.03);
+      border:1px solid rgba(44,36,25,.06);
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:13px;
+    }
 
-.expr-chip:hover,
-.expression-pill:hover {
-  transform: translateY(-1px);
-}
+    .price-summary-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
 
-/* orange “selected” state */
-.expr-chip.selected,
-.expression-pill.selected,
-.expression-btn.selected {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
+    .price-summary-total{
+      font-weight:600;
+    }
 
-.expr-thumb {
-  font-size: 11px;
-  background: #fff;
-  border: 1px solid #e4cd7a;
-  border-radius: 14px;
-  padding: 4px 8px;
-  margin-left: 6px;
-}
+    /* Success state for the whole card */
+    .card.upload.success-state{
+      box-shadow:
+        0 0 0 2px rgba(46,204,113,.65),
+        0 10px 30px rgba(46,204,113,.25);
+      border:1px solid #2ecc71;
+    }
 
-/* Success state */
-.success{
-  display:none;
-  text-align:center;
-  padding:18px 12px 24px; /* slightly less top padding */
-}
+    .row{display:flex;gap:12px;align-items:center;margin:8px 0}
+    label.small{font-size:12px;color:var(--graphite)}
 
-/* Emoji fade-in animation */
-.success-emoji{
-  opacity:0;
-  transform:translateY(4px);
-  animation:successFade .15s ease-out forwards;
-}
+    /* Inputs */
+    input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #e6e0cf;border-radius:10px}
+    .field-error{
+      border-color:#c0392b !important;
+      box-shadow:
+        0 0 0 2px rgba(192,57,43,.65),
+        0 0 14px rgba(192,57,43,.45);
+    }
 
-@keyframes successFade{
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
+    /* Expression chips */
+    .expr-chip,
+    .expression-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 999px;
+      font-size: 13px;
+      background: #f7f3ea;
+      cursor: pointer;
+      transition:
+        transform .12s ease,
+        box-shadow .12s ease,
+        background .12s ease,
+        color .12s ease;
+    }
 
-/* Footer */
-.site-footer {
-  border-top: 1px solid rgba(0,0,0,.04);
-  background: #fdf7ee;
-  padding: 1.5rem 0 2.5rem;
-  text-align: center;
-}
+    .expr-chip:hover,
+    .expression-pill:hover {
+      transform: translateY(-1px);
+    }
 
-.footer-inner {
-  width: min(1100px, 92%);
-  margin: 0 auto;
-}
+    /* orange “selected” state */
+    .expr-chip.selected,
+    .expression-pill.selected,
+    .expression-btn.selected {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
 
-.footer-inner p {
-  font-size: 0.78rem;
-  color: rgba(44,36,25,.85);
-  margin-bottom: 0.75rem;
-}
+    .expr-thumb {
+      font-size: 11px;
+      background: #fff;
+      border: 1px solid #e4cd7a;
+      border-radius: 14px;
+      padding: 4px 8px;
+      margin-left: 6px;
+    }
 
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-}
+    /* Success state */
+    .success{
+      display:none;
+      text-align:center;
+      padding:18px 12px 24px;
+    }
 
-.footer-links a {
-  text-decoration: none;
-  color: rgba(44,36,25,.85);
-  font-weight: 500;
-  font-size: 0.82rem;
-  transition: color 0.25s ease, text-decoration-color 0.25s ease;
-}
+    /* Emoji fade-in animation */
+    .success-emoji{
+      opacity:0;
+      transform:translateY(4px);
+      animation:successFade .15s ease-out forwards;
+    }
 
-.footer-links a:hover {
-  color: var(--espresso);
-  text-decoration: underline;
-  text-decoration-color: var(--espresso);
-}
+    @keyframes successFade{
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
 
-@media (max-width: 720px) {
-  .footer-links {
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-}
+    /* Footer */
+    .site-footer {
+      border-top: 1px solid rgba(0,0,0,.04);
+      background: #fdf7ee;
+      padding: 1.5rem 0 2.5rem;
+      text-align: center;
+    }
 
+    .footer-inner {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
 
-@media (max-width:900px){
-  .hero h1{font-size:34px}
-  .marq-img{width:96px;height:96px}
-}
-@media (max-width:480px){
-  .hero h1{
-    font-size:30px;
-  }
-  .hero-sub{
-    font-size:14px;
-  }
+    .footer-inner p {
+      font-size: 0.78rem;
+      color: rgba(44,36,25,.85);
+      margin-bottom: 0.75rem;
+    }
 
-  .card.upload{
-    padding:16px;
-  }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
 
-  .expression-pill{
-    font-size:12px;
-    padding:6px 10px;
-  }
+    .footer-links a {
+      text-decoration: none;
+      color: rgba(44,36,25,.85);
+      font-weight: 500;
+      font-size: 0.82rem;
+      transition: color 0.25s ease, text-decoration-color 0.25s ease;
+    }
 
-  .nav-btn,
-  .btn{
-    padding:9px 14px;
-    font-size:14px;
-  }
+    .footer-links a:hover {
+      color: var(--espresso);
+      text-decoration: underline;
+      text-decoration-color: var(--espresso);
+    }
 
-  .pack-pill-large{
-    padding:10px 22px;
-    font-size:15px;
-  }
-}
+    @media (max-width: 720px) {
+      .footer-links {
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+    }
+
+    @media (max-width:900px){
+      .hero h1{font-size:34px}
+      .marq-img{width:96px;height:96px}
+    }
+    @media (max-width:480px){
+      .hero h1{
+        font-size:30px;
+      }
+      .hero-sub{
+        font-size:14px;
+      }
+
+      .card.upload{
+        padding:16px;
+      }
+
+      .expression-pill{
+        font-size:12px;
+        padding:6px 10px;
+      }
+
+      .nav-btn,
+      .btn{
+        padding:9px 14px;
+        font-size:14px;
+      }
+
+      .pack-pill-large{
+        padding:10px 22px;
+        font-size:15px;
+      }
+    }
   </style>
 </head>
 
@@ -359,247 +372,242 @@ input[type="email"],input[type="tel"]{width:100%;padding:10px;border:1px solid #
 
   <!-- Hero -->
   <section class="hero">
-  <div class="container" style="max-width:620px;margin:0 auto;">
-    <h1>Start your pack</h1>
-    <p class="hero-sub">
-      Upload a selfie, add your email, and we’ll get your
-      <strong>hand-drawn inspired emojis</strong> started.
-    </p>
-    <p class="hero-pack">
-  <span id="pack-note" class="pack-pill pack-pill-large">Starter</span>
-</p>
-  </div>
-</section>
+    <div class="container" style="max-width:620px;margin:0 auto;">
+      <h1>Start your pack</h1>
+      <p class="hero-sub">
+        Upload a selfie, add your email, and we’ll get your
+        <strong>hand-drawn inspired emojis</strong> started.
+      </p>
+      <p class="hero-pack">
+        <span id="pack-note" class="pack-pill pack-pill-large">Starter</span>
+      </p>
+    </div>
+  </section>
 
   <!-- Upload + Expressions card -->
   <section class="upload-wrap">
     <div class="container">
       <form id="uploadForm">
-       <div class="card upload">
+        <div class="card upload">
          
-        <!-- Expressions -->
-<div class="row" id="expr-row">
-  <div id="expr-label">
-    <strong>Pick your expressions</strong>
-    <span id="expr-count">0 / 0 selected</span>
-  </div>
+          <!-- Expressions -->
+          <div class="row" id="expr-row">
+            <div id="expr-label">
+              <strong>Pick your expressions</strong>
+              <span id="expr-count">0 / 0 selected</span>
+            </div>
 
-  <div id="expr-chips">
-    <button type="button" class="expression-pill expression-btn">Happy</button>
-    <button type="button" class="expression-pill expression-btn">Laughing</button>
-    <button type="button" class="expression-pill expression-btn">Wink</button>
-    <button type="button" class="expression-pill expression-btn">Big Grin</button>
-    <button type="button" class="expression-pill expression-btn">Smirk</button>
+            <div id="expr-chips">
+              <button type="button" class="expression-pill expression-btn">Happy</button>
+              <button type="button" class="expression-pill expression-btn">Laughing</button>
+              <button type="button" class="expression-pill expression-btn">Wink</button>
+              <button type="button" class="expression-pill expression-btn">Big Grin</button>
+              <button type="button" class="expression-pill expression-btn">Smirk</button>
 
-    <button type="button" class="expression-pill expression-btn">Thumbs Up</button>
-    <button type="button" class="expression-pill expression-btn">Heart Eyes</button>
-    <button type="button" class="expression-pill expression-btn">Surprised</button>
-    <button type="button" class="expression-pill expression-btn">Face Palm</button>
-    <button type="button" class="expression-pill expression-btn">Eye Roll</button>
+              <button type="button" class="expression-pill expression-btn">Thumbs Up</button>
+              <button type="button" class="expression-pill expression-btn">Heart Eyes</button>
+              <button type="button" class="expression-pill expression-btn">Surprised</button>
+              <button type="button" class="expression-pill expression-btn">Face Palm</button>
+              <button type="button" class="expression-pill expression-btn">Eye Roll</button>
 
-    <button type="button" class="expression-pill expression-btn">Tired</button>
-    <button type="button" class="expression-pill expression-btn">Sad</button>
-    <button type="button" class="expression-pill expression-btn">Tearful</button>
-    <button type="button" class="expression-pill expression-btn">Angry</button>
-    <button type="button" class="expression-pill expression-btn">Mind Blown</button>
+              <button type="button" class="expression-pill expression-btn">Tired</button>
+              <button type="button" class="expression-pill expression-btn">Sad</button>
+              <button type="button" class="expression-pill expression-btn">Tearful</button>
+              <button type="button" class="expression-pill expression-btn">Angry</button>
+              <button type="button" class="expression-pill expression-btn">Mind Blown</button>
 
-    <button type="button" class="expression-pill expression-btn">Cool (Sunglasses)</button>
-    <button type="button" class="expression-pill expression-btn">Confident</button>
-    <button type="button" class="expression-pill expression-btn">Skeptical</button>
-    <button type="button" class="expression-pill expression-btn">Thinking</button>
+              <button type="button" class="expression-pill expression-btn">Cool (Sunglasses)</button>
+              <button type="button" class="expression-pill expression-btn">Confident</button>
+              <button type="button" class="expression-pill expression-btn">Skeptical</button>
+              <button type="button" class="expression-pill expression-btn">Thinking</button>
 
-    <button type="button" class="expression-pill expression-btn">Cheeky Tongue</button>
-    <button type="button" class="expression-pill expression-btn">Shy</button>
-    <button type="button" class="expression-pill expression-btn">Kiss</button>
-    <button type="button" class="expression-pill expression-btn">Celebrating</button>
+              <button type="button" class="expression-pill expression-btn">Cheeky Tongue</button>
+              <button type="button" class="expression-pill expression-btn">Shy</button>
+              <button type="button" class="expression-pill expression-btn">Kiss</button>
+              <button type="button" class="expression-pill expression-btn">Celebrating</button>
 
-    <button type="button" class="expression-pill expression-btn">Coffee</button>
-    <button type="button" class="expression-pill expression-btn">Prayer Hands</button>
-  </div>
+              <button type="button" class="expression-pill expression-btn">Coffee</button>
+              <button type="button" class="expression-pill expression-btn">Prayer Hands</button>
+            </div>
 
-    <!-- Hidden field we fill on submit -->
-  <input type="hidden" id="expressions" name="expressions" value="">
-  </div>
+            <!-- Hidden field we fill on submit if needed later -->
+            <input type="hidden" id="expressions" name="expressions" value="">
+          </div>
 
-    <!-- Promo summary (only visible if a promo exists) -->
-        <div class="row" id="promo-row" style="display:none;">
-          <p
-            id="promo-applied"
-            style="
-              font-size:12px;
-              font-weight:500;
-              margin:2px 0 6px;
-              padding:8px 10px;
-              border-radius:10px;
-              border:1px solid #F1D19A;
-              background:#FFF9EF;
-              color:#2C2419;
-            "
-          >
-            Promo applied:
-            <strong id="promo-code-label"></strong>
-            — 10% off your pack.
-          </p>
-        </div>
+          <!-- Promo summary (only visible if a promo exists) -->
+          <div class="row" id="promo-row" style="display:none;">
+            <p
+              id="promo-applied"
+              style="
+                font-size:12px;
+                font-weight:500;
+                margin:2px 0 6px;
+                padding:8px 10px;
+                border-radius:10px;
+                border:1px solid #F1D19A;
+                background:#FFF9EF;
+                color:#2C2419;
+              "
+            >
+              Promo applied:
+              <strong id="promo-code-label"></strong>
+              — <span id="promo-percent-label"></span> off your pack.
+            </p>
+          </div>
 
-        <!-- Email + SMS -->
-        <div class="row"><input id="email" type="email" placeholder="Email for delivery  •  you@example.com" /></div>
+          <!-- Order summary: pack + price + promo -->
+          <div class="price-summary-card">
+            <div class="price-summary-row">
+              <span>Pack</span>
+              <span id="summary-pack-label">Starter</span>
+            </div>
+            <div class="price-summary-row">
+              <span>Pack price</span>
+              <span id="summary-base-price">$5.00</span>
+            </div>
+            <div class="price-summary-row" id="summary-discount-row" style="display:none;">
+              <span>Discount</span>
+              <span id="summary-discount">- $0.00</span>
+            </div>
+            <div class="price-summary-row price-summary-total">
+              <span>Total today</span>
+              <span id="summary-final-price">$5.00</span>
+            </div>
+          </div>
 
-        <div class="row">
-          <label class="small" style="display:flex;align-items:center;gap:8px;">
-            <input type="checkbox" id="sms-optin" style="transform:scale(1.2);" />
-            Also text my emoji pack
-          </label>
-        </div>
-        <div class="row" id="sms-row" style="display:none;">
-          <input id="phone" type="tel" placeholder="Mobile number (optional)" />
-        </div>
-        <div class="row">
-          <label class="small" style="font-size:11px;color:#5F5B53;">
-            By providing your number, you agree to receive a one-time text message from Frankiemoji to deliver your emoji pack.
-            Standard message rates may apply.
-          </label>
-        </div>
+          <!-- Email + SMS -->
+          <div class="row">
+            <input id="email" type="email" placeholder="Email for delivery  •  you@example.com" />
+          </div>
 
-       <!-- Uploadcare picker + preview -->
-       <div class="row">
-       <!-- Uploadcare widget input -->
-         <input
-       id="u-file"
-       type="hidden"
-       role="uploadcare-uploader"
-       data-clearable=""
-       data-tabs="file camera"
-       data-images-only="true"
-       data-multiple="false"
-       data-preview-step="true"
-       />
+          <div class="row">
+            <label class="small" style="display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="sms-optin" style="transform:scale(1.2);" />
+              Also text my emoji pack
+            </label>
+          </div>
+          <div class="row" id="sms-row" style="display:none;">
+            <input id="phone" type="tel" placeholder="Mobile number (optional)" />
+          </div>
+          <div class="row">
+            <label class="small" style="font-size:11px;color:#5F5B53;">
+              By providing your number, you agree to receive a one-time text message from Frankiemoji to deliver your emoji pack.
+              Standard message rates may apply.
+            </label>
+          </div>
 
-       <!-- Where we store the picked CDN URL from Uploadcare -->
-       <input id="fileUrl" type="hidden" />
-      </div>
+          <!-- Uploadcare picker + preview -->
+          <div class="row">
+            <!-- Uploadcare widget input -->
+            <input
+              id="u-file"
+              type="hidden"
+              role="uploadcare-uploader"
+              data-clearable=""
+              data-tabs="file camera"
+              data-images-only="true"
+              data-multiple="false"
+              data-preview-step="true"
+            />
 
-      <div id="u-preview-wrap" style="display:none;margin:10px 0 16px;">
-       <img id="u-preview" alt="preview" style="max-width:100%;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.18);" />
-      </div>
+            <!-- Where we store the picked CDN URL from Uploadcare -->
+            <input id="fileUrl" type="hidden" />
+          </div>
 
-        <!-- Actions -->
-      <div class="row" style="justify-content:flex-end; gap:10px;">
-        <a class="btn" href="index.html" id="back-btn">Back</a>
-        <button type="submit" class="btn" id="send-btn">Send</button>
-      </div>
+          <div id="u-preview-wrap" style="display:none;margin:10px 0 16px;">
+            <img id="u-preview" alt="preview" style="max-width:100%;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.18);" />
+          </div>
 
-        <div class="success" id="success">
-   <h2
-    style="
-      margin:0 0 4px;
-      font-family:'DM Serif Display',serif;
-      font-size:24px;
-      letter-spacing:0.02em;
-    "
-  >
-    You’re all set!
-  </h2>
+          <!-- Actions -->
+          <div class="row" style="justify-content:flex-end; gap:10px;">
+            <a class="btn" href="index.html" id="back-btn">Back</a>
+            <button type="submit" class="btn" id="send-btn">Send</button>
+          </div>
 
-  <p
-    style="
-      margin:0 0 16px;
-      font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
-      font-size:14px;
-      color:#5F5B53;
-    "
-  >
-    You’re officially part of the Frankiemoji family.
-  </p>
+          <div class="success" id="success">
+            <h2
+              style="
+                margin:0 0 4px;
+                font-family:'DM Serif Display',serif;
+                font-size:24px;
+                letter-spacing:0.02em;
+              "
+            >
+              You’re all set!
+            </h2>
 
-  <!-- Branded thank-you emoji -->
-    <img
-    class="success-emoji"
-    src="images/success-heart-hands.webp"
-    alt="Thank you from Frankiemoji"
-    style="
-      width:120px;
-      height:auto;
-      margin:4px auto 10px;
-      display:block;
-      border-radius:18px;
-      box-shadow:0 6px 18px rgba(0,0,0,.15);
-    "
-  />
-   <p
-    style="
-      opacity:.85;
-      margin:0 16px 10px;
-      line-height:1.45;
-      font-size:13px;
-    "
-  >
-    <p
-    style="
-      opacity:.85;
-      margin:0 16px 10px;
-      line-height:1.45;
-      font-size:13px;
-    "
-  >
-    We saved your contact details. You’ll receive your one-of-a-kind emoji portraits soon!
-  </p>
+            <p
+              style="
+                margin:0 0 16px;
+                font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
+                font-size:14px;
+                color:#5F5B53;
+              "
+            >
+              You’re officially part of the Frankiemoji family.
+            </p>
 
-  <hr
-    style="
-      margin:14px auto 14px;
-      border:none;
-      border-top:1px solid rgba(0,0,0,.06);
-      width:72%;
-    "
-  />
+            <!-- Branded thank-you emoji -->
+            <img
+              class="success-emoji"
+              src="images/success-heart-hands.webp"
+              alt="Thank you from Frankiemoji"
+              style="
+                width:120px;
+                height:auto;
+                margin:4px auto 10px;
+                display:block;
+                border-radius:18px;
+                box-shadow:0 6px 18px rgba(0,0,0,.15);
+              "
+            />
+            <p
+              style="
+                opacity:.85;
+                margin:0 16px 10px;
+                line-height:1.45;
+                font-size:13px;
+              "
+            >
+              We saved your contact details. You’ll receive your one-of-a-kind emoji portraits soon!
+            </p>
 
-  <div style="display:flex;gap:10px;justify-content:center;">
-    <a class="btn" href="index.html#pricing">Home</a>
-    <a class="btn" href="our-story.html">About</a>
-  </div>
+            <hr
+              style="
+                margin:14px auto 14px;
+                border:none;
+                border-top:1px solid rgba(0,0,0,.06);
+                width:72%;
+              "
+            />
 
-      </div> <!-- /card upload -->
-    </form>
+            <div style="display:flex;gap:10px;justify-content:center;">
+              <a class="btn" href="index.html#pricing">Home</a>
+              <a class="btn" href="our-story.html">About</a>
+            </div>
+
+          </div> <!-- /success -->
+        </div> <!-- /card upload -->
+      </form>
   
-   <!-- Status message area -->
-    <div id="statusMsg"
-     style="margin-top:1.25rem;text-align:center;font-size:0.9rem;"></div>
+      <!-- Status message area -->
+      <div id="statusMsg"
+        style="margin-top:1.25rem;text-align:center;font-size:0.9rem;"></div>
+    </div>
   </section>
 
   <!-- Footer -->
   <footer class="site-footer">
-  <div class="footer-inner">
-    <p>© 2025 Frankiemoji™ Studios LLC. All Rights Reserved. Born with a Pencil. Evolved with Technology.</p>
-    <div class="footer-links">
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="contact.html">Contact</a>
+    <div class="footer-inner">
+      <p>© 2025 Frankiemoji™ Studios LLC. All Rights Reserved. Born with a Pencil. Evolved with Technology.</p>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="contact.html">Contact</a>
+      </div>
     </div>
-  </div>
-</footer>
-  <!-- Promo loader -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const promo = localStorage.getItem("frankie_promo");
-  const promoInput = document.getElementById("promo-code");
-  const promoMsg = document.getElementById("promo-message");
+  </footer>
 
-  // Only run if input + message elements exist
-  if (!promoInput || !promoMsg) return;
-
-  if (promo === "frankiemoj10") {
-    promoInput.value = promo;
-
-    promoMsg.style.display = "block";
-    promoMsg.innerHTML = "Promo applied! 10% off your pack.";
-    promoMsg.style.borderColor = "#F1D19A";
-    promoMsg.style.background = "#FFF9EF";
-    promoMsg.style.color = "#2C2419";
-    promoMsg.classList.add("fade");
-  }
-});
-</script>
   <!-- Marquee loader (manifest → GitHub → hard fallback) -->
   <script>
   (function () {
@@ -677,29 +685,15 @@ document.addEventListener("DOMContentLoaded", function () {
   <script>window.UPLOADCARE_PUBLIC_KEY='demopublickey';</script>
   
   <!-- Page logic: pack, expressions, email/sms, Uploadcare, send -->
-    <script>
+  <script>
   // Small helper for querySelector
   const qs = (s) => document.querySelector(s);
   let isSubmitting = false; // prevent double submits
 
-  // ----- Show promo banner (if a promo is stored) -----
-  (function () {
-    const promo = localStorage.getItem('frankie_promo') || '';
-    if (!promo) return;
-
-    const promoRow   = document.getElementById('promo-row');
-    const promoLabel = document.getElementById('promo-code-label');
-
-    if (promoRow && promoLabel) {
-      promoLabel.textContent = promo;
-      promoRow.style.display = 'flex'; // matches .row layout
-    }
-  })();
-
-  // Reference to the main upload card (for error highlighting)
+  const formEl = document.getElementById('uploadForm');
   const cardEl = document.querySelector('.card.upload');
 
-  // ----- Pack mapping (Starter / Standard / Premium) -----
+  // ----- Pack mapping (labels, limits, prices) -----
   const PACK_LABEL = {
     starter: 'Starter',
     standard: 'Standard',
@@ -712,6 +706,63 @@ document.addEventListener("DOMContentLoaded", function () {
     premium: 18,
   };
 
+  // Prices in cents
+  const PACK_PRICES = {
+    starter: 500,   // $5
+    standard: 1500, // $15
+    premium: 2500,  // $25
+  };
+
+  // Promo definitions: all percent discounts
+  const PROMO_DEFINITIONS = {
+    frankie10:    { type: 'percent', value: 10 },
+    holiday15:    { type: 'percent', value: 15 },
+    crew100:      { type: 'percent', value: 100 },
+    aaronemoji10: { type: 'percent', value: 10 },
+    donniemoji10: { type: 'percent', value: 10 },
+  };
+
+  function formatCents(cents) {
+    return '$' + (cents / 100).toFixed(2);
+  }
+
+  function calculatePriceForPack(packKey, promoRaw) {
+    const base = PACK_PRICES[packKey] ?? 0;
+    let final = base;
+    let appliedPromo = '';
+
+    if (promoRaw && base > 0) {
+      const code = promoRaw.trim().toLowerCase();
+      const def = PROMO_DEFINITIONS[code];
+      if (def && def.type === 'percent') {
+        const discount = Math.round(base * (def.value / 100));
+        final = Math.max(0, base - discount);
+        appliedPromo = code;
+      }
+    }
+
+    return { base, final, appliedPromo };
+  }
+
+  function showPromoBanner(promoRaw) {
+    if (!promoRaw) return;
+
+    const code = promoRaw.trim().toLowerCase();
+    const def  = PROMO_DEFINITIONS[code];
+
+    const promoRow   = document.getElementById('promo-row');
+    const codeEl     = document.getElementById('promo-code-label');
+    const percentEl  = document.getElementById('promo-percent-label');
+
+    if (!promoRow || !codeEl) return;
+
+    codeEl.textContent = promoRaw;
+    if (def && percentEl) {
+      percentEl.textContent = `${def.value}%`;
+    }
+    promoRow.style.display = 'flex';
+  }
+
   // Read ?pack= from the URL (default to starter)
   const params = new URLSearchParams(window.location.search);
   const pack = (params.get('pack') || 'starter').toLowerCase();
@@ -719,10 +770,47 @@ document.addEventListener("DOMContentLoaded", function () {
   // How many expressions allowed for this pack
   const MAX = PACK_MAX[pack] || 3;
 
-  // ----- Update “Selected: …” text at the top -----
-  const packNote = document.getElementById('pack-note');
-  if (packNote) {
-    packNote.textContent = `Selected: ${PACK_LABEL[pack] || 'Starter'}`;
+  // ----- Update hero + price summary -----
+  function updatePriceSummaryUI() {
+    const promoRaw = localStorage.getItem('frankie_promo') || '';
+
+    const { base, final, appliedPromo } = calculatePriceForPack(pack, promoRaw);
+
+    const heroNoteEl   = document.getElementById('pack-note');
+    const packLabelEl  = document.getElementById('summary-pack-label');
+    const baseEl       = document.getElementById('summary-base-price');
+    const finalEl      = document.getElementById('summary-final-price');
+    const discountRow  = document.getElementById('summary-discount-row');
+    const discountEl   = document.getElementById('summary-discount');
+
+    const label = PACK_LABEL[pack] || 'Starter';
+
+    if (heroNoteEl) {
+      heroNoteEl.textContent = `${label} • ${formatCents(final)}`;
+    }
+    if (packLabelEl) packLabelEl.textContent = label;
+    if (baseEl)      baseEl.textContent      = formatCents(base);
+    if (finalEl)     finalEl.textContent     = formatCents(final);
+
+    if (discountRow && discountEl) {
+      const discount = base - final;
+      if (discount > 0) {
+        discountRow.style.display = '';
+        discountEl.textContent = '- ' + formatCents(discount);
+      } else {
+        discountRow.style.display = 'none';
+      }
+    }
+
+    // Show banner text if promo is valid
+    showPromoBanner(promoRaw);
+
+    // Stash on form for submit
+    if (formEl) {
+      formEl.dataset.basePriceCents  = String(base);
+      formEl.dataset.finalPriceCents = String(final);
+      formEl.dataset.appliedPromo    = appliedPromo || '';
+    }
   }
 
   // ----- Prefill email if we have it in localStorage -----
@@ -804,8 +892,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Make selected accessible if needed elsewhere
   window.frankiSelectedExpressions = selected;
 
+  // Set initial price + promo summary
+  updatePriceSummaryUI();
+
   // ----- Uploadcare widget + preview -----
-  const widget      = uploadcare.Widget('#u-file');
+  const widget       = uploadcare.Widget('#u-file');
   const fileUrlInput = document.getElementById('fileUrl');
   const previewWrap  = document.getElementById('u-preview-wrap');
   const previewImg   = document.getElementById('u-preview');
@@ -823,29 +914,28 @@ document.addEventListener("DOMContentLoaded", function () {
     previewWrap.style.display = 'block';
   }
 
- widget.onChange(function (file) {
-  if (fileUrlInput) fileUrlInput.value = '';
+  widget.onChange(function (file) {
+    if (fileUrlInput) fileUrlInput.value = '';
 
-  if (!file) {
-    // No file selected: hide preview, keep any existing status
-    showPreview('');
-    return;
-  }
+    if (!file) {
+      // No file selected: hide preview, keep any existing status
+      showPreview('');
+      return;
+    }
 
-  file.done(function (info) {
-    if (!info || !info.cdnUrl) return;
+    file.done(function (info) {
+      if (!info || !info.cdnUrl) return;
 
-    if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
-    showPreview(info.cdnUrl);
+      if (fileUrlInput) fileUrlInput.value = info.cdnUrl;
+      showPreview(info.cdnUrl);
 
-    // ✔ Clear any card-level error once a valid image is chosen
-    if (cardEl) cardEl.classList.remove('field-error');
-    setStatus('', '#2C2419'); // wipe “Please choose an image first.”
+      // ✔ Clear any card-level error once a valid image is chosen
+      if (cardEl) cardEl.classList.remove('field-error');
+      setStatus('', '#2C2419'); // wipe “Please choose an image first.”
+    });
   });
-});
 
   // ----- Submit to /api/upload (JSON) -----
-  const formEl    = document.getElementById('uploadForm');
   const successEl = document.getElementById('success');
   const statusEl  = document.getElementById('statusMsg');
   const sendBtn   = document.getElementById('send-btn');
@@ -855,116 +945,128 @@ document.addEventListener("DOMContentLoaded", function () {
     statusEl.textContent = msg;
     statusEl.style.color = color || '#2C2419';
   }
-    async function handleSubmit(e) {
-  e.preventDefault();
 
-  // Prevent double-submits
-  if (isSubmitting) return;
+  async function handleSubmit(e) {
+    e.preventDefault();
 
-  // Grab inputs
-  const emailInput = document.getElementById('email');
-  const phoneInput = document.getElementById('phone');
+    // Prevent double-submits
+    if (isSubmitting) return;
 
-  // Clear previous error outlines
-  if (emailInput) emailInput.classList.remove('field-error');
-  if (cardEl) cardEl.classList.remove('field-error', 'success-state');
+    // Grab inputs
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
 
-  const email  = emailInput?.value.trim();
-  const phone  = phoneInput?.value.trim() || null;
-  const fileUrl = fileUrlInput?.value;
+    // Clear previous error outlines
+    if (emailInput) emailInput.classList.remove('field-error');
+    if (cardEl) cardEl.classList.remove('field-error', 'success-state');
 
-  // ----- Validation order -----
-  // 1) Image
-  if (!fileUrl) {
-    setStatus('Please choose an image first.', '#c0392b');
-    if (cardEl) cardEl.classList.add('field-error');
-    return;
-  }
+    const email   = emailInput?.value.trim();
+    const phone   = phoneInput?.value.trim() || null;
+    const fileUrl = fileUrlInput?.value;
 
-  // 2) Expressions
-  if (!selected.size) {
-    setStatus('Please pick at least one expression.', '#c0392b');
-    return;
-  }
-
-  // 3) Email
-  if (!email) {
-    setStatus('Please enter your email.', '#c0392b');
-    if (emailInput) emailInput.classList.add('field-error');
-    return;
-  }
-
-  // (optional) basic email format check
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(email)) {
-    setStatus('Please enter a valid email address.', '#c0392b');
-    if (emailInput) emailInput.classList.add('field-error');
-    return;
-  }
-
-  // 4) (Optional) later we can require phone if SMS opt-in is checked
-
-  // Pull promo code from localStorage (for now)
-  const promo = localStorage.getItem('frankie_promo') || '';
-
-  const payload = {
-    pack,
-    email,
-    phone,
-    file_url: fileUrl,
-    expressions: Array.from(selected),
-    promo_code: promo, // <-- matches /api/upload.js
-  };
-
-  try {
-    isSubmitting = true;
-
-    setStatus('Sending your pack details…');
-    if (sendBtn) {
-      sendBtn.disabled = true;
-      sendBtn.textContent = 'Sending...';
+    // ----- Validation order -----
+    // 1) Image
+    if (!fileUrl) {
+      setStatus('Please choose an image first.', '#c0392b');
+      if (cardEl) cardEl.classList.add('field-error');
+      return;
     }
 
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok || !data.ok) {
-      throw new Error(data.error || `Server returned ${res.status}`);
+    // 2) Expressions
+    if (!selected.size) {
+      setStatus('Please pick at least one expression.', '#c0392b');
+      return;
     }
 
-        // Success: clear status text, turn card green, show success block
-    setStatus('', '#2C2419');
-    if (cardEl) {
-      cardEl.classList.remove('field-error');
-      cardEl.classList.add('success-state');
+    // 3) Email
+    if (!email) {
+      setStatus('Please enter your email.', '#c0392b');
+      if (emailInput) emailInput.classList.add('field-error');
+      return;
     }
 
-    if (successEl) {
-      successEl.style.display = 'block';
-      // Smoothly scroll the success message into view (nice on mobile)
-      successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // (optional) basic email format check
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setStatus('Please enter a valid email address.', '#c0392b');
+      if (emailInput) emailInput.classList.add('field-error');
+      return;
     }
 
-    // Hide Back / Send so user doesn’t resubmit
-    const backBtn = document.getElementById('back-btn');
-    if (backBtn) backBtn.style.display = 'none';
-    if (sendBtn) sendBtn.style.display = 'none';
-  } catch (err) {
-    console.error(err);
-    setStatus('❌ ' + (err.message || 'Upload failed'), '#c0392b');
-  } finally {
-    isSubmitting = false;
-    if (sendBtn) {
-      sendBtn.disabled = false;
-      sendBtn.textContent = 'Send';
+    // ---- Pricing + promo from form dataset ----
+    const rawPromo = localStorage.getItem('frankie_promo') || '';
+
+    const basePriceCents  = formEl?.dataset.basePriceCents
+      ? parseInt(formEl.dataset.basePriceCents, 10)
+      : null;
+
+    const finalPriceCents = formEl?.dataset.finalPriceCents
+      ? parseInt(formEl.dataset.finalPriceCents, 10)
+      : null;
+
+    const appliedPromo = (formEl?.dataset.appliedPromo || rawPromo || '').trim();
+
+    const payload = {
+      pack,
+      email,
+      phone,
+      file_url: fileUrl,
+      expressions: Array.from(selected),
+      promo_code: appliedPromo || null,
+      base_price_cents: basePriceCents,
+      final_price_cents: finalPriceCents,
+      status: 'PENDING_PAYMENT',
+    };
+
+    try {
+      isSubmitting = true;
+
+      setStatus('Sending your pack details…');
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = 'Sending...';
+      }
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || `Server returned ${res.status}`);
+      }
+
+      // Success: clear status text, turn card green, show success block
+      setStatus('', '#2C2419');
+      if (cardEl) {
+        cardEl.classList.remove('field-error');
+        cardEl.classList.add('success-state');
+      }
+
+      if (successEl) {
+        successEl.style.display = 'block';
+        // Smoothly scroll the success message into view (nice on mobile)
+        successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Hide Back / Send so user doesn’t resubmit
+      const backBtn = document.getElementById('back-btn');
+      if (backBtn) backBtn.style.display = 'none';
+      if (sendBtn) sendBtn.style.display = 'none';
+    } catch (err) {
+      console.error(err);
+      setStatus('❌ ' + (err.message || 'Upload failed'), '#c0392b');
+    } finally {
+      isSubmitting = false;
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send';
+      }
     }
   }
-}
 
   if (formEl) {
     formEl.addEventListener('submit', handleSubmit);
