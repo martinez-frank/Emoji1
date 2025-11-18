@@ -264,3 +264,90 @@ img{display:block;max-width:100%}
     padding: 1.6rem 1.2rem 2rem;
   }
 }
+/* ==== Admin / Orders page ==== */
+
+.admin-body {
+  background: var(--cream);
+}
+
+/* Wider shell so the table breathes on desktop */
+.admin-shell {
+  width: min(1400px, 96%);
+  margin: 2.5rem auto 3rem;
+}
+
+/* Optional: consistent gap below page title */
+.admin-shell > h1 {
+  margin: 0 0 1.5rem;
+}
+
+/* Filter row */
+.admin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.admin-filters input,
+.admin-filters select {
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #e0d6bf;
+  font-size: 0.9rem;
+}
+
+/* Table wrap keeps things from touching shell edges */
+.admin-table-wrap {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 14px 32px rgba(0,0,0,.06);
+  padding: 12px 14px 16px;
+  overflow-x: auto; /* safety net for very small screens */
+}
+
+/* Main orders table */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.88rem;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(0,0,0,.04);
+  word-break: break-word;
+}
+
+/* Lighter header row */
+.orders-table thead th {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(44,36,25,.7);
+}
+
+/* Slightly narrower ID column; more space for email/expressions */
+.orders-table th:nth-child(2),
+.orders-table td:nth-child(2) {
+  width: 18%;
+}
+
+/* Very small screens: stack filters nicely */
+@media (max-width: 720px) {
+  .admin-shell {
+    width: 100%;
+    margin: 1.5rem auto 2.5rem;
+    padding: 0 0.75rem;
+  }
+
+  .admin-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
