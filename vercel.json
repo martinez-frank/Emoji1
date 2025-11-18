@@ -1,22 +1,18 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/*.js",  "use": "@vercel/node" },
-    { "src": "api/*.py",  "use": "@vercel/python" },
-
-    { "src": "*.html",    "use": "@vercel/static" },
-    { "src": "images/*",  "use": "@vercel/static" },
-    { "src": "*.css",     "use": "@vercel/static" },
-    { "src": "*.js",      "use": "@vercel/static" }
+    { "src": "api/main.py", "use": "@vercel/python" },
+    { "src": "api/upload.js", "use": "@vercel/node" },
+    { "src": "api/orders.js", "use": "@vercel/node" },
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "images/**", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/upload(.*)", "dest": "/api/upload.js" },
     { "src": "/api/orders(.*)", "dest": "/api/orders.js" },
-    { "src": "/api/main(.*)",   "dest": "/api/main.py"   },
-
-    { "src": "/images/(.*)",    "dest": "/images/$1" },
-
+    { "src": "/api/main(.*)", "dest": "/api/main.py" },
+    { "src": "/images/(.*)", "dest": "/images/$1" },
     { "src": "/([^\\.]+\\.html)", "dest": "/$1" },
-    { "src": "/(.*)",             "dest": "/index.html" }
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
