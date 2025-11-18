@@ -297,53 +297,70 @@
  <!-- Promo JS -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  const applyBtn   = document.getElementById("apply-btn");
+  const applyBtn  = document.getElementById("apply-btn");
   const promoInput = document.getElementById("promo-code");
   const promoMsg   = document.getElementById("promo-message");
 
   if (!applyBtn || !promoInput || !promoMsg) return;
 
-  // (Optional nice touch) Pre-fill from saved promo if it exists
-  const savedCode = localStorage.getItem("frankie_promo");
-  if (savedCode) {
-    promoInput.value = savedCode;
-    promoMsg.style.display   = "block";
-    promoMsg.innerHTML       = "Promo applied! 10% off your pack.";
+  // Same codes as upload.html / api/upload.js
+  const PROMO_DEFINITIONS = {
+    frankie10:    { type: "percent", value: 10 },
+    frankiemoj10: { type: "percent", value: 10 }, // backwards-compat
+    holiday15:    { type: "percent", value: 15 },
+    crew100:      { type: "percent", value: 100 },
+    aaronemoji10: { type: "percent", value: 10 },
+    donniemoji10: { type: "percent", value: 10 },
+  };
+
+  function showPromoMessage(def, code) {
+    promoMsg.classList.remove("fade", "shake");
+    promoMsg.style.display = "block";
+
+    if (!def) {
+      promoMsg.innerHTML = "❌ Invalid code. Try again.";
+      promoMsg.style.borderColor = "#AF180A";
+      promoMsg.style.background  = "#FFF2EF";
+      promoMsg.style.color       = "#B84239";
+      promoMsg.classList.add("shake");
+      localStorage.removeItem("frankie_promo");
+      return;
+    }
+
+    // valid promo
+    promoMsg.innerHTML =
+      "Promo applied! " + def.value + "% off your pack.";
     promoMsg.style.borderColor = "#F1D19A";
     promoMsg.style.background  = "#FFF9EF";
     promoMsg.style.color       = "#2C2419";
     promoMsg.classList.add("fade");
+
+    // store normalized code for upload page
+    localStorage.setItem("frankie_promo", code);
+  }
+
+  function applyPromo(raw) {
+    const code = (raw || "").trim().toLowerCase();
+    const def  = PROMO_DEFINITIONS[code] || null;
+    showPromoMessage(def, code);
+  }
+
+  // Pre-fill from saved promo if it exists and is still valid
+  const savedCode = localStorage.getItem("frankie_promo");
+  if (savedCode) {
+    promoInput.value = savedCode;
+    const norm = savedCode.trim().toLowerCase();
+    const def  = PROMO_DEFINITIONS[norm] || null;
+    if (def) {
+      showPromoMessage(def, norm);
+    } else {
+      // stale / unknown code
+      localStorage.removeItem("frankie_promo");
+    }
   }
 
   applyBtn.addEventListener("click", function () {
-    const code = promoInput.value.trim().toLowerCase();
-
-    promoMsg.classList.remove("fade", "shake");
-    promoMsg.style.display = "none";
-
-    setTimeout(() => {
-      promoMsg.style.display = "block";
-
-      if (code === "frankiemoj10") {
-        promoMsg.innerHTML = "Promo applied! 10% off your pack.";
-        promoMsg.style.borderColor = "#F1D19A";
-        promoMsg.style.background  = "#FFF9EF";
-        promoMsg.style.color       = "#2C2419";
-        promoMsg.classList.add("fade");
-
-        // 4) ✅ Save valid promo so upload page can read it
-        localStorage.setItem("frankie_promo", code);
-      } else {
-        promoMsg.innerHTML = "❌ Invalid code. Try again.";
-        promoMsg.style.borderColor = "#F1B0A0";
-        promoMsg.style.background  = "#FFF2EF";
-        promoMsg.style.color       = "#B84239";
-        promoMsg.classList.add("shake");
-
-        // 5) ❌ Clear any old promo if current one is invalid
-        localStorage.removeItem("frankie_promo");
-      }
-    }, 30);
+    applyPromo(promoInput.value);
   });
 });
 </script>
