@@ -716,10 +716,14 @@
   // Promo definitions: all percent discounts
   const PROMO_DEFINITIONS = {
     frankie10:    { type: 'percent', value: 10 },
-    holiday15:    { type: 'percent', value: 15 },
-    crew100:      { type: 'percent', value: 100 },
-    aaronemoji10: { type: 'percent', value: 10 },
-    donniemoji10: { type: 'percent', value: 10 },
+  // Backwards-compat alias – in case anyone still uses it
+  frankiemoj10: { type: 'percent', value: 10 },
+
+  holiday15:    { type: 'percent', value: 15 },
+  crew100:      { type: 'percent', value: 100 },
+
+  aaronemoji10: { type: 'percent', value: 10 },
+  donniemoji10: { type: 'percent', value: 10 },
   };
 
   function formatCents(cents) {
@@ -745,23 +749,16 @@
   }
 
   function showPromoBanner(promoRaw) {
-    if (!promoRaw) return;
+  if (!promoRaw) return;
 
-    const code = promoRaw.trim().toLowerCase();
-    const def  = PROMO_DEFINITIONS[code];
+  const promoRow   = document.getElementById('promo-row');
+  const promoCodeEl = document.getElementById('promo-code-label');
 
-    const promoRow   = document.getElementById('promo-row');
-    const codeEl     = document.getElementById('promo-code-label');
-    const percentEl  = document.getElementById('promo-percent-label');
+  if (!promoRow || !promoCodeEl) return;
 
-    if (!promoRow || !codeEl) return;
-
-    codeEl.textContent = promoRaw;
-    if (def && percentEl) {
-      percentEl.textContent = `${def.value}%`;
-    }
-    promoRow.style.display = 'flex';
-  }
+  promoCodeEl.textContent = promoRaw;
+  promoRow.style.display = 'block';  // or 'flex', either is fine with your .row layout
+}
 
   // Read ?pack= from the URL (default to starter)
   const params = new URLSearchParams(window.location.search);
@@ -889,6 +886,9 @@
   // Initial counter
   renderExpressions();
 
+  // Initial price + promo summary
+updatePriceSummary();
+  
   // Make selected accessible if needed elsewhere
   window.frankiSelectedExpressions = selected;
 
