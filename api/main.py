@@ -2,15 +2,19 @@
 import os
 from typing import List, Optional
 
+import logging
+
 import requests
 import stripe
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 app = FastAPI(title="Frankiemoji API", version="0.0.5")
 
-# allow your sites to call this API
+# -------------------------------------------------------------------
+# CORS: allow your frontends
+# -------------------------------------------------------------------
 origins = [
     "https://frankiemoji.com",
     "https://www.frankiemoji.com",
@@ -18,6 +22,7 @@ origins = [
     "http://localhost:3000",
     "http://localhost:5173",
 ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -26,18 +31,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# -------------------------------------------------------------------
+# Supabase config
+# -------------------------------------------------------------------
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
-UPLOAD_SECRET = os.getenv("FRANKIEMOJI_UPLOAD_SECRET")  # optional
+UPLOAD_SECRET = os.getenv("FRANKIEMOJI_UPLOAD_SECRET")  # optional shared secret
 
-# ---------- Stripe config ----------
+# -------------------------------------------------------------------
+# Stripe config
+# -------------------------------------------------------------------
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "https://frankiemoji.com")
 
+logger = logging.getLogger("uvicorn.error")
+
 if STRIPE_SECRET_KEY:
     stripe.api_key = STRIPE_SECRET_KEY
+else:
+    logger.warning(
+        "STRIPE_SECRET_KEY is not set. /api/create-checkout-session will return 500 until configured."
+    )
 
-
+# -------------------------------------------------------------------
+# Pydantic models
+# -------------------------------------------------------------------
 class UploadIn(BaseModel):
     file_url: str
     note: Optional[str] = None
@@ -52,41 +70,57 @@ class CheckoutIn(BaseModel):
     image_url: str              # Uploadcare CDN URL
 
 
+# -------------------------------------------------------------------
+# Simple health/info endpoints
+# -------------------------------------------------------------------
+@app.get("/api/hello")
+def hello():
+    return {"message": "Frankiemoji backend alive — CORS ready ✅"}
+
+
 @app.get("/api/upload")
 def upload_info():
     return {"detail": "This endpoint accepts POST with JSON: { 'file_url': '...', 'note': '...' }"}
 
 
+# -------------------------------------------------------------------
+# /api/upload  → store Uploadcare file URL in Supabase
+# -------------------------------------------------------------------
 @app.post("/api/upload")
 def upload_file(payload: UploadIn, x_upload_key: Optional[str] = Header(None)):
-    # if you set FRANKIEMOJI_UPLOAD_SECRET in Vercel, enforce it
+    # Optional shared-secret protection
     if UPLOAD_SECRET and x_upload_key != UPLOAD_SECRET:
-        raise HTTPException(status_code=401, detail="Not authorized")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized")
 
     if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
         raise HTTPException(
-            status_code=500,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Supabase env vars missing. Set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel.",
         )
 
     endpoint = f"{SUPABASE_URL}/rest/v1/uploads"
     headers = {
-      "apikey": SUPABASE_SERVICE_KEY,
-      "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
-      "Content-Type": "application/json",
-      "Prefer": "return=representation",
+        "apikey": SUPABASE_SERVICE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
     }
     json_payload = {
-      "file_url": payload.file_url,
-      "note": payload.note,
+        "file_url": payload.file_url,
+        "note": payload.note,
     }
 
     try:
         resp = requests.post(endpoint, headers=headers, json=json_payload, timeout=10)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Could not reach Supabase: {e}")
+        logger.exception("Error calling Supabase in /api/upload")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Could not reach Supabase: {e}",
+        )
 
     if resp.status_code >= 400:
+        logger.error("Supabase error in /api/upload: %s", resp.text)
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
 
     return {
@@ -97,22 +131,21 @@ def upload_file(payload: UploadIn, x_upload_key: Optional[str] = Header(None)):
         "supabase": resp.json(),
     }
 
-# ---------- create-checkout-session for Stripe ----------
 
-
-from fastapi import status
-import logging
-
-logger = logging.getLogger("uvicorn.error")
-
+# -------------------------------------------------------------------
+# /api/create-checkout-session  → Stripe Checkout
+# -------------------------------------------------------------------
 @app.post("/api/create-checkout-session")
 def create_checkout_session(payload: CheckoutIn):
-    # Ensure Stripe library is loaded & secret present
+    # Ensure Stripe key is present
     if not STRIPE_SECRET_KEY:
         logger.error("Stripe secret key missing")
-        raise HTTPException(status_code=500, detail="Stripe secret key not configured.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Stripe secret key not configured.",
+        )
 
-    # Map pack types to Stripe Price IDs (set these in Vercel env)
+    # Map pack types to Stripe Price IDs (set in Vercel env)
     PACK_PRICE_IDS = {
         "starter": os.getenv("STRIPE_PRICE_STARTER", "price_STARTER_REPLACE_ME"),
         "standard": os.getenv("STRIPE_PRICE_STANDARD", "price_STANDARD_REPLACE_ME"),
@@ -121,42 +154,55 @@ def create_checkout_session(payload: CheckoutIn):
 
     pack = (payload.pack_type or "").lower()
     if pack not in PACK_PRICE_IDS:
-        raise HTTPException(status_code=400, detail="Invalid pack type")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid pack type",
+        )
 
     price_id = PACK_PRICE_IDS[pack]
-    if price_id.startswith("price_") is False or "REPLACE_ME" in price_id:
-        # friendly error to remind you to set env vars
+
+    # Guard against forgetting to set the real price IDs
+    if not price_id.startswith("price_") or "REPLACE_ME" in price_id:
         logger.error("Stripe Price ID missing or placeholder for pack: %s", pack)
         raise HTTPException(
-            status_code=500,
-            detail=f"Missing Stripe price for pack '{pack}'. Set STRIPE_PRICE_{pack.upper()} in environment.",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Missing Stripe price for pack '{pack}'. "
+                   f"Set STRIPE_PRICE_{pack.upper()} in environment.",
         )
 
     try:
         metadata = {
             "pack_type": pack,
             "promo_code": payload.promo_code or "",
-            "email": payload.email or "",
+            "email": payload.email,
             "phone": payload.phone or "",
-            "image_url": payload.image_url or "",
+            "image_url": payload.image_url,
             "expressions": ",".join(payload.expressions or []),
         }
 
         checkout_session = stripe.checkout.Session.create(
             mode="payment",
             payment_method_types=["card"],
-            line_items=[{"price": price_id, "quantity": 1}],
+            line_items=[
+                {
+                    "price": price_id,
+                    "quantity": 1,
+                }
+            ],
             customer_email=payload.email,
-            success_url=f"{FRONTEND_BASE_URL}/upload.html?paid=1&session_id={{CHECKOUT_SESSION_ID}}",
+            success_url=(
+                f"{FRONTEND_BASE_URL}/upload.html"
+                "?paid=1&session_id={{CHECKOUT_SESSION_ID}}"
+            ),
             cancel_url=f"{FRONTEND_BASE_URL}/upload.html?canceled=1",
             metadata=metadata,
         )
 
-        # Return the full URL that Stripe gives
-        return {"checkoutUrl": getattr(checkout_session, "url", None) or checkout_session.get("url")}
+        return {"ok": True, "checkoutUrl": checkout_session.url}
 
     except Exception as e:
-        # Log full exception server-side and return a friendly error to the client
-        logger.exception("Stripe checkout create failed")
-        raise HTTPException(status_code=500, detail=f"Could not create Stripe session: {str(e)}")
-        
+        logger.exception("Error creating Stripe Checkout session")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
