@@ -97,60 +97,66 @@ def upload_file(payload: UploadIn, x_upload_key: Optional[str] = Header(None)):
         "supabase": resp.json(),
     }
 
+# ---------- create-checkout-session for Stripe ----------
 
-# ---------- NEW: create-checkout-session for Stripe ----------
+
+from fastapi import status
+import logging
+
+logger = logging.getLogger("uvicorn.error")
 
 @app.post("/api/create-checkout-session")
 def create_checkout_session(payload: CheckoutIn):
+    # Ensure Stripe library is loaded & secret present
     if not STRIPE_SECRET_KEY:
+        logger.error("Stripe secret key missing")
         raise HTTPException(status_code=500, detail="Stripe secret key not configured.")
 
-    # Map pack types to Stripe Price IDs
-    # 👉 Set these as env vars in Vercel, or replace the fallback strings with your real price IDs.
+    # Map pack types to Stripe Price IDs (set these in Vercel env)
     PACK_PRICE_IDS = {
         "starter": os.getenv("STRIPE_PRICE_STARTER", "price_STARTER_REPLACE_ME"),
         "standard": os.getenv("STRIPE_PRICE_STANDARD", "price_STANDARD_REPLACE_ME"),
         "premium": os.getenv("STRIPE_PRICE_PREMIUM", "price_PREMIUM_REPLACE_ME"),
     }
 
-    pack = payload.pack_type.lower()
+    pack = (payload.pack_type or "").lower()
     if pack not in PACK_PRICE_IDS:
         raise HTTPException(status_code=400, detail="Invalid pack type")
+
+    price_id = PACK_PRICE_IDS[pack]
+    if price_id.startswith("price_") is False or "REPLACE_ME" in price_id:
+        # friendly error to remind you to set env vars
+        logger.error("Stripe Price ID missing or placeholder for pack: %s", pack)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Missing Stripe price for pack '{pack}'. Set STRIPE_PRICE_{pack.upper()} in environment.",
+        )
 
     try:
         metadata = {
             "pack_type": pack,
             "promo_code": payload.promo_code or "",
-            "email": payload.email,
+            "email": payload.email or "",
             "phone": payload.phone or "",
-            "image_url": payload.image_url,
+            "image_url": payload.image_url or "",
             "expressions": ",".join(payload.expressions or []),
         }
 
         checkout_session = stripe.checkout.Session.create(
             mode="payment",
             payment_method_types=["card"],
-            line_items=[
-                {
-                    "price": PACK_PRICE_IDS[pack],
-                    "quantity": 1,
-                }
-            ],
+            line_items=[{"price": price_id, "quantity": 1}],
             customer_email=payload.email,
-            success_url=(
-                f"{FRONTEND_BASE_URL}/upload.html"
-                "?paid=1&session_id={{CHECKOUT_SESSION_ID}}"
-            ),
+            success_url=f"{FRONTEND_BASE_URL}/upload.html?paid=1&session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{FRONTEND_BASE_URL}/upload.html?canceled=1",
             metadata=metadata,
         )
 
-        return {"checkoutUrl": checkout_session.url}
+        # Return the full URL that Stripe gives
+        return {"checkoutUrl": getattr(checkout_session, "url", None) or checkout_session.get("url")}
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.get("/api/hello")
-def hello():
-    return {"message": "Frankiemoji backend alive — CORS ready ✅"}
+        # Log full exception server-side and return a friendly error to the client
+        logger.exception("Stripe checkout create failed")
+        raise HTTPException(status_code=500, detail=f"Could not create Stripe session: {str(e)}")
+        
