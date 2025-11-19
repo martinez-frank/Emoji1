@@ -945,7 +945,7 @@ window.frankiSelectedExpressions = selected;
     statusEl.style.color = color || '#2C2419';
   }
 
-  async function handleSubmit(e) {
+    async function handleSubmit(e) {
     e.preventDefault();
 
     // Prevent double-submits
@@ -992,41 +992,30 @@ window.frankiSelectedExpressions = selected;
       return;
     }
 
-    // ---- Pricing + promo from form dataset ----
+    // ---- Promo code (from localStorage / dataset) ----
     const rawPromo = localStorage.getItem('frankie_promo') || '';
+    const appliedPromo = (formEl?.dataset.appliedPromo || rawPromo || '').trim() || null;
 
-    const basePriceCents  = formEl?.dataset.basePriceCents
-      ? parseInt(formEl.dataset.basePriceCents, 10)
-      : null;
-
-    const finalPriceCents = formEl?.dataset.finalPriceCents
-      ? parseInt(formEl.dataset.finalPriceCents, 10)
-      : null;
-
-    const appliedPromo = (formEl?.dataset.appliedPromo || rawPromo || '').trim();
-
+    // ----- Build payload for FastAPI / Stripe -----
     const payload = {
-      pack,
-      email,
-      phone,
-      file_url: fileUrl,
-      expressions: Array.from(selected),
-      promo_code: appliedPromo || null,
-      base_price_cents: basePriceCents,
-      final_price_cents: finalPriceCents,
-      status: 'PENDING_PAYMENT',
+      pack_type: pack,                         // "starter" | "standard" | "premium"
+      email: email,
+      phone: phone,
+      image_url: fileUrl,                      // Uploadcare CDN URL
+      expressions: Array.from(selected),       // ["Smirk", "Cool (Sunglasses)", ...]
+      promo_code: appliedPromo                 // may be null
     };
 
     try {
       isSubmitting = true;
 
-      setStatus('Sending your pack details…');
+      setStatus('Redirecting to secure payment…', '#2C2419');
       if (sendBtn) {
         sendBtn.disabled = true;
-        sendBtn.textContent = 'Sending...';
+        sendBtn.textContent = 'Redirecting…';
       }
 
-      const res = await fetch('/api/upload', {
+      const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -1034,30 +1023,20 @@ window.frankiSelectedExpressions = selected;
 
       const data = await res.json().catch(() => ({}));
 
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || `Server returned ${res.status}`);
+      if (!res.ok || !data.checkoutUrl) {
+        throw new Error(
+          data.detail ||
+          data.error ||
+          `Server returned ${res.status}`
+        );
       }
 
-      // Success: clear status text, turn card green, show success block
-      setStatus('', '#2C2419');
-      if (cardEl) {
-        cardEl.classList.remove('field-error');
-        cardEl.classList.add('success-state');
-      }
+      // 🔁 Hand off to Stripe Checkout
+      window.location.href = data.checkoutUrl;
 
-      if (successEl) {
-        successEl.style.display = 'block';
-        // Smoothly scroll the success message into view (nice on mobile)
-        successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-
-      // Hide Back / Send so user doesn’t resubmit
-      const backBtn = document.getElementById('back-btn');
-      if (backBtn) backBtn.style.display = 'none';
-      if (sendBtn) sendBtn.style.display = 'none';
     } catch (err) {
       console.error(err);
-      setStatus('❌ ' + (err.message || 'Upload failed'), '#c0392b');
+      setStatus('❌ ' + (err.message || 'Could not start payment.'), '#c0392b');
     } finally {
       isSubmitting = false;
       if (sendBtn) {
