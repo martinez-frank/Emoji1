@@ -1018,8 +1018,10 @@ if (paid && successEl && cardEl) {
       return;
     }
 
-    // ---- Promo code (from localStorage / dataset) ----
-    const appliedPromo = (formEl?.dataset.appliedPromo || rawPromo || '').trim() || null;
+    // ----- Promo code (from card state only — no localStorage) -----
+    const appliedPromoRaw = (formEl.dataset.appliedPromo || '').trim();
+    const appliedPromo = appliedPromoRaw || null;
+
 
     // ----- Build payload for FastAPI / Stripe -----
     const payload = {
