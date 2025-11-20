@@ -1019,7 +1019,6 @@ if (paid && successEl && cardEl) {
     }
 
     // ---- Promo code (from localStorage / dataset) ----
-    const rawPromo = localStorage.getItem('frankie_promo') || '';
     const appliedPromo = (formEl?.dataset.appliedPromo || rawPromo || '').trim() || null;
 
     // ----- Build payload for FastAPI / Stripe -----
