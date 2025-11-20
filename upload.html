@@ -762,28 +762,18 @@
 }
 
   // Read ?pack= from the URL (default to starter)
- const params = new URLSearchParams(window.location.search);
- const pack = (params.get('pack') || 'starter').toLowerCase();
- const paid = params.get('paid') === '1';
- const promoParam = (params.get('promo') || '').trim().toLowerCase();
- const MAX = PACK_MAX[pack] || 3;
- // Global set of selected expressions
- const selected = new Set();
+  const params = new URLSearchParams(window.location.search);
+  const pack = (params.get('pack') || 'starter').toLowerCase();
+  const paid = params.get('paid') === '1';
+
+  // How many expressions allowed for this pack
+  const MAX = PACK_MAX[pack] || 3;
 
  // ------ Update hero + price summary ------
-  function updatePriceSummaryUI() {
-  // 1) Try to read promo from the URL (?promo=holiday15)
-  const params = new URLSearchParams(window.location.search);
-  let promoRaw = (params.get('promo') || '').trim().toLowerCase();
-
-  // 2) If not in the URL, fall back to localStorage (set on index page)
-  if (!promoRaw) {
-    try {
-      promoRaw = (localStorage.getItem('franki:promo') || '').trim().toLowerCase();
-    } catch (_) {
-      promoRaw = '';
-    }
-  }
+function updatePriceSummaryUI() {
+  // Read promo from the URL (?promo=holiday15), not from localStorage
+const params   = new URLSearchParams(window.location.search);
+const promoRaw = (params.get('promo') || '').trim().toLowerCase();
 
   // base / final prices in cents + which promo code actually applied
   const { base, final, appliedPromo } = calculatePriceForPack(pack, promoRaw);
@@ -818,15 +808,11 @@
     }
   }
 
-   // Save normalized promo onto the form so submit can read it
-   if (formEl) {
-    formEl.dataset.appliedPromo = appliedPromo || '';
-  }
-
-   // Also update the small banner "Promo applied: CODE — X% off your pack."
-   if (appliedPromo) {
+  // Also update the small banner "Promo applied: CODE — X% off your pack."
+  if (appliedPromo) {
     showPromoBanner(appliedPromo);
   }
+}
 
   // ----- Prefill email if we have it in localStorage -----
   let start = {};
@@ -865,6 +851,8 @@
   const counterEl = document.getElementById('expr-count');
   const thumbEl   = document.getElementById('expr-thumbs'); // OK if null
 
+  const selected  = new Set();
+
   function renderExpressions() {
     const count = selected.size;
     if (counterEl) {
@@ -900,8 +888,7 @@
   });
 
   // Initial counter
-    renderExpressions();
-    }
+renderExpressions();
 
 // Set initial price + promo summary
 updatePriceSummaryUI();
@@ -1031,19 +1018,18 @@ if (paid && successEl && cardEl) {
       return;
     }
 
-    // ----- Promo code (from card state only — no localStorage) -----
-    const appliedPromoRaw = (formEl.dataset.appliedPromo || '').trim();
-    const appliedPromo = appliedPromoRaw || null;
-
+    // ---- Promo code (from localStorage / dataset) ----
+    const rawPromo = localStorage.getItem('frankie_promo') || '';
+    const appliedPromo = (formEl?.dataset.appliedPromo || rawPromo || '').trim() || null;
 
     // ----- Build payload for FastAPI / Stripe -----
     const payload = {
-     pack_type: pack,
-     email: email,
-     phone: phone,
-     image_url: fileUrl,
-     expressions: Array.from(selected),
-     promo_code: appliedPromo   // ✅ Correct key name
+      pack_type: pack,                         // "starter" | "standard" | "premium"
+      email: email,
+      phone: phone,
+      image_url: fileUrl,                      // Uploadcare CDN URL
+      expressions: Array.from(selected),       // ["Smirk", "Cool (Sunglasses)", ...]
+      promo_code: appliedPromo                 // may be null
     };
 
     try {
