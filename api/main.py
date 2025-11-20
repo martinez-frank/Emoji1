@@ -138,7 +138,6 @@ def upload_file(payload: UploadIn, x_upload_key: Optional[str] = Header(None)):
 # -------------------------------------------------------------------
 @app.post("/api/create-checkout-session")
 def create_checkout_session(payload: CheckoutIn):
-    # Ensure Stripe key is present
     if not STRIPE_SECRET_KEY:
         logger.error("Stripe secret key missing")
         raise HTTPException(
@@ -146,38 +145,30 @@ def create_checkout_session(payload: CheckoutIn):
             detail="Stripe secret key not configured.",
         )
 
-    # Map pack types to Stripe Price IDs (set in Vercel env)
     PACK_PRICE_IDS = {
         "starter": os.getenv("STRIPE_PRICE_STARTER", "price_STARTER_REPLACE_ME"),
         "standard": os.getenv("STRIPE_PRICE_STANDARD", "price_STANDARD_REPLACE_ME"),
         "premium": os.getenv("STRIPE_PRICE_PREMIUM", "price_PREMIUM_REPLACE_ME"),
     }
 
-    # Map human promo strings → Vercel env var names that hold Stripe promotion_code IDs
     PROMO_ENV_MAP = {
-        "frankie10":     "STRIPE_PROMO_FRANKIE10",
-        "holiday15":     "STRIPE_PROMO_HOLIDAY15",
-        "crew100":       "STRIPE_PROMO_CREW100",
-        "aaronemoji10":  "STRIPE_PROMO_AARON10",
-        "donniemoji10":  "STRIPE_PROMO_DONNI10",
+        "frankie10": "STRIPE_PROMO_FRANKIE10",
+        "holiday15": "STRIPE_PROMO_HOLIDAY15",
+        "crew100": "STRIPE_PROMO_CREW100",
+        "aaronemoji10": "STRIPE_PROMO_AARON10",
+        "donniemoji10": "STRIPE_PROMO_DONNI10",
     }
-    
+
     pack = (payload.pack_type or "").lower()
     if pack not in PACK_PRICE_IDS:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid pack type",
-        )
+        raise HTTPException(status_code=400, detail="Invalid pack type")
 
     price_id = PACK_PRICE_IDS[pack]
 
-    # Guard against forgetting to set the real price IDs
     if not price_id.startswith("price_") or "REPLACE_ME" in price_id:
-        logger.error("Stripe Price ID missing or placeholder for pack: %s", pack)
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Missing Stripe price for pack '{pack}'. "
-                   f"Set STRIPE_PRICE_{pack.upper()} in environment.",
+            status_code=500,
+            detail=f"Missing Stripe price for pack '{pack}'. Set env STRIPE_PRICE_{pack.upper()}",
         )
 
     try:
@@ -189,43 +180,33 @@ def create_checkout_session(payload: CheckoutIn):
             "image_url": payload.image_url,
             "expressions": ",".join(payload.expressions or []),
         }
-     # --- NEW: look up Stripe promotion_code ID from env, based on promo string ---
-            promo_raw = (payload.promo_code or "").strip().lower()
-                promotion_code_id: Optional[str] = None
-    if promo_raw:
-        env_key = PROMO_ENV_MAP.get(promo_raw)
-        if env_key:
-            promotion_code_id = os.getenv(env_key)
 
-    # Build optional discounts array if we resolved a Stripe promotion_code
-    extra_args = {}
-    if promotion_code_id:
-        extra_args["discounts"] = [{"promotion_code": promotion_code_id}]
+        # --- NEW promo lookup ---
+        promo_raw = (payload.promo_code or "").strip().lower()
+        promotion_code_id: Optional[str] = None
 
-    checkout_session = stripe.checkout.Session.create(
-        mode="payment",
-        payment_method_types=["card"],
-        line_items=[
-            {
-                "price": price_id,
-                "quantity": 1,
-            },
-        ],
-        customer_email=payload.email,
-        success_url=(
-            f"{FRONTEND_BASE_URL}/upload.html"
-            f"?paid=1&session_id={{CHECKOUT_SESSION_ID}}"
-        ),
-        cancel_url=f"{FRONTEND_BASE_URL}/upload.html?canceled=1",
-        metadata=metadata,
-        **extra_args,
-    )
+        if promo_raw:
+            env_key = PROMO_ENV_MAP.get(promo_raw)
+            if env_key:
+                promotion_code_id = os.getenv(env_key)
+
+        extra_args = {}
+        if promotion_code_id:
+            extra_args["discounts"] = [{"promotion_code": promotion_code_id}]
+
+        checkout_session = stripe.checkout.Session.create(
+            mode="payment",
+            payment_method_types=["card"],
+            line_items=[{"price": price_id, "quantity": 1}],
+            customer_email=payload.email,
+            success_url=f"{FRONTEND_BASE_URL}/upload.html?paid=1&session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{FRONTEND_BASE_URL}/upload.html?canceled=1",
+            metadata=metadata,
+            **extra_args,
+        )
 
         return {"ok": True, "checkoutUrl": checkout_session.url}
 
     except Exception as e:
         logger.exception("Error creating Stripe Checkout session")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e),
-        )
+        raise HTTPException(status_code=500, detail=str(e))
