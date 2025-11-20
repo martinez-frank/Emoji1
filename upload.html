@@ -762,12 +762,11 @@
 }
 
   // Read ?pack= from the URL (default to starter)
-  const params = new URLSearchParams(window.location.search);
-  const pack = (params.get('pack') || 'starter').toLowerCase();
-  const paid = params.get('paid') === '1';
-
-  // How many expressions allowed for this pack
-  const MAX = PACK_MAX[pack] || 3;
+ const params = new URLSearchParams(window.location.search);
+ const pack = (params.get('pack') || 'starter').toLowerCase();
+ const paid = params.get('paid') === '1';
+ const promoParam = (params.get('promo') || '').trim().toLowerCase();
+ const MAX = PACK_MAX[pack] || 3;
 
  // ------ Update hero + price summary ------
 function updatePriceSummaryUI() {
@@ -808,11 +807,15 @@ const promoRaw = (params.get('promo') || '').trim().toLowerCase();
     }
   }
 
-  // Also update the small banner "Promo applied: CODE — X% off your pack."
-  if (appliedPromo) {
+   // Save normalized promo onto the form so submit can read it
+   if (formEl) {
+    formEl.dataset.appliedPromo = appliedPromo || '';
+  }
+
+   // Also update the small banner "Promo applied: CODE — X% off your pack."
+   if (appliedPromo) {
     showPromoBanner(appliedPromo);
   }
-}
 
   // ----- Prefill email if we have it in localStorage -----
   let start = {};
