@@ -18,6 +18,7 @@ app = FastAPI(title="Frankiemoji API", version="0.0.5")
 origins = [
     "https://frankiemoji.com",
     "https://www.frankiemoji.com",
+    "https://frankiemoji.vercel.app",
     "https://emoji1-sandy.vercel.app",
     "http://localhost:3000",
     "http://localhost:5173",
