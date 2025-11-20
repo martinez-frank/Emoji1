@@ -296,171 +296,81 @@
 
  <!-- Promo JS -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const applyBtn  = document.getElementById("apply-btn");
-  const promoInput = document.getElementById("promo-code");
-  const promoMsg   = document.getElementById("promo-message");
+document.addEventListener('DOMContentLoaded', function () {
+  const applyBtn   = document.getElementById('apply-btn');
+  const promoInput = document.getElementById('promo-code');
+  const promoMsg   = document.getElementById('promo-message');
+
+  // Pack CTA links
+  const starterLink  = document.getElementById('starter-link');
+  const standardLink = document.getElementById('standard-link');
+  const premiumLink  = document.getElementById('premium-link');
 
   if (!applyBtn || !promoInput || !promoMsg) return;
 
-  // Same codes as upload.html / api/upload.js
+  // Same definitions we use everywhere
   const PROMO_DEFINITIONS = {
-    frankie10:    { type: "percent", value: 10 },
-    frankiemoj10: { type: "percent", value: 10 }, // backwards-compat
-    holiday15:    { type: "percent", value: 15 },
-    crew100:      { type: "percent", value: 100 },
-    aaronemoji10: { type: "percent", value: 10 },
-    donniemoji10: { type: "percent", value: 10 },
+    frankie10:    { type: 'percent', value: 10 },
+    frankiemoji10:{ type: 'percent', value: 10 }, // backwards-compat
+    holiday15:    { type: 'percent', value: 15 },
+    crew100:      { type: 'percent', value: 100 },
+    aaronemoji10: { type: 'percent', value: 10 },
+    donniemoji10: { type: 'percent', value: 10 },
   };
 
-  function showPromoMessage(def, code) {
-    promoMsg.classList.remove("fade", "shake");
-    promoMsg.style.display = "block";
+  function setPackHref(link, packKey, code) {
+    if (!link) return;
+    const params = new URLSearchParams();
+    params.set('pack', packKey);
+    if (code) params.set('promo', code);
+    link.href = 'upload.html?' + params.toString();
+  }
 
+  function updatePackLinks(code) {
+    const normalized = (code || '').trim().toLowerCase();
+    setPackHref(starterLink,  'starter',  normalized);
+    setPackHref(standardLink, 'standard', normalized);
+    setPackHref(premiumLink,  'premium',  normalized);
+  }
+
+  function showPromoMessage(def, code) {
+    promoMsg.classList.remove('fade', 'shake');
+
+    // Invalid code
     if (!def) {
-      promoMsg.innerHTML = "❌ Invalid code. Try again.";
-      promoMsg.style.borderColor = "#AF180A";
-      promoMsg.style.background  = "#FFF2EF";
-      promoMsg.style.color       = "#B84239";
-      promoMsg.classList.add("shake");
-      localStorage.removeItem("frankie_promo");
+      promoMsg.innerHTML = '❌ Invalid code. Try again.';
+      promoMsg.style.borderColor = '#AF1B0A';
+      promoMsg.style.background  = '#FFE2E2';
+      promoMsg.style.color       = '#884239';
+      promoMsg.style.display     = 'block';
+      promoMsg.classList.add('shake');
+
+      updatePackLinks(''); // no promo attached to links
       return;
     }
 
-    // valid promo
-    promoMsg.innerHTML =
-      "Promo applied! " + def.value + "% off your pack.";
-    promoMsg.style.borderColor = "#F1D19A";
-    promoMsg.style.background  = "#FFF9EF";
-    promoMsg.style.color       = "#2C2419";
-    promoMsg.classList.add("fade");
+    // Valid code
+    promoMsg.innerHTML = 'Promo applied! ' + def.value + '% off your pack.';
+    promoMsg.style.borderColor = '#F1D19A';
+    promoMsg.style.background  = '#FFF9EE';
+    promoMsg.style.color       = '#2C2419';
+    promoMsg.style.display     = 'block';
+    promoMsg.classList.add('fade');
 
-    // store normalized code for upload page
-    localStorage.setItem("frankie_promo", code);
+    updatePackLinks(code);
   }
 
   function applyPromo(raw) {
-    const code = (raw || "").trim().toLowerCase();
+    const code = (raw || '').trim().toLowerCase();
     const def  = PROMO_DEFINITIONS[code] || null;
     showPromoMessage(def, code);
   }
 
-  applyBtn.addEventListener("click", function () {
+  // Make sure links start clean (no promo param) on first load
+  updatePackLinks('');
+
+  applyBtn.addEventListener('click', function () {
     applyPromo(promoInput.value);
   });
 });
 </script>
-
-  <!-- Marquee JS (unchanged) -->
-<script>
-  // GitHub: where emoji images actually live
-  const GH_OWNER = "martinez-frank";
-  const GH_REPO = "Emoji1";
-  const IMAGES_PATH = "images";
-
-  // fallback list in case GitHub doesn't return (still point to your images/ folder)
-  const FALLBACK_EMOJIS = [
-    "frankemoji-aaronfunny.webp",
-    "frankemoji-brockangry.webp",
-    "frankemoji-brocklaugh.webp",
-    "frankemoji-brockpointing.webp",
-    "frankemoji-corihappy.webp",
-    "frankemoji-coriheart.webp",
-    "frankemoji-dennishappy.webp",
-    "frankemoji-dennisho.webp",
-    "frankemoji-dennisunglassescool.webp",
-    "frankemoji-dennisthinking.webp",
-    "frankemoji-donprofessional.webp",
-    "frankemoji-donthumbsup.webp",
-    "frankemoji-frankcomputer.webp",
-    "frankemoji-frankdrawing.webp",
-    "frankemoji-frankfunny.webp",
-    "frankemoji-frankheart.webp",
-    "frankemoji-franklaugh.webp",
-    "frankemoji-frankohno.webp",
-    "frankemoji-frankside.webp",
-    "frankemoji-franksideeye.webp",
-    "frankemoji-franksquint.webp",
-    "frankemoji-franksweat.webp",
-    "frankemoji-frankthumbsup.webp",
-    "frankemoji-franktounge.webp",
-    "frankemoji-frankwow.webp",
-    "frankemoji-frankyawn.webp",
-    "frankemoji-greatidea.webp",
-    "frankemoji-happydonsmile.webp",
-    "frankemoji-kissingheart.webp",
-    "frankemoji-misshalo.webp",
-    "frankemoji-misslaughing.webp",
-    "frankemoji-missscared.webp",
-    "frankemoji-misssmile.webp",
-    "frankemoji-sisterangry.webp",
-    "frankemoji-sisterheart.webp",
-    "frankemoji-sisterkiss.webp",
-    "frankemoji-sisterthumbsup.webp",
-    "frankemoji-sisterwink.webp"
-  ].map(name => ({
-    src: `${IMAGES_PATH}/${name}`,
-    name
-  }));
-
-  async function loadMarqueeEmojis() {
-    let emojis = [];
-
-    try {
-      // add timestamp so Safari/desktop doesn’t cache the directory request
-      const res = await fetch(
-        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${IMAGES_PATH}?t=${Date.now()}`
-      );
-      const files = await res.json();
-
-      if (Array.isArray(files)) {
-        // ✅ use GitHub's download_url so the path is ALWAYS valid
-        emojis = files
-          .filter(f => f.type === "file")
-          .filter(f => f.name.toLowerCase().endsWith(".webp"))
-          .filter(f => !f.name.toLowerCase().includes("white"))
-          .map(f => ({
-            src: f.download_url,   // ← this is the important change
-            name: f.name
-          }));
-      }
-    } catch (e) {
-      console.warn("GitHub fetch failed, will use fallback.", e);
-    }
-
-    // if nothing came back from GitHub, use local list
-    if (!emojis.length) {
-      emojis = FALLBACK_EMOJIS;
-    }
-
-    // shuffle so faces are mixed
-    emojis = emojis.sort(() => Math.random() - 0.5);
-
-    const row1 = document.getElementById("emojiMarquee");
-    const row2 = document.getElementById("emojiMarquee2");
-    if (!row1 || !row2) return;
-
-    function addRun(el, list) {
-      list.forEach(item => {
-        const img = document.createElement("img");
-        img.src = item.src;
-        img.alt = item.name;
-        img.className = "marq-img";
-        el.appendChild(img);
-      });
-    }
-
-    // top row: normal, twice
-    addRun(row1, emojis);
-    addRun(row1, emojis);
-
-    // bottom row: reversed, twice
-    const reversed = [...emojis].reverse();
-    addRun(row2, reversed);
-    addRun(row2, reversed);
-  }
-
-  loadMarqueeEmojis();
-</script>
-</body>
-</html>
