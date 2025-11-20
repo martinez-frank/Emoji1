@@ -771,10 +771,19 @@
  const selected = new Set();
 
  // ------ Update hero + price summary ------
-function updatePriceSummaryUI() {
-  // Read promo from the URL (?promo=holiday15), not from localStorage
-const params   = new URLSearchParams(window.location.search);
-const promoRaw = (params.get('promo') || '').trim().toLowerCase();
+  function updatePriceSummaryUI() {
+  // 1) Try to read promo from the URL (?promo=holiday15)
+  const params = new URLSearchParams(window.location.search);
+  let promoRaw = (params.get('promo') || '').trim().toLowerCase();
+
+  // 2) If not in the URL, fall back to localStorage (set on index page)
+  if (!promoRaw) {
+    try {
+      promoRaw = (localStorage.getItem('franki:promo') || '').trim().toLowerCase();
+    } catch (_) {
+      promoRaw = '';
+    }
+  }
 
   // base / final prices in cents + which promo code actually applied
   const { base, final, appliedPromo } = calculatePriceForPack(pack, promoRaw);
@@ -1029,12 +1038,12 @@ if (paid && successEl && cardEl) {
 
     // ----- Build payload for FastAPI / Stripe -----
     const payload = {
-      pack_type: pack,                         // "starter" | "standard" | "premium"
-      email: email,
-      phone: phone,
-      image_url: fileUrl,                      // Uploadcare CDN URL
-      expressions: Array.from(selected),       // ["Smirk", "Cool (Sunglasses)", ...]
-      promo_code: appliedPromo                 // may be null
+     pack_type: pack,
+     email: email,
+     phone: phone,
+     image_url: fileUrl,
+     expressions: Array.from(selected),
+     promo_code: appliedPromo   // ✅ Correct key name
     };
 
     try {
