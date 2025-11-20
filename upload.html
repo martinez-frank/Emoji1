@@ -771,7 +771,9 @@
 
  // ------ Update hero + price summary ------
 function updatePriceSummaryUI() {
-  const promoRaw = localStorage.getItem('frankie_promo') || '';
+  // Read promo from the URL (?promo=holiday15), not from localStorage
+const params   = new URLSearchParams(window.location.search);
+const promoRaw = (params.get('promo') || '').trim().toLowerCase();
 
   // base / final prices in cents + which promo code actually applied
   const { base, final, appliedPromo } = calculatePriceForPack(pack, promoRaw);
