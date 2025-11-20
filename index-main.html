@@ -345,20 +345,6 @@ document.addEventListener("DOMContentLoaded", function () {
     showPromoMessage(def, code);
   }
 
-  // Pre-fill from saved promo if it exists and is still valid
-  const savedCode = localStorage.getItem("frankie_promo");
-  if (savedCode) {
-    promoInput.value = savedCode;
-    const norm = savedCode.trim().toLowerCase();
-    const def  = PROMO_DEFINITIONS[norm] || null;
-    if (def) {
-      showPromoMessage(def, norm);
-    } else {
-      // stale / unknown code
-      localStorage.removeItem("frankie_promo");
-    }
-  }
-
   applyBtn.addEventListener("click", function () {
     applyPromo(promoInput.value);
   });
