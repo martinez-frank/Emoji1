@@ -767,6 +767,8 @@
  const paid = params.get('paid') === '1';
  const promoParam = (params.get('promo') || '').trim().toLowerCase();
  const MAX = PACK_MAX[pack] || 3;
+ // Global set of selected expressions
+ const selected = new Set();
 
  // ------ Update hero + price summary ------
 function updatePriceSummaryUI() {
@@ -853,8 +855,6 @@ const promoRaw = (params.get('promo') || '').trim().toLowerCase();
   const chipsEl   = document.getElementById('expr-chips');
   const counterEl = document.getElementById('expr-count');
   const thumbEl   = document.getElementById('expr-thumbs'); // OK if null
-
-  const selected  = new Set();
 
   function renderExpressions() {
     const count = selected.size;
