@@ -581,10 +581,9 @@
               "
             />
 
-            <div style="display:flex;gap:10px;justify-content:center;">
-              <a class="btn" href="index.html#pricing">Home</a>
-              <a class="btn" href="our-story.html">About</a>
-            </div>
+           <div style="display:flex;gap:10px;justify-content:center;">
+            <a class="btn" href="index.html#pricing">Return to home</a>
+             </div>
 
           </div> <!-- /success -->
         </div> <!-- /card upload -->
@@ -765,6 +764,7 @@
   // Read ?pack= from the URL (default to starter)
   const params = new URLSearchParams(window.location.search);
   const pack = (params.get('pack') || 'starter').toLowerCase();
+  const paid = params.get('paid') === '1';
 
   // How many expressions allowed for this pack
   const MAX = PACK_MAX[pack] || 3;
@@ -938,6 +938,22 @@ window.frankiSelectedExpressions = selected;
   const successEl = document.getElementById('success');
   const statusEl  = document.getElementById('statusMsg');
   const sendBtn   = document.getElementById('send-btn');
+    // If Stripe sent us back with ?paid=1, show the success state immediately
+if (paid && successEl && cardEl) {
+  // Hide everything in the card except the success block
+  Array.from(cardEl.children).forEach((child) => {
+    if (child !== successEl) {
+      child.style.display = 'none';
+    }
+  });
+
+  // Reveal the success message + green highlight
+  successEl.style.display = 'block';
+  cardEl.classList.add('success-state');
+
+  // Clear any old status text
+  if (statusEl) statusEl.textContent = '';
+}
 
   function setStatus(msg, color) {
     if (!statusEl) return;
