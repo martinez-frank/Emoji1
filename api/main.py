@@ -152,6 +152,15 @@ def create_checkout_session(payload: CheckoutIn):
         "premium": os.getenv("STRIPE_PRICE_PREMIUM", "price_PREMIUM_REPLACE_ME"),
     }
 
+    # Map human promo strings → Vercel env var names that hold Stripe promotion_code IDs
+    PROMO_ENV_MAP = {
+        "frankie10":     "STRIPE_PROMO_FRANKIE10",
+        "holiday15":     "STRIPE_PROMO_HOLIDAY15",
+        "crew100":       "STRIPE_PROMO_CREW100",
+        "aaronemoji10":  "STRIPE_PROMO_AARON10",
+        "donniemoji10":  "STRIPE_PROMO_DONNI10",
+    }
+    
     pack = (payload.pack_type or "").lower()
     if pack not in PACK_PRICE_IDS:
         raise HTTPException(
@@ -179,24 +188,37 @@ def create_checkout_session(payload: CheckoutIn):
             "image_url": payload.image_url,
             "expressions": ",".join(payload.expressions or []),
         }
+     # --- NEW: look up Stripe promotion_code ID from env, based on promo string ---
+            promo_raw = (payload.promo_code or "").strip().lower()
+                promotion_code_id: Optional[str] = None
+    if promo_raw:
+        env_key = PROMO_ENV_MAP.get(promo_raw)
+        if env_key:
+            promotion_code_id = os.getenv(env_key)
 
-        checkout_session = stripe.checkout.Session.create(
-            mode="payment",
-            payment_method_types=["card"],
-            line_items=[
-                {
-                    "price": price_id,
-                    "quantity": 1,
-                }
-            ],
-            customer_email=payload.email,
-            success_url=(
-                f"{FRONTEND_BASE_URL}/upload.html"
-                "?paid=1&session_id={{CHECKOUT_SESSION_ID}}"
-            ),
-            cancel_url=f"{FRONTEND_BASE_URL}/upload.html?canceled=1",
-            metadata=metadata,
-        )
+    # Build optional discounts array if we resolved a Stripe promotion_code
+    extra_args = {}
+    if promotion_code_id:
+        extra_args["discounts"] = [{"promotion_code": promotion_code_id}]
+
+    checkout_session = stripe.checkout.Session.create(
+        mode="payment",
+        payment_method_types=["card"],
+        line_items=[
+            {
+                "price": price_id,
+                "quantity": 1,
+            },
+        ],
+        customer_email=payload.email,
+        success_url=(
+            f"{FRONTEND_BASE_URL}/upload.html"
+            f"?paid=1&session_id={{CHECKOUT_SESSION_ID}}"
+        ),
+        cancel_url=f"{FRONTEND_BASE_URL}/upload.html?canceled=1",
+        metadata=metadata,
+        **extra_args,
+    )
 
         return {"ok": True, "checkoutUrl": checkout_session.url}
 
