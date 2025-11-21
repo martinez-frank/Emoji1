@@ -246,14 +246,30 @@
       color: var(--graphite);
     }
 
-/* --- MAIN AREA SHOULD NOT OVERLAP SIDEBAR --- */
-      .admin-main {
-      flex: 1;
-      padding-left: 1rem;
+/* --- CENTER MAIN CONTENT & EXPAND TABLE --- */
+     .admin-main {
+     flex: 1;
+     display: flex;
+     justify-content: center;     /* centers the shell */
+     padding: 2rem 1.5rem;
     }
 
      .shell {
-     margin-left: 0; /* remove unintended shift */
+     width: 100%;
+     max-width: 1600px;           /* expands full table width */
+     margin: 0 auto;              /* centered */
+     padding: 0 1rem;
+    }
+
+/* table wrapper should always stretch */
+     .table-wrap {
+     width: 100%;
+    }
+
+/* Table itself should NEVER shrink because of sidebar */
+     table {
+     width: 100%;
+     min-width: 1200px;           /* ensures all columns fit */
     }
 
 /* Make the whole table area breathe from sidebar */
