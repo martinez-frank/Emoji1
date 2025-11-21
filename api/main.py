@@ -44,6 +44,12 @@ UPLOAD_SECRET = os.getenv("FRANKIEMOJI_UPLOAD_SECRET")  # optional shared secret
 # -------------------------------------------------------------------
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "https://frankiemoji.com")
+# Base prices in cents (keep in sync with Stripe prices)
+BASE_PRICE_CENTS = {
+    "starter": 500,   # $5.00
+    "standard": 1500, # $15.00
+    "premium": 2500,  # $25.00
+}
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -134,7 +140,7 @@ def upload_file(payload: UploadIn, x_upload_key: Optional[str] = Header(None)):
 
 
 # -------------------------------------------------------------------
-# /api/create-checkout-session  → Stripe Checkout
+# /api/create-checkout-session  → Stripe Checkout + emoji_orders row
 # -------------------------------------------------------------------
 @app.post("/api/create-checkout-session")
 def create_checkout_session(payload: CheckoutIn):
@@ -143,6 +149,13 @@ def create_checkout_session(payload: CheckoutIn):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Stripe secret key not configured.",
+        )
+
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        logger.error("Supabase config missing")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Supabase env vars missing. Set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel.",
         )
 
     PACK_PRICE_IDS = {
@@ -160,6 +173,7 @@ def create_checkout_session(payload: CheckoutIn):
         "donniemoji10": "STRIPE_PROMO_DONNI10",
     }
 
+    # 1) Validate pack + price
     pack = (payload.pack_type or "").lower()
     if pack not in PACK_PRICE_IDS:
         raise HTTPException(status_code=400, detail="Invalid pack type")
@@ -172,41 +186,108 @@ def create_checkout_session(payload: CheckoutIn):
             detail=f"Missing Stripe price for pack '{pack}'. Set env STRIPE_PRICE_{pack.upper()}",
         )
 
+    base_price_cents = BASE_PRICE_CENTS.get(pack)
+    if base_price_cents is None:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Missing base price cents for pack '{pack}'.",
+        )
+
+    # 2) Normalize promo + look up promotion_code ID from env
+    promo_raw = (payload.promo_code or "").strip().lower()
+    promotion_code_id: Optional[str] = None
+
+    if promo_raw:
+        env_key = PROMO_ENV_MAP.get(promo_raw)
+        if env_key:
+            promotion_code_id = os.getenv(env_key)
+
+    # 3) Create emoji_orders row in Supabase (status = payment_pending)
+    emoji_orders_endpoint = f"{SUPABASE_URL}/rest/v1/emoji_orders"
+    headers = {
+        "apikey": SUPABASE_SERVICE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+    }
+
+    order_payload = {
+        "pack_type": pack.capitalize(),        # "Starter" / "Standard" / "Premium"
+        "expressions": payload.expressions,    # text[] column
+        "email": payload.email,
+        "phone": payload.phone,
+        "image_path": payload.image_url,       # map image_url -> image_path in DB
+        "status": "payment_pending",
+        "promo_code": promo_raw or None,
+        "base_price_cents": base_price_cents,
+        "final_price_cents": base_price_cents,  # will be updated by webhook later
+    }
+
     try:
-        metadata = {
-            "pack_type": pack,
-            "promo_code": payload.promo_code or "",
-            "email": payload.email,
-            "phone": payload.phone or "",
-            "image_url": payload.image_url,
-            "expressions": ",".join(payload.expressions or []),
-        }
+        db_resp = requests.post(
+            emoji_orders_endpoint,
+            headers=headers,
+            params={"select": "id"},
+            json=order_payload,
+            timeout=10,
+        )
+    except Exception as e:
+        logger.exception("Error calling Supabase in /api/create-checkout-session")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Could not reach Supabase: {e}",
+        )
 
-        # --- NEW promo lookup ---
-        promo_raw = (payload.promo_code or "").strip().lower()
-        promotion_code_id: Optional[str] = None
+    if db_resp.status_code >= 400:
+        logger.error("Supabase error in /api/create-checkout-session: %s", db_resp.text)
+        raise HTTPException(
+            status_code=db_resp.status_code,
+            detail=f"Supabase insert failed: {db_resp.text}",
+        )
 
-        if promo_raw:
-            env_key = PROMO_ENV_MAP.get(promo_raw)
-            if env_key:
-                promotion_code_id = os.getenv(env_key)
+    try:
+        order_row = db_resp.json()[0]
+        order_id = order_row["id"]
+    except Exception:
+        logger.exception("Unexpected Supabase response in /api/create-checkout-session")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Unexpected Supabase response when creating order.",
+        )
 
-        extra_args = {}
-        if promotion_code_id:
-            extra_args["discounts"] = [{"promotion_code": promotion_code_id}]
+    # 4) Build Stripe metadata and discounts
+    metadata = {
+        "order_id": str(order_id),
+        "pack_type": pack,
+        "promo_code": promo_raw,
+        "email": payload.email,
+        "phone": payload.phone or "",
+        "image_url": payload.image_url,
+        "expressions": ",".join(payload.expressions or []),
+    }
 
+    extra_args = {}
+    if promotion_code_id:
+        extra_args["discounts"] = [{"promotion_code": promotion_code_id}]
+
+    # 5) Create Stripe Checkout Session
+    try:
         checkout_session = stripe.checkout.Session.create(
             mode="payment",
             payment_method_types=["card"],
             line_items=[{"price": price_id, "quantity": 1}],
             customer_email=payload.email,
-            success_url=f"{FRONTEND_BASE_URL}/upload.html?paid=1&session_id={{CHECKOUT_SESSION_ID}}",
+            success_url=f"{FRONTEND_BASE_URL}/processing.html?order_id={order_id}",
             cancel_url=f"{FRONTEND_BASE_URL}/upload.html?canceled=1",
             metadata=metadata,
             **extra_args,
         )
 
-        return {"ok": True, "checkoutUrl": checkout_session.url}
+        return {
+            "ok": True,
+            "checkoutUrl": checkout_session.url,
+            "order_id": order_id,
+        }
 
     except Exception as e:
         logger.exception("Error creating Stripe Checkout session")
