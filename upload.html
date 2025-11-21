@@ -712,16 +712,16 @@
     premium: 2500,  // $25
   };
 
-  // Promo definitions: all percent discounts (same as index-main & api/upload.js)
-  const PROMO_DEFINITIONS = {
-    frankie10:    { type: 'percent', value: 10 },
-    // backwards-compat alias
-    frankiemoj10: { type: 'percent', value: 10 },
-    holiday15:    { type: 'percent', value: 15 },
-    crew100:      { type: 'percent', value: 100 },
-    aaronemoji10: { type: 'percent', value: 10 },
-    donniemoji10: { type: 'percent', value: 10 },
-  };
+  // Promo definitions: all percent discounts (same as index-main & api/main.py)
+const PROMO_DEFINITIONS = {
+  frankie10:      { type: 'percent', value: 10 },
+  // backwards-compat alias
+  frankiemoji10:  { type: 'percent', value: 10 },
+  holiday15:      { type: 'percent', value: 15 },
+  crew100:        { type: 'percent', value: 100 },
+  aaronemoji10:   { type: 'percent', value: 10 },
+  donniemoji10:   { type: 'percent', value: 10 },
+};
 
   function formatCents(cents) {
     return '$' + (cents / 100).toFixed(2);
@@ -748,17 +748,25 @@
   }
 
   // Shows the “Promo applied: CODE — X% off your pack.” line on upload.html
-  
-  function showPromoBanner(promoRaw) {
-  if (!promoRaw) return;
+function showPromoBanner(appliedPromo) {
+  const code = (appliedPromo || '').trim().toLowerCase();
+  if (!code) return;
 
-  const promoRow   = document.getElementById('promo-row');
-  const promoCodeEl = document.getElementById('promo-code-label');
+  const def = PROMO_DEFINITIONS[code];
+  if (!def) return;
 
-  if (!promoRow || !promoCodeEl) return;
+  const promoRow       = document.getElementById('promo-row');
+  const promoCodeEl    = document.getElementById('promo-code-label');
+  const promoPercentEl = document.getElementById('promo-percent-label');
 
-  promoCodeEl.textContent = promoRaw;
-  promoRow.style.display = 'block';  // or 'flex', either is fine with your .row layout
+  if (!promoRow || !promoCodeEl || !promoPercentEl) return;
+
+  // CODE
+  promoCodeEl.textContent    = code;
+  // “10% / 15% / 100%”
+  promoPercentEl.textContent = def.value + '%';
+
+  promoRow.style.display = 'block';
 }
 
   // Read ?pack= from the URL (default to starter)
@@ -772,11 +780,16 @@
  // ------ Update hero + price summary ------
 function updatePriceSummaryUI() {
   // Read promo from the URL (?promo=holiday15), not from localStorage
-const params   = new URLSearchParams(window.location.search);
-const promoRaw = (params.get('promo') || '').trim().toLowerCase();
+  const params   = new URLSearchParams(window.location.search);
+  const promoRaw = (params.get('promo') || '').trim().toLowerCase();
 
   // base / final prices in cents + which promo code actually applied
   const { base, final, appliedPromo } = calculatePriceForPack(pack, promoRaw);
+
+  // Save the actually applied promo (or clear it) so submit can send it to Stripe
+  if (formEl) {
+    formEl.dataset.appliedPromo = appliedPromo || '';
+  }
 
   const heroNoteEl    = document.getElementById('pack-note');
   const packLabelEl   = document.getElementById('summary-pack-label');
@@ -784,6 +797,7 @@ const promoRaw = (params.get('promo') || '').trim().toLowerCase();
   const finalEl       = document.getElementById('summary-final-price');
   const discountRowEl = document.getElementById('summary-discount-row');
   const discountEl    = document.getElementById('summary-discount');
+  ...
 
   const label = PACK_LABEL[pack] || 'Starter';
 
