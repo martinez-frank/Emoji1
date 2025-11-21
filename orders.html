@@ -315,6 +315,36 @@
     .status-in_progress{ background:#2563EB; }  /* blue  */
     .status-done       { background:#059669; }  /* green */
     .status-error      { background:#B91C1C; }  /* red   */
+    /* --- Sidebar tweak: keep admin nav fixed-ish on scroll --- */
+    .admin-sidebar{
+     position: sticky;
+     top: 0;
+     align-self: flex-start;
+     min-height: 100vh;
+     }
+
+/* --- Amount column alignment --- */
+th.amount-col,
+td.amount-col{
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* --- Sticky header shadow + row hover / click state --- */
+.table-wrap thead{
+  box-shadow: 0 2px 4px rgba(44,36,25,0.10);
+}
+
+.table-wrap tbody tr{
+  cursor: pointer;
+  transition: background 0.12s ease, transform 0.08s ease;
+}
+
+.table-wrap tbody tr:hover{
+  background: #FFEFD9;
+  transform: translateY(-1px);
+}
+
   </style>
 </head>
 <body>
@@ -323,7 +353,7 @@
       <div class="admin-logo">Frankiemoji™</div>
 
       <nav class="admin-nav">
-        <a href="/orders.html" class="active">Orders</a>
+        <a href="/orders.html" class="is-active">Orders</a>
         <a href="/upload.html">Upload test</a>
         <!-- future: <a href="/reports.html">Reports</a> -->
       </nav>
@@ -386,17 +416,18 @@
         <table id="ordersTable">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Created</th>
-              <th>Pack</th>
-              <th>Status</th>
-              <th>Expressions</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Promo</th>
-              <th>Order&nbsp;ID</th>
-            </tr>
-          </thead>
+            <th>#</th>
+            <th>Created</th>
+            <th>Pack</th>
+            <th>Status</th>
+            <th class="amount-col">Amount</th>
+            <th>Expressions</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Promo</th>
+            <th>Order&nbsp;ID</th>
+          </tr>
+        </thead>
           <tbody></tbody>
         </table>
       </div>
@@ -433,59 +464,78 @@
       tbody.innerHTML = '';
 
       if (!orders || !orders.length){
-        summaryEl.textContent = 'No orders in this range yet.';
-        if (statusSummaryEl) statusSummaryEl.textContent = '';
-        return;
-      }
-
-      summaryEl.textContent = `${orders.length} orders in this view (newest first).`;
-
-      const statusClassMap = {
-        received:        'status-new',
-        payment_pending: 'status-queued',
-        queued:          'status-queued',
-        in_progress:     'status-in_progress',
-        done:            'status-done',
-        error:           'status-error'
-      };
-
-      orders.forEach((o, idx) => {
-        const tr = document.createElement('tr');
-
-        const created = o.created_at
-          ? new Date(o.created_at).toLocaleString()
-          : '';
-
-        const exprList = Array.isArray(o.expressions) ? o.expressions : [];
-        const exprHtml = exprList.map(e => `<span>${e}</span>`).join('');
-
-        const rawStatus  = (o.status || 'received').toLowerCase();
-        const statusClass = statusClassMap[rawStatus] || 'status-new';
-        const statusLabel = rawStatus.replace('_',' ');
-
-        tr.innerHTML = `
-          <td>${idx + 1}</td>
-          <td>${created}</td>
-          <td>
-            <span class="chip-pack">
-              <span class="dot"></span>
-              <span>${o.pack_type || 'starter'}</span>
-            </span>
-          </td>
-          <td>
-            <span class="status-pill ${statusClass}">
-              ${statusLabel}
-            </span>
-          </td>
-          <td class="expr">${exprHtml}</td>
-          <td>${o.email || ''}</td>
-          <td>${o.phone || ''}</td>
-          <td>${o.promo_code || ''}</td>
-          <td style="font-family:monospace;font-size:0.78rem;">${o.id}</td>
-        `;
-        tbody.appendChild(tr);
-      });
+       summaryEl.textContent = 'No orders in this range yet.';
+       if (statusSummaryEl) statusSummaryEl.textContent = '';
+       return;
     }
+
+     summaryEl.textContent = `${orders.length} orders in this view (newest first).`;
+
+    const statusClassMap = {
+     received:        'status-new',
+     payment_pending: 'status-queued',
+     queued:          'status-queued',
+     in_progress:     'status-in_progress',
+     done:            'status-done',
+     error:           'status-error'
+   };
+
+   orders.forEach((o, idx) => {
+    const tr = document.createElement('tr');
+
+    // Created timestamp
+     const created = o.created_at
+      ? new Date(o.created_at).toLocaleString()
+      : '';
+
+    // Expressions
+    const exprList = Array.isArray(o.expressions) ? o.expressions : [];
+    const exprHtml = exprList.map(e => `<span>${e}</span>`).join('');
+
+    // Status pill
+    const rawStatus   = (o.status || 'received').toLowerCase();
+    const statusClass = statusClassMap[rawStatus] || 'status-new';
+    const statusLabel = rawStatus.replace('_', ' ');
+
+    // Amount logic: prefer final_price_cents, fall back to base_price_cents
+    const baseCents  = (typeof o.base_price_cents  === 'number') ? o.base_price_cents  : null;
+    const finalCents = (typeof o.final_price_cents === 'number') ? o.final_price_cents : baseCents;
+    let amountStr = '';
+    if (typeof finalCents === 'number'){
+      amountStr = '$' + (finalCents / 100).toFixed(2);
+    }
+
+    tr.innerHTML = `
+      <td>${idx + 1}</td>
+      <td>${created}</td>
+      <td>
+        <span class="chip-pack">
+          <span class="dot"></span>
+          <span>${o.pack_type || 'starter'}</span>
+        </span>
+      </td>
+      <td>
+        <span class="status-pill ${statusClass}">
+          ${statusLabel}
+        </span>
+      </td>
+      <td class="amount-col">${amountStr}</td>
+      <td class="expr">${exprHtml}</td>
+      <td>${o.email || ''}</td>
+      <td>${o.phone || ''}</td>
+      <td>${o.promo_code || ''}</td>
+      <td style="font-family:monospace;font-size:0.78rem;">${o.id}</td>
+    `;
+
+    // Row deep-link to detailed admin view
+    tr.addEventListener('click', () => {
+      // opens /admin/order/?id=xxxxx in the SAME tab
+      window.location.href = '/admin/order/?id=' + encodeURIComponent(o.id);
+    });
+
+    tbody.appendChild(tr);
+  });
+}
 
     function updateStatusSummary(orders){
       if (!statusSummaryEl) return;
