@@ -1,333 +1,665 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Orders — Frankiemoji Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --cream:#FAF3E0;
-      --espresso:#2C2419;
-      --graphite:#5A5350;
-      --accent:#F5A623;
-      --pill:#FFF8EC;
-      --border:#E2D4BE;
-    }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{
-      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:var(--cream);
-      color:var(--espresso);
-      min-height:100vh;
-    }
-    .shell{
-      max-width:1100px;
-      margin:2.5rem auto 3rem;
-      padding:0 1.25rem;
-    }
-    header{
-      display:flex;
-      justify-content:space-between;
-      align-items:baseline;
-      margin-bottom:1.5rem;
-      gap:1rem;
-    }
-    header h1{
-      font-family:"DM Serif Display",serif;
-      font-size:2.1rem;
-      letter-spacing:0.03em;
-    }
-    header span.badge{
-      background:var(--pill);
-      border-radius:999px;
-      padding:0.35rem 0.9rem;
-      font-size:0.8rem;
-      border:1px solid var(--border);
-      text-transform:uppercase;
-      letter-spacing:0.08em;
-    }
-
-    .card{
-      background:#FFF7EA;
-      border-radius:18px;
-      border:1px solid var(--border);
-      padding:1.25rem 1.5rem;
-      box-shadow:0 10px 30px rgba(44,36,25,0.06);
-      margin-bottom:1.25rem;
-    }
-    .card h2{
-      font-size:1rem;
-      text-transform:uppercase;
-      letter-spacing:0.12em;
-      font-weight:600;
-      color:var(--graphite);
-      margin-bottom:0.5rem;
-    }
-    .auth-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:0.75rem;
-      align-items:center;
-    }
-    .auth-row input{
-      flex:1;
-      min-width:220px;
-      padding:0.55rem 0.75rem;
-      border-radius:10px;
-      border:1px solid var(--border);
-      font-size:0.9rem;
-      background:white;
-    }
-    button.primary{
-      border:none;
-      border-radius:999px;
-      padding:0.55rem 1.2rem;
-      font-size:0.9rem;
-      font-weight:600;
-      cursor:pointer;
-      background:var(--espresso);
-      color:#fff;
-      display:inline-flex;
-      align-items:center;
-      gap:0.4rem;
-      transition:transform 0.08s ease,box-shadow 0.08s ease,background 0.15s ease;
-    }
-    button.primary:hover{
-      transform:translateY(-1px);
-      box-shadow:0 6px 14px rgba(44,36,25,0.18);
-      background:#221A11;
-    }
-    .status{
-      margin-top:0.4rem;
-      font-size:0.85rem;
-    }
-    .status.ok{color:#137D3B;}
-    .status.err{color:#B02020;}
-
-    .table-wrap{
-      margin-top:0.5rem;
-      border-radius:18px;
-      border:1px solid var(--border);
-      overflow:auto;
-      background:#FFFDF7;
-    }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:0.85rem;
-      min-width:800px;
-    }
-    thead{
-      background:#F2E5CF;
-      position:sticky;
-      top:0;
-      z-index:1;
-    }
-    th,td{
-      padding:0.55rem 0.7rem;
-      border-bottom:1px solid #EDE0CC;
-      text-align:left;
-      vertical-align:top;
-    }
-    th{
-      font-weight:600;
-      text-transform:uppercase;
-      letter-spacing:0.08em;
-      font-size:0.75rem;
-      color:var(--graphite);
-      white-space:nowrap;
-    }
-    tbody tr:nth-child(even){
-      background:#FFF9EF;
-    }
-    .chip-pack{
-      display:inline-flex;
-      align-items:center;
-      gap:0.25rem;
-      padding:0.1rem 0.55rem;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:#FFF;
-      font-size:0.78rem;
-      text-transform:capitalize;
-    }
-    .chip-pack span.dot{
-      width:7px;
-      height:7px;
-      border-radius:999px;
-      background:var(--accent);
-    }
-    .expr{
-      max-width:280px;
-      white-space:normal;
-    }
-    .expr span{
-      display:inline-block;
-      padding:0.08rem 0.4rem;
-      margin:0.06rem 0.14rem 0.06rem 0;
-      border-radius:999px;
-      background:#FFF2D8;
-      border:1px solid #F1D7A5;
-      font-size:0.75rem;
-    }
-    .pill-meta{
-      font-size:0.78rem;
-      color:var(--graphite);
-    }
-    footer{
-      margin-top:1.75rem;
-      text-align:center;
-      font-size:0.78rem;
-      color:var(--graphite);
-      opacity:0.8;
-    }
-    @media (max-width:720px){
-      header{
-        flex-direction:column;
-        align-items:flex-start;
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Frankiemoji Orders — Admin</title>
+    <link rel="stylesheet" href="/style-v8.0.css" />
+    <style>
+      body {
+        margin: 0;
+        background: var(--cream);
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        color: var(--espresso);
       }
-      header h1{font-size:1.7rem;}
-      .card{padding:1rem 1rem;}
-    }
-  </style>
-</head>
-<body>
-  <div class="shell">
-    <header>
-      <h1>Frankiemoji Orders</h1>
-      <span class="badge">Internal · Admin View</span>
-    </header>
 
-    <!-- Auth card -->
-    <section class="card">
-      <h2>Access</h2>
-      <p style="font-size:0.9rem;margin-bottom:0.6rem;">
-        Enter your admin passphrase to view the latest emoji pack orders.
-      </p>
-      <div class="auth-row">
-        <input type="password" id="adminKey" placeholder="Admin passphrase" autocomplete="current-password" />
-        <button class="primary" id="loadBtn">
-          <span>View orders</span> <span>📦</span>
-        </button>
-      </div>
-      <div id="authStatus" class="status"></div>
-    </section>
-
-    <!-- Orders table -->
-    <section class="card" id="ordersCard" style="display:none;">
-      <h2>Recent Orders</h2>
-      <p class="pill-meta" id="summary"></p>
-      <div class="table-wrap">
-        <table id="ordersTable">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Created</th>
-              <th>Pack</th>
-              <th>Expressions</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Promo</th>
-              <th>Order&nbsp;ID</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-
-    <footer>
-      Internal tooling for Frankiemoji™ Studios. Do not share this URL publicly.
-    </footer>
-  </div>
-
-  <script>
-    const adminInput  = document.getElementById('adminKey');
-    const loadBtn     = document.getElementById('loadBtn');
-    const statusEl    = document.getElementById('authStatus');
-    const ordersCard  = document.getElementById('ordersCard');
-    const tbody       = document.querySelector('#ordersTable tbody');
-    const summaryEl   = document.getElementById('summary');
-
-    function setStatus(msg, type){
-      statusEl.textContent = msg || '';
-      statusEl.className = 'status' + (type ? ' ' + type : '');
-    }
-
-    function renderOrders(orders){
-      tbody.innerHTML = '';
-      if (!orders || !orders.length){
-        summaryEl.textContent = 'No orders yet. Once packs start flowing, they will appear here.';
-        return;
+      .admin-shell {
+        max-width: 1200px;
+        margin: 32px auto 64px;
+        padding: 0 16px;
       }
-      summaryEl.textContent = `${orders.length} most recent orders (newest first).`;
 
-      orders.forEach((o, idx) => {
-        const tr = document.createElement('tr');
-
-        const created = o.created_at
-          ? new Date(o.created_at).toLocaleString()
-          : '';
-
-        const exprList = Array.isArray(o.expressions) ? o.expressions : [];
-        const exprHtml = exprList.map(e =>
-          `<span>${e}</span>`
-        ).join('');
-
-        tr.innerHTML = `
-          <td>${idx + 1}</td>
-          <td>${created}</td>
-          <td>
-            <span class="chip-pack">
-              <span class="dot"></span>
-              <span>${o.pack_type || 'starter'}</span>
-            </span>
-          </td>
-          <td class="expr">${exprHtml}</td>
-          <td>${o.email || ''}</td>
-          <td>${o.phone || ''}</td>
-          <td>${o.promo_code || ''}</td>
-          <td style="font-family:monospace;font-size:0.78rem;">${o.id}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    async function loadOrders(){
-      const key = adminInput.value.trim();
-      if (!key){
-        setStatus('Please enter your admin passphrase.', 'err');
-        return;
+      .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
       }
-      setStatus('Loading orders…', '');
-      ordersCard.style.display = 'none';
 
-      try{
-        const res  = await fetch('/api/orders', {
-          headers: { 'x-admin-key': key }
-        });
-        const data = await res.json().catch(() => ({}));
+      .admin-title {
+        font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+        font-size: 28px;
+        letter-spacing: 0.02em;
+      }
 
-        if (!res.ok || !data.ok){
-          throw new Error(data.error || `Request failed (${res.status})`);
+      .admin-badge {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.04);
+      }
+
+      .card {
+        background: var(--paper);
+        border-radius: 18px;
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+        padding: 18px 20px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+      }
+
+      .card + .card {
+        margin-top: 16px;
+      }
+
+      .access-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .access-input {
+        flex: 1;
+        padding: 10px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        font-size: 14px;
+        outline: none;
+      }
+
+      .access-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(216, 116, 43, 0.2);
+      }
+
+      .access-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        background: var(--accent);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .access-status {
+        margin-top: 6px;
+        font-size: 12px;
+      }
+
+      .access-status.ok {
+        color: #15803d;
+      }
+
+      .access-status.error {
+        color: #b91c1c;
+      }
+
+      .filters-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .filters-row label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--graphite);
+      }
+
+      .filter-input {
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        font-size: 13px;
+        min-width: 160px;
+      }
+
+      .filter-select {
+        padding: 6px 24px 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        font-size: 13px;
+        background: #fff;
+      }
+
+      .range-group {
+        display: inline-flex;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.03);
+        padding: 3px;
+      }
+
+      .range-btn {
+        border: none;
+        background: transparent;
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+
+      .range-btn.active {
+        background: #fff;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+        font-weight: 600;
+      }
+
+      .table-wrapper {
+        border-radius: 14px;
+        overflow: auto;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        background: #fffdf7;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      thead {
+        background: #f3e3c3;
+      }
+
+      th,
+      td {
+        padding: 8px 10px;
+        text-align: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        vertical-align: top;
+      }
+
+      th {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--graphite);
+        white-space: nowrap;
+      }
+
+      tbody tr:nth-child(even) td {
+        background: #fffaf0;
+      }
+
+      .col-idx {
+        width: 32px;
+        text-align: right;
+        color: var(--graphite);
+      }
+
+      .pill-pack {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        background: #fef3c7;
+        color: #92400e;
+        font-weight: 600;
+      }
+
+      .pill-pack.premium {
+        background: #e0e7ff;
+        color: #3730a3;
+      }
+
+      .pill-pack.starter {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .status-received {
+        background: #e0f2fe;
+        color: #075985;
+      }
+
+      .status-queued {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .status-in_progress {
+        background: #e0e7ff;
+        color: #1d4ed8;
+      }
+
+      .status-done {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .status-payment_pending {
+        background: #fef2f2;
+        color: #b91c1c;
+      }
+
+      .pill-expression {
+        display: inline-block;
+        margin: 2px 4px 2px 0;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #f9f5e7;
+        font-size: 11px;
+      }
+
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        font-size: 11px;
+      }
+
+      .muted {
+        color: var(--graphite);
+      }
+
+      .table-footer {
+        padding: 6px 4px 0;
+        font-size: 11px;
+        color: var(--graphite);
+        display: flex;
+        justify-content: space-between;
+      }
+
+      @media (max-width: 768px) {
+        .admin-shell {
+          padding: 0 12px 32px;
         }
 
-        renderOrders(data.orders || []);
-        setStatus('Access granted. Orders loaded.', 'ok');
-        ordersCard.style.display = 'block';
-      } catch (err){
-        console.error('loadOrders error', err);
-        setStatus(err.message || 'Failed to load orders.', 'err');
-        ordersCard.style.display = 'none';
-      }
-    }
+        .card {
+          padding: 16px;
+        }
 
-    loadBtn.addEventListener('click', loadOrders);
-    adminInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') loadOrders();
-    });
-  </script>
-</body>
+        .filters-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .range-group {
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .range-btn {
+          flex: 1;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="admin-shell">
+      <header class="admin-header">
+        <h1 class="admin-title">Frankiemoji Orders</h1>
+        <span class="admin-badge">Internal · Admin View</span>
+      </header>
+
+      <!-- ACCESS / PASSPHRASE CARD -->
+      <section class="card">
+        <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px;">
+          Access
+        </div>
+        <div style="font-size: 13px; margin-bottom: 10px;">
+          Enter your admin passphrase to view the latest emoji pack orders.
+        </div>
+        <div class="access-row">
+          <input
+            id="adminKey"
+            type="password"
+            class="access-input"
+            placeholder="••••••••••"
+          />
+          <button id="btnAccess" class="access-btn">
+            <span>View orders</span>
+            <span aria-hidden="true">👀</span>
+          </button>
+        </div>
+        <div id="accessStatus" class="access-status muted">
+          Waiting for passphrase.
+        </div>
+      </section>
+
+      <!-- ORDERS CARD -->
+      <section class="card" id="ordersCard" style="display: none;">
+        <div
+          style="
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 2px;
+          "
+        >
+          Recent orders
+        </div>
+        <div
+          id="ordersSummary"
+          style="font-size: 13px; margin-bottom: 12px;"
+        >
+          Loading…
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters-row">
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <label>Date</label>
+            <div class="range-group">
+              <button
+                type="button"
+                class="range-btn active"
+                data-range="all"
+              >
+                All time
+              </button>
+              <button type="button" class="range-btn" data-range="7d">
+                Last 7 days
+              </button>
+              <button type="button" class="range-btn" data-range="today">
+                Today
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <input
+              id="fEmail"
+              class="filter-input"
+              placeholder="Filter email"
+            />
+            <input
+              id="fPhone"
+              class="filter-input"
+              placeholder="Filter phone"
+            />
+            <select id="fStatus" class="filter-select">
+              <option value="">Any status</option>
+              <option value="received">received</option>
+              <option value="payment_pending">payment_pending</option>
+              <option value="queued">queued</option>
+              <option value="in_progress">in_progress</option>
+              <option value="done">done</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th class="col-idx">#</th>
+                <th>Created</th>
+                <th>Pack</th>
+                <th>Status</th>
+                <th>Expressions</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Promo</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody id="ordersBody"></tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span id="rowsSummary">0 rows</span>
+          <span class="muted">Newest orders first.</span>
+        </div>
+      </section>
+    </div>
+
+    <script type="module">
+      const adminKeyInput = document.getElementById("adminKey");
+      const btnAccess = document.getElementById("btnAccess");
+      const accessStatus = document.getElementById("accessStatus");
+      const ordersCard = document.getElementById("ordersCard");
+      const ordersBody = document.getElementById("ordersBody");
+      const ordersSummary = document.getElementById("ordersSummary");
+      const rowsSummary = document.getElementById("rowsSummary");
+
+      const fEmail = document.getElementById("fEmail");
+      const fPhone = document.getElementById("fPhone");
+      const fStatus = document.getElementById("fStatus");
+      const rangeButtons = Array.from(
+        document.querySelectorAll(".range-btn")
+      );
+
+      let adminKey = "";
+      let allOrders = [];
+      let currentRange = "all";
+
+      function setAccessStatus(text, kind = "muted") {
+        accessStatus.textContent = text;
+        accessStatus.className = "access-status " + kind;
+      }
+
+      function formatMoney(cents) {
+        if (typeof cents !== "number" || isNaN(cents)) return "";
+        return "$" + (cents / 100).toFixed(2);
+      }
+
+      function statusClass(status) {
+        const key = (status || "").toLowerCase();
+        switch (key) {
+          case "received":
+            return "status-pill status-received";
+          case "queued":
+            return "status-pill status-queued";
+          case "in_progress":
+            return "status-pill status-in_progress";
+          case "done":
+            return "status-pill status-done";
+          case "payment_pending":
+            return "status-pill status-payment_pending";
+          default:
+            return "status-pill";
+        }
+      }
+
+      function packPillClass(pack) {
+        const key = (pack || "").toLowerCase();
+        if (key === "premium") return "pill-pack premium";
+        if (key === "starter") return "pill-pack starter";
+        return "pill-pack";
+      }
+
+      function applyFilters() {
+        const emailFilter = fEmail.value.trim().toLowerCase();
+        const phoneFilter = fPhone.value.trim().toLowerCase();
+        const statusFilter = fStatus.value.trim().toLowerCase();
+        const now = new Date();
+
+        return (allOrders || []).filter((o) => {
+          const created = o.created_at ? new Date(o.created_at) : null;
+
+          if (currentRange === "today" && created) {
+            const same =
+              created.toDateString() === now.toDateString();
+            if (!same) return false;
+          } else if (currentRange === "7d" && created) {
+            const diffMs = now - created;
+            if (diffMs > 7 * 24 * 60 * 60 * 1000) return false;
+          }
+
+          if (emailFilter) {
+            if (
+              !o.email ||
+              !o.email.toLowerCase().includes(emailFilter)
+            )
+              return false;
+          }
+
+          if (phoneFilter) {
+            if (
+              !o.phone ||
+              !String(o.phone).toLowerCase().includes(phoneFilter)
+            )
+              return false;
+          }
+
+          if (statusFilter) {
+            if (
+              !o.status ||
+              o.status.toLowerCase() !== statusFilter
+            )
+              return false;
+          }
+
+          return true;
+        });
+      }
+
+      function renderTable() {
+        const filtered = applyFilters();
+        ordersBody.innerHTML = "";
+
+        filtered.forEach((o, idx) => {
+          const tr = document.createElement("tr");
+          const created = o.created_at
+            ? new Date(o.created_at).toLocaleString()
+            : "";
+
+          const packLabel =
+            (o.pack_type || "").charAt(0).toUpperCase() +
+            (o.pack_type || "").slice(1);
+          const packClass = packPillClass(o.pack_type);
+          const promo = o.promo_code || "";
+          const base = o.base_price_cents;
+          const final = o.final_price_cents || base;
+
+          const expressions = Array.isArray(o.expressions)
+            ? o.expressions
+            : ("" + (o.expressions || "")).split(",");
+
+          tr.innerHTML = `
+            <td class="col-idx">${idx + 1}</td>
+            <td>${created}</td>
+            <td><span class="${packClass}">${packLabel ||
+            "—"
+          }</span></td>
+            <td><span class="${statusClass(o.status)}">${
+            (o.status || "").replace("_", " ") || "—"
+          }</span></td>
+            <td>
+              ${expressions
+                .filter(Boolean)
+                .map(
+                  (ex) =>
+                    `<span class="pill-expression">${String(ex).trim()}</span>`
+                )
+                .join("")}
+            </td>
+            <td>${o.email || ""}</td>
+            <td>${o.phone || ""}</td>
+            <td>${promo || ""}</td>
+            <td>
+              <div>${final ? formatMoney(final) : ""}</div>
+              ${
+                base && final && base !== final
+                  ? `<div class="muted" style="font-size:11px;">Base ${formatMoney(
+                      base
+                    )}</div>`
+                  : ""
+              }
+            </td>
+          `;
+          ordersBody.appendChild(tr);
+        });
+
+        rowsSummary.textContent = `${filtered.length} order${
+          filtered.length === 1 ? "" : "s"
+        } shown`;
+      }
+
+      async function fetchOrders() {
+        setAccessStatus("Loading orders…", "muted");
+        ordersBody.innerHTML = "";
+
+        const res = await fetch("/api/orders", {
+          headers: {
+            "x-admin-orders-key": adminKey,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error(
+            `Server responded with ${res.status} ${res.statusText}`
+          );
+        }
+
+        const json = await res.json();
+        allOrders = json.data || [];
+        const total = allOrders.length;
+
+        ordersSummary.textContent = `${total} most recent orders (newest first).`;
+        setAccessStatus("Access granted. Orders loaded.", "ok");
+        ordersCard.style.display = "block";
+
+        renderTable();
+      }
+
+      async function handleAccess() {
+        adminKey = adminKeyInput.value.trim();
+        if (!adminKey) {
+          setAccessStatus(
+            "Please enter your admin passphrase.",
+            "error"
+          );
+          return;
+        }
+
+        btnAccess.disabled = true;
+        try {
+          await fetchOrders();
+        } catch (err) {
+          console.error(err);
+          setAccessStatus(
+            "Access denied or server error. Check your passphrase.",
+            "error"
+          );
+          ordersCard.style.display = "none";
+        } finally {
+          btnAccess.disabled = false;
+        }
+      }
+
+      // EVENTS
+      btnAccess.addEventListener("click", handleAccess);
+      adminKeyInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleAccess();
+      });
+
+      fEmail.addEventListener("input", renderTable);
+      fPhone.addEventListener("input", renderTable);
+      fStatus.addEventListener("change", renderTable);
+
+      rangeButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          rangeButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          currentRange = btn.dataset.range || "all";
+          renderTable();
+        });
+      });
+    </script>
+  </body>
 </html>
