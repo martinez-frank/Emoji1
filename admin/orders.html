@@ -1,80 +1,316 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Orders — Admin</title>
-<link rel="stylesheet" href="/style-v8.0.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Orders — Admin</title>
+  <link rel="stylesheet" href="/style-v8.0.css">
 </head>
-<body style="padding:24px;font-family:Inter,system-ui,sans-serif;max-width:1200px;margin:0 auto;">
-  <h1 style="margin:0 0 12px;">Orders (Phase 1)</h1>
+<body
+  style="
+    padding:24px 32px;
+    font-family:Inter,system-ui,sans-serif;
+    max-width:1440px;
+    margin:0 auto;
+    background:#FAF3E0;
+  "
+>
+  <h1 style="margin:0 0 12px;">Frankiemoji Orders (Raw Table)</h1>
 
-  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
-    <input id="fEmail"  placeholder="Filter email">
-    <input id="fPhone"  placeholder="Filter phone">
-    <select id="fStatus">
-      <option value="">Any status</option>
-      <option>received</option>
-      <option>queued</option>
-      <option>in_progress</option>
-      <option>done</option>
-    </select>
-    <button id="btnLoad">Load</button>
+  <!-- ACCESS CARD (mirrors pretty admin vibe) -->
+  <div
+    style="
+      background:#FFF7E6;
+      border-radius:16px;
+      padding:16px 18px;
+      margin-bottom:16px;
+      border:1px solid #E4D6B8;
+      box-shadow:0 8px 24px rgba(0,0,0,0.04);
+    "
+  >
+    <div style="font-size:12px;font-weight:600;letter-spacing:0.06em;color:#8A6A36;margin-bottom:6px;">
+      ACCESS
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input
+        id="adminPass"
+        type="password"
+        placeholder="Enter your admin passphrase"
+        style="padding:8px 10px;border-radius:999px;border:1px solid #D3C3A2;min-width:220px;"
+      >
+      <button
+        id="btnAccess"
+        style="
+          padding:8px 16px;
+          border-radius:999px;
+          border:none;
+          background:#D8742B;
+          color:#fff;
+          font-weight:600;
+          cursor:pointer;
+        "
+      >
+        View orders 🧑‍🎨
+      </button>
+      <span id="accessMsg" style="font-size:13px;margin-left:4px;"></span>
+    </div>
   </div>
 
-  <table id="tbl" border="1" cellspacing="0" cellpadding="6" style="width:100%;border-collapse:collapse;">
-    <thead>
-     <tr>      
-      <th>Created</th>
-      <th>Order</th>
-      <th>Email</th>
-      <th>Phone</th>
-      <th>Status</th>
-      <th>Promo</th>
-      <th>Expressions</th>
-      <th>File</th>
-     </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <!-- FILTERS + TABLE WRAPPER (hidden until access granted) -->
+  <div id="ordersWrapper" style="display:none;">
+    <!-- Filters row -->
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        align-items:center;
+        margin-bottom:12px;
+        flex-wrap:wrap;
+      "
+    >
+      <input
+        id="fEmail"
+        placeholder="Filter email"
+        style="padding:6px 8px;min-width:200px;border-radius:999px;border:1px solid #D3C3A2;"
+      >
+      <input
+        id="fPhone"
+        placeholder="Filter phone"
+        style="padding:6px 8px;min-width:160px;border-radius:999px;border:1px solid #D3C3A2;"
+      >
+      <select
+        id="fStatus"
+        style="padding:6px 8px;border-radius:999px;border:1px solid #D3C3A2;"
+      >
+        <option value="">Any status</option>
+        <option>payment_pending</option>
+        <option>received</option>
+        <option>queued</option>
+        <option>in_progress</option>
+        <option>done</option>
+      </select>
+      <select
+        id="fRange"
+        style="padding:6px 8px;border-radius:999px;border:1px solid #D3C3A2;"
+      >
+        <option value="">All time</option>
+        <option value="today">Today</option>
+        <option value="7">Last 7 days</option>
+      </select>
+      <button
+        id="btnLoad"
+        style="padding:6px 14px;border-radius:999px;border:none;background:#E0B15C;color:#2C2419;font-weight:600;cursor:pointer;"
+      >
+        Load
+      </button>
+    </div>
 
-<script type="module">
-const tbody = document.querySelector('#tbl tbody');
+    <!-- Scrollable card wrapper -->
+    <div
+      style="
+        background:#fff;
+        border-radius:16px;
+        box-shadow:0 12px 40px rgba(0,0,0,0.06);
+        padding:12px 16px;
+        overflow-x:auto;
+      "
+    >
+      <table
+        id="tbl"
+        border="0"
+        cellspacing="0"
+        cellpadding="6"
+        style="width:100%;border-collapse:collapse;font-size:13px;min-width:900px;"
+      >
+        <thead>
+          <tr style="text-align:left;border-bottom:1px solid #E4D6B8;">
+            <th>Created</th>
+            <th>Order</th>
+            <th>Pack</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Promo</th>
+            <th>Base $</th>
+            <th>Final $</th>
+            <th>Expressions</th>
+            <th>File</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
-async function load(){
-  const p = new URLSearchParams();
-  const s  = document.getElementById('fStatus').value;
-  const ph = document.getElementById('fPhone').value.trim();
-  const em = document.getElementById('fEmail').value.trim();
-  if (s)  p.set('status', s);
-  if (ph) p.set('phone', ph);
-  if (em) p.set('email', em);
+  <script type="module">
+    const tbody       = document.querySelector('#tbl tbody');
+    const ordersWrap  = document.getElementById('ordersWrapper');
+    const passInput   = document.getElementById('adminPass');
+    const accessMsg   = document.getElementById('accessMsg');
+    const btnAccess   = document.getElementById('btnAccess');
+    const btnLoad     = document.getElementById('btnLoad');
+    const fStatus     = document.getElementById('fStatus');
+    const fEmail      = document.getElementById('fEmail');
+    const fPhone      = document.getElementById('fPhone');
+    const fRange      = document.getElementById('fRange');
 
-  const r = await fetch('/api/orders/list?'+p.toString());
-  const j = await r.json();
+    let currentPassphrase = '';
 
-    const j = await r.json();
+    function renderStatusPill(status) {
+      if (!status) return '';
+      const s = String(status).toLowerCase();
+      let bg = '#E5E7EB';
+      let color = '#374151';
 
-// Clear existing rows before adding new ones
-tbody.innerHTML = '';
+      if (s === 'payment_pending') {
+        bg = '#FEF3C7'; color = '#92400E';
+      } else if (s === 'queued') {
+        bg = '#E0ECFF'; color = '#1D4ED8';
+      } else if (s === 'in_progress') {
+        bg = '#FFF4CE'; color = '#92400E';
+      } else if (s === 'done') {
+        bg = '#DCFCE7'; color = '#166534';
+      } else if (s === 'received') {
+        bg = '#E5E7EB'; color = '#374151';
+      }
 
-(j.data || []).forEach(o => {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${new Date(o.created_at).toLocaleString()}</td>
-    <td style="font-family:monospace">${o.id}</td>
-    <td>${o.email || ''}</td>
-    <td>${o.phone || ''}</td>
-    <td>${o.status || ''}</td>
-    <td>${o.promo_code || ''}</td>
-    <td>${Array.isArray(o.expressions) ? o.expressions.join(', ') : ''}</td>
-    <td>${o.file_url ? `<a href="${o.file_url}" target="_blank">view</a>` : ''}</td>
-  `;
-  tbody.appendChild(tr);
-});
-}
-document.getElementById('btnLoad').addEventListener('click', load);
-load();
-</script>
+      return `<span
+        style="
+          display:inline-block;
+          padding:2px 8px;
+          border-radius:999px;
+          font-size:11px;
+          font-weight:500;
+          background:${bg};
+          color:${color};
+          text-transform:capitalize;
+        "
+      >${status}</span>`;
+    }
+
+    async function load() {
+      if (!currentPassphrase) {
+        accessMsg.textContent = 'Enter your passphrase to load orders.';
+        accessMsg.style.color = '#B3261E';
+        return;
+      }
+
+      const p  = new URLSearchParams();
+      const s  = fStatus.value;
+      const ph = fPhone.value.trim();
+      const em = fEmail.value.trim();
+      const range = fRange.value;
+
+      if (s)  p.set('status', s);
+      if (ph) p.set('phone', ph);
+      if (em) p.set('email', em);
+
+      const headers = {
+        'x-admin-orders-key': currentPassphrase
+      };
+
+      const r = await fetch('/api/orders/list?' + p.toString(), { headers });
+
+      if (!r.ok) {
+        throw new Error('Server returned ' + r.status);
+      }
+
+      const j = await r.json();
+
+      let data = j.data || [];
+
+      // Client-side date filter for range
+      if (range === 'today' || range === '7') {
+        const now = new Date();
+        data = data.filter(o => {
+          if (!o.created_at) return false;
+          const d = new Date(o.created_at);
+
+          if (range === 'today') {
+            return (
+              d.getFullYear() === now.getFullYear() &&
+              d.getMonth() === now.getMonth() &&
+              d.getDate() === now.getDate()
+            );
+          } else {
+            const diffMs = now - d;
+            const diffDays = diffMs / (1000 * 60 * 60 * 24);
+            return diffDays <= 7;
+          }
+        });
+      }
+
+      // Clear existing rows
+      tbody.innerHTML = '';
+
+      data.forEach(o => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #F0E2C5';
+
+        const created = o.created_at
+          ? new Date(o.created_at).toLocaleString()
+          : '';
+
+        const baseCents  = typeof o.base_price_cents  === 'number' ? o.base_price_cents  : null;
+        const finalCents = typeof o.final_price_cents === 'number' ? o.final_price_cents : null;
+
+        const baseUsd  = baseCents  != null ? (baseCents  / 100).toFixed(2) : '';
+        const finalUsd = finalCents != null ? (finalCents / 100).toFixed(2) : '';
+
+        const fileUrl = o.file_url || o.image_path || '';
+
+        tr.innerHTML = `
+          <td>${created}</td>
+          <td style="font-family:monospace">${o.id || ''}</td>
+          <td>${o.pack_type || ''}</td>
+          <td>${o.email || ''}</td>
+          <td>${o.phone || ''}</td>
+          <td>${renderStatusPill(o.status)}</td>
+          <td>${o.promo_code || ''}</td>
+          <td>${baseUsd}</td>
+          <td>${finalUsd}</td>
+          <td>${Array.isArray(o.expressions) ? o.expressions.join(', ') : ''}</td>
+          <td>${fileUrl ? `<a href="${fileUrl}" target="_blank">view</a>` : ''}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function handleAccess() {
+      const value = passInput.value.trim();
+      if (!value) {
+        accessMsg.textContent = 'Please enter your admin passphrase.';
+        accessMsg.style.color = '#B3261E';
+        ordersWrap.style.display = 'none';
+        return;
+      }
+
+      currentPassphrase = value;
+      accessMsg.textContent = 'Checking access…';
+      accessMsg.style.color = '#8A6A36';
+
+      try {
+        await load();
+        ordersWrap.style.display = 'block';
+        accessMsg.textContent = 'Access granted. Orders loaded.';
+        accessMsg.style.color = '#1A7F37';
+      } catch (err) {
+        console.error(err);
+        ordersWrap.style.display = 'none';
+        accessMsg.textContent = 'Access denied or error loading orders.';
+        accessMsg.style.color = '#B3261E';
+      }
+    }
+
+    btnAccess.addEventListener('click', handleAccess);
+    btnLoad.addEventListener('click', () => load());
+
+    // Allow Enter key in passphrase field
+    passInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleAccess();
+      }
+    });
+  </script>
 </body>
 </html>
