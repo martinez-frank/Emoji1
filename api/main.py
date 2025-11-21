@@ -273,15 +273,15 @@ def create_checkout_session(payload: CheckoutIn):
     # 5) Create Stripe Checkout Session
     try:
         checkout_session = stripe.checkout.Session.create(
-            mode="payment",
-            payment_method_types=["card"],
-            line_items=[{"price": price_id, "quantity": 1}],
-            customer_email=payload.email,
-            success_url=f"{FRONTEND_BASE_URL}/processing.html?order_id={order_id}",
-            cancel_url=f"{FRONTEND_BASE_URL}/upload.html?canceled=1",
-            metadata=metadata,
-            **extra_args,
-        )
+    mode="payment",
+    payment_method_types=["card"],
+    line_items=[{"price": price_id, "quantity": 1}],
+    customer_email=payload.email,
+    success_url=f"{FRONTEND_BASE_URL}/upload.html?paid=1&order_id={order_id}",
+    cancel_url=f"{FRONTEND_BASE_URL}/upload.html?canceled=1",
+    metadata=metadata,
+    **extra_args,
+)
 
         return {
             "ok": True,
