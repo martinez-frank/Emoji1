@@ -787,9 +787,10 @@ function updatePriceSummaryUI() {
   const { base, final, appliedPromo } = calculatePriceForPack(pack, promoRaw);
 
   // Save the actually applied promo (or clear it) so submit can send it to Stripe
-  if (formEl) {
-    formEl.dataset.appliedPromo = appliedPromo || '';
-  }
+if (formEl) {
+  formEl.dataset.appliedPromo = appliedPromo || '';
+  formEl.dataset.packType = pack;   // <-- NEW: keep pack in sync for submit
+}
 
   const heroNoteEl    = document.getElementById('pack-note');
   const packLabelEl   = document.getElementById('summary-pack-label');
@@ -1066,12 +1067,12 @@ if (paid && successEl && cardEl) {
 
       const data = await res.json().catch(() => ({}));
 
-      if (!res.ok || !data.checkoutUrl) {
-        throw new Error(
-          data.detail ||
-          data.error ||
-          `Server returned ${res.status}`
-        );
+      if (!res.ok || !data.ok || !data.checkoutUrl) {
+       throw new Error(
+         data.detail ||
+         data.error ||
+         `Server returned ${res.status}`
+       );
       }
 
       // 🔁 Hand off to Stripe Checkout
