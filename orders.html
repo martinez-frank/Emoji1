@@ -22,6 +22,62 @@
       color:var(--espresso);
       min-height:100vh;
     }
+        .admin-layout{
+      display:flex;
+      min-height:100vh;
+    }
+    .admin-nav{
+      width:220px;
+      padding:2.5rem 1.25rem 2rem;
+      border-right:1px solid var(--border);
+      background:#F6EBD7;
+      position:sticky;
+      top:0;
+      align-self:flex-start;
+    }
+    .admin-nav h2{
+      font-family:"DM Serif Display",serif;
+      font-size:1.1rem;
+      margin-bottom:1rem;
+    }
+    .admin-nav ul{
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:flex;
+      flex-direction:column;
+      gap:0.4rem;
+      font-size:0.85rem;
+    }
+    .admin-nav a{
+      text-decoration:none;
+      color:var(--graphite);
+      padding:0.35rem 0.6rem;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      gap:0.35rem;
+    }
+    .admin-nav a span.icon{
+      font-size:0.9rem;
+    }
+    .admin-nav a.is-active{
+      background:#2C2419;
+      color:#FFF7EA;
+    }
+    @media (max-width:960px){
+      .admin-layout{
+        flex-direction:column;
+      }
+      .admin-nav{
+        width:100%;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        border-right:none;
+        border-bottom:1px solid var(--border);
+      }
+    }
     .shell{
       max-width:1300px;
       margin:2.5rem auto 3rem;
@@ -119,12 +175,14 @@
       font-size:0.85rem;
       min-width:900px;
     }
-    thead{
+      thead{
       background:#F2E5CF;
       position:sticky;
       top:0;
       z-index:1;
+      box-shadow:0 2px 4px rgba(0,0,0,0.04);
     }
+
     th,td{
       padding:0.55rem 0.7rem;
       border-bottom:1px solid #EDE0CC;
@@ -139,9 +197,14 @@
       color:var(--graphite);
       white-space:nowrap;
     }
-    tbody tr:nth-child(even){
-      background:#FFF9EF;
+     tbody tr:hover{
+      background:#FFF3E0;
     }
+     tr.row-focused{
+      box-shadow:0 0 0 2px rgba(245,166,35,0.6);
+      position:relative;
+    }
+
     .chip-pack{
       display:inline-flex;
       align-items:center;
@@ -255,11 +318,25 @@
   </style>
 </head>
 <body>
-  <div class="shell">
-    <header>
-      <h1>Frankiemoji Orders</h1>
-      <span class="badge">Internal · Admin View</span>
-    </header>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-logo">Frankiemoji™</div>
+
+      <nav class="admin-nav">
+        <a href="/orders.html" class="active">Orders</a>
+        <a href="/upload.html">Upload test</a>
+        <!-- future: <a href="/reports.html">Reports</a> -->
+      </nav>
+
+      <div class="admin-footnote">Internal tools</div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="shell">
+        <header>
+          <h1>Frankiemoji Orders</h1>
+          <span class="badge">Internal · Admin View</span>
+        </header>
 
     <!-- Auth card -->
     <section class="card">
@@ -328,7 +405,9 @@
     <footer>
       Internal tooling for Frankiemoji™ Studios. Do not share this URL publicly.
     </footer>
-  </div>
+        </div> <!-- /.shell -->
+      </main>
+    </div> <!-- /.admin-layout -->
 
   <script>
     const adminInput   = document.getElementById('adminKey');
