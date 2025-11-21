@@ -46,17 +46,18 @@
     .container { max-width:1200px; margin:0 auto; padding:0 24px; }
 
     /* Buttons */
-    .btn{
-  display:inline-block;
-  border:none;
-  padding:12px 20px;
-  border-radius:12px;
-  background:var(--accent);
-  color:#fff;
-  font-weight:600;
-  cursor:pointer;
-  transition:all .2s;
-  text-decoration:none;      /* ← add this */
+   .btn{
+   display:inline-block;
+   border:none;
+   padding:12px 20px;
+   border-radius:12px;
+   background:var(--accent);
+   color:#fff;
+   font-weight:600;
+   cursor:pointer;
+   transition:all .2s;
+   text-decoration:none;
+   text-align:center;          /* ✅ NEW: center label inside button */
 }
 
 .btn:hover{
@@ -168,7 +169,6 @@
     text-align: center;
     }
 
-    }
     .footer-inner {
       width: min(1100px, 92%);
       margin: 0 auto;
@@ -317,6 +317,125 @@
     </div>
   </footer>
 
+<!-- Marquee loader (manifest → GitHub → fallback) -->
+<script>
+(function () {
+  const GH = { owner: "martinez-frank", repo: "Emoji1", branch: "main" };
+  const EXCLUDE = ["starter", "standard", "premium"];
+  const EXTRA = [/\.ds_store/i, /%20/];
+
+  const q = (s) => document.querySelector(s);
+  const row1 = q("#emojiMarquee");
+  const row2 = q("#emojiMarquee2");
+  if (!row1 || !row2) return;
+
+  const isOut = (s) => {
+    s = (s || "").toLowerCase();
+    return EXCLUDE.some((x) => s.includes(x)) || EXTRA.some((rx) => rx.test(s));
+  };
+
+  const shuffle = (a) => {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  const build = (urls) => {
+    const f = document.createDocumentFragment();
+    urls.concat(urls).forEach((src) => {
+      const im = new Image();
+      im.className = "marq-img";
+      im.loading = "lazy";
+      im.decoding = "async";
+      im.alt = "Frankiemoji";
+      im.src = src;
+      im.onerror = () => im.remove();
+      f.appendChild(im);
+    });
+    return f;
+  };
+
+  async function fromManifest() {
+    try {
+      const res = await fetch("images/manifest.json?cb=" + Date.now(), {
+        cache: "no-store",
+      });
+      if (!res.ok) throw 0;
+      const data = await res.json();
+      const list = Array.isArray(data)
+        ? data
+        : Array.isArray(data.stickers)
+        ? data.stickers
+        : [];
+      return list
+        .map((s) => (String(s).startsWith("images/") ? s : `images/${s}`))
+        .filter(
+          (s) =>
+            /\.(png|jpe?g|webp|gif)$/i.test(s) &&
+            !isOut(s)
+        );
+    } catch {
+      return [];
+    }
+  }
+
+  async function fromGitHub() {
+    try {
+      const url = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/images?ref=${GH.branch}`;
+      const r = await fetch(url, {
+        headers: { Accept: "application/vnd.github+json" },
+      });
+      if (!r.ok) throw 0;
+      const items = await r.json();
+      return items
+        .filter((it) => it.type === "file")
+        .filter((it) => /\.webp$/i.test(it.name))
+        .filter((it) => !isOut(it.name) && !isOut(it.path))
+        .map((it) => it.download_url);
+    } catch {
+      return [];
+    }
+  }
+
+  (async () => {
+    let urls = await fromManifest();
+    if (!urls.length) {
+      const gh = await fromGitHub();
+      urls = gh;
+    }
+    if (!urls.length) {
+      // last-resort fallback tiles
+      urls = [
+        "images/wink.webp",
+        "images/laugh.webp",
+        "images/smirk.webp",
+        "images/ohno.webp",
+      ];
+    }
+
+    urls = shuffle([...new Set(urls)]);
+    row1.appendChild(build(urls));
+    row2.appendChild(build([...urls].reverse()));
+
+    row1.style.animationDuration =
+      (50 + Math.random() * 2).toFixed(2) + "s";
+    row2.style.animationDuration =
+      (53 + Math.random() * 2).toFixed(2) + "s";
+
+    document.querySelectorAll(".marquee").forEach((m) => {
+      m.addEventListener("mouseenter", () => {
+        m.style.animationPlayState = "paused";
+      });
+      m.addEventListener("mouseleave", () => {
+        m.style.animationPlayState = "running";
+      });
+    });
+  })();
+})();
+</script>
+  
  <!-- Promo JS -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
