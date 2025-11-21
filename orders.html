@@ -23,7 +23,7 @@
       min-height:100vh;
     }
     .shell{
-      max-width:1100px;
+      max-width:1300px;
       margin:2.5rem auto 3rem;
       padding:0 1.25rem;
     }
@@ -117,7 +117,7 @@
       width:100%;
       border-collapse:collapse;
       font-size:0.85rem;
-      min-width:800px;
+      min-width:900px;
     }
     thead{
       background:#F2E5CF;
@@ -191,6 +191,67 @@
       header h1{font-size:1.7rem;}
       .card{padding:1rem 1rem;}
     }
+
+    /* --- Status pills + summary bar --- */
+    .status-bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:0.75rem;
+      margin-bottom:0.75rem;
+    }
+    .status-summary{
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.35rem;
+    }
+    .status-pill{
+      display:inline-flex;
+      align-items:center;
+      padding:0.12rem 0.6rem;
+      border-radius:999px;
+      font-size:0.78rem;
+      font-weight:500;
+      color:#fff;
+      text-transform:capitalize;
+    }
+
+    /* Date-range + status filter controls */
+    .filter-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.5rem;
+      align-items:center;
+      font-size:0.78rem;
+    }
+    .filter-btn{
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      padding:0.25rem 0.75rem;
+      font-size:0.78rem;
+      cursor:pointer;
+    }
+    .filter-btn.is-active{
+      background:var(--espresso);
+      color:#fff;
+      border-color:var(--espresso);
+    }
+    #statusFilter{
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      padding:0.25rem 0.6rem;
+      font-size:0.78rem;
+    }
+
+    /* status color classes */
+    .status-new        { background:#6B7280; }  /* gray  */
+    .status-queued     { background:#D97706; }  /* amber */
+    .status-in_progress{ background:#2563EB; }  /* blue  */
+    .status-done       { background:#059669; }  /* green */
+    .status-error      { background:#B91C1C; }  /* red   */
   </style>
 </head>
 <body>
@@ -218,7 +279,32 @@
     <!-- Orders table -->
     <section class="card" id="ordersCard" style="display:none;">
       <h2>Recent Orders</h2>
+
+      <!-- Status summary + filters bar -->
+      <div class="status-bar">
+        <div class="status-summary" id="statusSummary"></div>
+
+        <div class="filter-row">
+          <span style="font-weight:600;">Range:</span>
+          <button type="button" class="filter-btn is-active" data-range="all">All time</button>
+          <button type="button" class="filter-btn" data-range="today">Today</button>
+          <button type="button" class="filter-btn" data-range="7d">Last 7 days</button>
+
+          <span style="font-weight:600;margin-left:0.5rem;">Status:</span>
+          <select id="statusFilter">
+            <option value="any">Any status</option>
+            <option value="received">received</option>
+            <option value="payment_pending">payment_pending</option>
+            <option value="queued">queued</option>
+            <option value="in_progress">in_progress</option>
+            <option value="done">done</option>
+            <option value="error">error</option>
+          </select>
+        </div>
+      </div>
+
       <p class="pill-meta" id="summary"></p>
+
       <div class="table-wrap">
         <table id="ordersTable">
           <thead>
@@ -226,6 +312,7 @@
               <th>#</th>
               <th>Created</th>
               <th>Pack</th>
+              <th>Status</th>
               <th>Expressions</th>
               <th>Email</th>
               <th>Phone</th>
@@ -244,12 +331,19 @@
   </div>
 
   <script>
-    const adminInput  = document.getElementById('adminKey');
-    const loadBtn     = document.getElementById('loadBtn');
-    const statusEl    = document.getElementById('authStatus');
-    const ordersCard  = document.getElementById('ordersCard');
-    const tbody       = document.querySelector('#ordersTable tbody');
-    const summaryEl   = document.getElementById('summary');
+    const adminInput   = document.getElementById('adminKey');
+    const loadBtn      = document.getElementById('loadBtn');
+    const statusEl     = document.getElementById('authStatus');
+    const ordersCard   = document.getElementById('ordersCard');
+    const tbody        = document.querySelector('#ordersTable tbody');
+    const summaryEl    = document.getElementById('summary');
+    const statusSummaryEl = document.getElementById('statusSummary');
+    const rangeButtons = Array.from(document.querySelectorAll('.filter-btn'));
+    const statusSelect = document.getElementById('statusFilter');
+
+    let allOrders     = [];
+    let currentRange  = 'all';   // 'all' | 'today' | '7d'
+    let currentStatus = 'any';   // 'any' or specific status
 
     function setStatus(msg, type){
       statusEl.textContent = msg || '';
@@ -258,11 +352,23 @@
 
     function renderOrders(orders){
       tbody.innerHTML = '';
+
       if (!orders || !orders.length){
-        summaryEl.textContent = 'No orders yet. Once packs start flowing, they will appear here.';
+        summaryEl.textContent = 'No orders in this range yet.';
+        if (statusSummaryEl) statusSummaryEl.textContent = '';
         return;
       }
-      summaryEl.textContent = `${orders.length} most recent orders (newest first).`;
+
+      summaryEl.textContent = `${orders.length} orders in this view (newest first).`;
+
+      const statusClassMap = {
+        received:        'status-new',
+        payment_pending: 'status-queued',
+        queued:          'status-queued',
+        in_progress:     'status-in_progress',
+        done:            'status-done',
+        error:           'status-error'
+      };
 
       orders.forEach((o, idx) => {
         const tr = document.createElement('tr');
@@ -272,9 +378,11 @@
           : '';
 
         const exprList = Array.isArray(o.expressions) ? o.expressions : [];
-        const exprHtml = exprList.map(e =>
-          `<span>${e}</span>`
-        ).join('');
+        const exprHtml = exprList.map(e => `<span>${e}</span>`).join('');
+
+        const rawStatus  = (o.status || 'received').toLowerCase();
+        const statusClass = statusClassMap[rawStatus] || 'status-new';
+        const statusLabel = rawStatus.replace('_',' ');
 
         tr.innerHTML = `
           <td>${idx + 1}</td>
@@ -285,6 +393,11 @@
               <span>${o.pack_type || 'starter'}</span>
             </span>
           </td>
+          <td>
+            <span class="status-pill ${statusClass}">
+              ${statusLabel}
+            </span>
+          </td>
           <td class="expr">${exprHtml}</td>
           <td>${o.email || ''}</td>
           <td>${o.phone || ''}</td>
@@ -293,6 +406,70 @@
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    function updateStatusSummary(orders){
+      if (!statusSummaryEl) return;
+
+      if (!orders || !orders.length){
+        statusSummaryEl.textContent = '';
+        return;
+      }
+
+      const counts = {
+        received: 0,
+        payment_pending: 0,
+        queued: 0,
+        in_progress: 0,
+        done: 0,
+        error: 0,
+      };
+
+      orders.forEach(o => {
+        const s = (o.status || 'received').toLowerCase();
+        if (counts.hasOwnProperty(s)) counts[s] += 1;
+      });
+
+      statusSummaryEl.innerHTML = `
+        <span class="status-pill status-new">Total: ${orders.length}</span>
+        ${counts.received ? `<span class="status-pill status-new">received: ${counts.received}</span>` : ''}
+        ${(counts.payment_pending || counts.queued) ? `<span class="status-pill status-queued">queued/pending: ${counts.payment_pending + counts.queued}</span>` : ''}
+        ${counts.in_progress ? `<span class="status-pill status-in_progress">in progress: ${counts.in_progress}</span>` : ''}
+        ${counts.done ? `<span class="status-pill status-done">done: ${counts.done}</span>` : ''}
+        ${counts.error ? `<span class="status-pill status-error">error: ${counts.error}</span>` : ''}
+      `;
+    }
+
+    function applyFilters(){
+      let filtered = allOrders.slice();
+
+      // Date range filter
+      const now = new Date();
+      filtered = filtered.filter(o => {
+        if (!o.created_at) return true;
+        const created = new Date(o.created_at);
+
+        if (currentRange === 'today'){
+          const todayStr   = now.toISOString().slice(0,10);
+          const createdStr = created.toISOString().slice(0,10);
+          if (createdStr !== todayStr) return false;
+        } else if (currentRange === '7d'){
+          const diffMs   = now - created;
+          const diffDays = diffMs / (1000 * 60 * 60 * 24);
+          if (diffDays > 7) return false;
+        }
+        return true;
+      });
+
+      // Status filter
+      if (currentStatus && currentStatus !== 'any'){
+        filtered = filtered.filter(o =>
+          (o.status || '').toLowerCase() === currentStatus
+        );
+      }
+
+      renderOrders(filtered);
+      updateStatusSummary(filtered);
     }
 
     async function loadOrders(){
@@ -314,9 +491,10 @@
           throw new Error(data.error || `Request failed (${res.status})`);
         }
 
-        renderOrders(data.orders || []);
+        allOrders = data.orders || [];
         setStatus('Access granted. Orders loaded.', 'ok');
         ordersCard.style.display = 'block';
+        applyFilters();
       } catch (err){
         console.error('loadOrders error', err);
         setStatus(err.message || 'Failed to load orders.', 'err');
@@ -328,6 +506,24 @@
     adminInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') loadOrders();
     });
+
+    // Range buttons
+    rangeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        rangeButtons.forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        currentRange = btn.dataset.range || 'all';
+        applyFilters();
+      });
+    });
+
+    // Status dropdown
+    if (statusSelect){
+      statusSelect.addEventListener('change', () => {
+        currentStatus = statusSelect.value || 'any';
+        applyFilters();
+      });
+    }
   </script>
 </body>
 </html>
