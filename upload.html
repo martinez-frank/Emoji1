@@ -797,7 +797,6 @@ function updatePriceSummaryUI() {
   const finalEl       = document.getElementById('summary-final-price');
   const discountRowEl = document.getElementById('summary-discount-row');
   const discountEl    = document.getElementById('summary-discount');
-  ...
 
   const label = PACK_LABEL[pack] || 'Starter';
 
@@ -825,6 +824,9 @@ function updatePriceSummaryUI() {
   // Also update the small banner "Promo applied: CODE — X% off your pack."
   if (appliedPromo) {
     showPromoBanner(appliedPromo);
+  } else {
+    const promoRow = document.getElementById('promo-row');
+    if (promoRow) promoRow.style.display = 'none';
   }
 }
 
