@@ -153,6 +153,7 @@ def create_checkout_session(payload: CheckoutIn):
 
     PROMO_ENV_MAP = {
         "frankie10": "STRIPE_PROMO_FRANKIE10",
+        "frankiemoji10": "STRIPE_PROMO_FRANKIE10",
         "holiday15": "STRIPE_PROMO_HOLIDAY15",
         "crew100": "STRIPE_PROMO_CREW100",
         "aaronemoji10": "STRIPE_PROMO_AARON10",
