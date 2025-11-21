@@ -47,18 +47,23 @@
 
     /* Buttons */
     .btn{
-      display:inline-block;
-      border:1px solid transparent;
-      padding:12px 18px;
-      border-radius:12px;
-      background:#fff;
-      color:var(--espresso);
-      font-weight:600;
-      cursor:pointer;
-      transition:transform .12s ease;
-    }
-    .btn:hover{transform:translateY(-1px)}
-    .btn.primary{background:var(--accent);color:#fff}
+  display:inline-block;
+  border:none;
+  padding:12px 20px;
+  border-radius:12px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .2s;
+  text-decoration:none;      /* ← add this */
+}
+
+.btn:hover{
+  background:#b85f22;
+  transform:translateY(-1px);
+  text-decoration:none;      /* ← make sure hover doesn’t re-underline */
+}
 
     /* Hero + marquee */
     .hero{text-align:center;padding:64px 0 12px}
