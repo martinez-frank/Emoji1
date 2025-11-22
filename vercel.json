@@ -20,7 +20,8 @@
     { "src": "/api/stripe-webhook$", "dest": "/api/stripe-webhook.js" },
 
     { "src": "/images/(.*)$", "dest": "/images/$1" },
-    { "src": "/([^\\_]+)\\.html$", "dest": "/$1" },
+
+    { "src": "/(.*)\\.html$", "dest": "/$1.html" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
