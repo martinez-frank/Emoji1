@@ -12,9 +12,14 @@
   ],
 
   "routes": [
-    { "src": "/api/upload(.+)$", "dest": "/api/upload.js" },
-    { "src": "/api/orders(.+)$", "dest": "/api/orders.js" },
-    { "src": "/api/main(.+)$", "dest": "/api/main.py" },
+    { "src": "/api/upload", "dest": "/api/upload.js" },
+    { "src": "/api/upload/.*", "dest": "/api/upload.js" },
+
+    { "src": "/api/orders", "dest": "/api/orders.js" },
+    { "src": "/api/orders/.*", "dest": "/api/orders.js" },
+
+    { "src": "/api/main", "dest": "/api/main.py" },
+    { "src": "/api/main/.*", "dest": "/api/main.py" },
 
     { "src": "/api/create-checkout-session$", "dest": "/api/create-checkout-session.js" },
     { "src": "/api/stripe-webhook$", "dest": "/api/stripe-webhook.js" },
