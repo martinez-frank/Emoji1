@@ -61,17 +61,12 @@ export default async function handler(req, res) {
 
     // Normalize field names
     const finalPackType = packType || pack_type;
-    const finalPromoCode =
-      promoCode != null ? promoCode : (promo_code != null ? promo_code : null);
+    const rawPromo = promoCode != null ? promoCode : promo_code;
+    const finalPromo = rawPromo ? String(rawPromo).trim().toLowerCase() : null;
     const finalImageUrl = imageUrl || image_url;
 
     // 4) Basic validation
-    if (
-      !email ||
-      !finalPackType ||
-      !PRICE_MAP[finalPackType] ||
-      !finalImageUrl
-    ) {
+    if (!email || !finalPackType || !PRICE_MAP[finalPackType] || !finalImageUrl) {
       console.error('[create-checkout-session] Invalid request payload', {
         email,
         packType: finalPackType,
@@ -81,12 +76,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid request' });
     }
 
-    const normalizedPromo = finalPromoCode
-      ? String(finalPromoCode).trim().toLowerCase()
-      : null;
-
     const priceId = PRICE_MAP[finalPackType];
-    const promoId = normalizedPromo ? PROMO_MAP[normalizedPromo] : null;
+    const promoId = finalPromo ? PROMO_MAP[finalPromo] : null;
 
     // 5) Create pending order in Supabase
     const { data: order, error: insertError } = await supabase
@@ -98,14 +89,15 @@ export default async function handler(req, res) {
         phone,
         image_path: finalImageUrl,
         status: 'pending_payment',
-        promo_code: normalizedPromo,
+        promo_code: finalPromo,
       })
-      .single();
+      .select()      // <-- ensure we actually get the inserted row back
+      .single();     //     so order.id is not null
 
-    if (insertError) {
+    if (insertError || !order) {
       console.error(
-        '[create-checkout-session] Supabase insert error',
-        insertError
+        '[create-checkout-session] Supabase insert error / no order returned',
+        { insertError, order }
       );
       return res
         .status(500)
@@ -134,7 +126,7 @@ export default async function handler(req, res) {
           email,
           phone: phone || '',
           packType: finalPackType,
-          promoCode: normalizedPromo || '',
+          promoCode: finalPromo || '',
           expressions: JSON.stringify(expressions || []),
           imageUrl: finalImageUrl,
         },
