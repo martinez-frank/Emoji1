@@ -137,10 +137,14 @@ export default async function handler(req, res) {
     }
 
     // 7) Return URL for redirect
-    return res.status(200).json({ url: session.url });
-  } catch (err) {
-    console.error('[create-checkout-session] Unexpected error', err);
-    return res
+    // 7) Return URL for redirect
+    return res.status(200).json({
+      ok: true,
+      checkoutUrl: session.url,
+      });
+   } catch (err) {
+     console.error('[create-checkout-session] Unexpected error', err);
+     return res
       .status(500)
       .json({ error: 'Server error (unhandled)', detail: err.message });
   }
