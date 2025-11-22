@@ -46,43 +46,57 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 3) Read JSON body from upload.html
+    // 3) Read JSON body from upload.html (support camelCase + snake_case)
     const {
       email,
       phone,
       packType,
+      pack_type,
       promoCode,
+      promo_code,
       expressions,
       imageUrl,
+      image_url,
     } = req.body || {};
 
+    // Normalize field names
+    const finalPackType = packType || pack_type;
+    const finalPromoCode =
+      promoCode != null ? promoCode : (promo_code != null ? promo_code : null);
+    const finalImageUrl = imageUrl || image_url;
+
     // 4) Basic validation
-    if (!email || !packType || !PRICE_MAP[packType] || !imageUrl) {
+    if (
+      !email ||
+      !finalPackType ||
+      !PRICE_MAP[finalPackType] ||
+      !finalImageUrl
+    ) {
       console.error('[create-checkout-session] Invalid request payload', {
         email,
-        packType,
-        hasPrice: !!PRICE_MAP[packType],
-        hasImage: !!imageUrl,
+        packType: finalPackType,
+        hasPrice: !!PRICE_MAP[finalPackType],
+        hasImage: !!finalImageUrl,
       });
       return res.status(400).json({ error: 'Invalid request' });
     }
 
-    const normalizedPromo = promoCode
-      ? String(promoCode).trim().toLowerCase()
+    const normalizedPromo = finalPromoCode
+      ? String(finalPromoCode).trim().toLowerCase()
       : null;
 
-    const priceId = PRICE_MAP[packType];
+    const priceId = PRICE_MAP[finalPackType];
     const promoId = normalizedPromo ? PROMO_MAP[normalizedPromo] : null;
 
     // 5) Create pending order in Supabase
     const { data: order, error: insertError } = await supabase
       .from('emoji_orders')
       .insert({
-        pack_type: packType,
+        pack_type: finalPackType,
         expressions: expressions || [],
         email,
         phone,
-        image_path: imageUrl,
+        image_path: finalImageUrl,
         status: 'pending_payment',
         promo_code: normalizedPromo,
       })
@@ -119,10 +133,10 @@ export default async function handler(req, res) {
           orderId: order.id,
           email,
           phone: phone || '',
-          packType,
+          packType: finalPackType,
           promoCode: normalizedPromo || '',
           expressions: JSON.stringify(expressions || []),
-          imageUrl,
+          imageUrl: finalImageUrl,
         },
       });
     } catch (stripeErr) {
