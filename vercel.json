@@ -1,19 +1,26 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/main.py", "use": "@vercel/python" },
-    { "src": "api/upload.js", "use": "@vercel/node" },
-    { "src": "api/orders.js", "use": "@vercel/node" },
-    { "src": "*.html", "use": "@vercel/static" },
-    { "src": "images/**", "use": "@vercel/static" }
+    { "src": "api/main.py",          "use": "@vercel/python" },
+    { "src": "api/upload.js",        "use": "@vercel/node" },
+    { "src": "api/orders.js",        "use": "@vercel/node" },
+
+    /* NEW: build stripe-webhook as a Node function */
+    { "src": "api/stripe-webhook.js","use": "@vercel/node" },
+
+    { "src": "*.html",               "use": "@vercel/static" },
+    { "src": "images/**",            "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/api/upload(.*)", "dest": "/api/upload.js" },
-    { "src": "/api/orders(.*)", "dest": "/api/orders.js" },
-    { "src": "/api/main(.*)", "dest": "/api/main.py" },
-    { "src": "/api/create-checkout-session",  "dest": "/api/main.py" },
-    { "src": "/images/(.*)", "dest": "/images/$1" },
-    { "src": "/([^\\.]+\\.html)", "dest": "/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/api/upload(.*)$", "dest": "/api/upload.js" },
+    { "src": "/api/orders(.*)$", "dest": "/api/orders.js" },
+    { "src": "/api/main(.*)$",   "dest": "/api/main.py" },
+
+    /* NEW: route Stripe webhooks *before* the catch-all */
+    { "src": "/api/stripe-webhook", "dest": "/api/stripe-webhook.js" },
+
+    { "src": "/images/(.*)$",        "dest": "/images/$1" },
+    { "src": "/([^\\..]+)\\.html$",  "dest": "/$1" },
+    { "src": "/(.*)",                "dest": "/index.html" }
   ]
 }
