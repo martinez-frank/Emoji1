@@ -104,43 +104,43 @@ export default async function handler(req, res) {
         .json({ error: 'Failed to create order (db_insert)' });
     }
 
-    // 6) Create Stripe Checkout Session
-    const frontendBase =
-      process.env.FRONTEND_BASE_URL || 'https://frankiemoji.com';
+        // 6) Create Stripe Checkout Session
+const frontendBase =
+  process.env.FRONTEND_BASE_URL || 'https://frankiemoji.com';
 
-    let session;
-    try {
-      session = await stripe.checkout.sessions.create({
-        mode: 'payment',
-        line_items: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        discounts: promoId ? [{ promotion_code: promoId }] : [],
-        success_url: `${frontendBase}/processing.html?orderId=${order.id}`,
-        cancel_url: `${frontendBase}/upload.html?canceled=1`,
-        metadata: {
-          orderId: order.id,
-          email,
-          phone: phone || '',
-          packType: finalPackType,
-          promoCode: finalPromo || '',
-          expressions: JSON.stringify(expressions || []),
-          imageUrl: finalImageUrl,
-        },
-      });
-    } catch (stripeErr) {
-      console.error(
-        '[create-checkout-session] Stripe error creating session',
-        stripeErr
-      );
-      return res.status(500).json({
-        error: 'Failed to create Stripe session',
-        detail: stripeErr.message,
-      });
-    }
+let session;
+try {
+  session = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    line_items: [
+      {
+        price: priceId,
+        quantity: 1,
+      },
+    ],
+    discounts: promoId ? [{ promotion_code: promoId }] : [],
+    success_url: `${frontendBase}/upload.html?paid=1&orderId=${order.id}`,
+    cancel_url: `${frontendBase}/upload.html?canceled=1`,
+    metadata: {
+      orderId: order.id,
+      email,
+      phone: phone || '',
+      packType: finalPackType,
+      promoCode: normalizedPromo || '',
+      expressions: JSON.stringify(expressions || []),
+      imageUrl: finalImageUrl,
+    },
+  });
+} catch (stripeErr) {
+  console.error(
+    '[create-checkout-session] Stripe error creating session',
+    stripeErr
+  );
+  return res.status(500).json({
+    error: 'Failed to create Stripe session',
+    detail: stripeErr.message,
+  });
+}
 
     // 7) Save Stripe session ID on the order (non-fatal if this fails)
     const { error: updateError } = await supabase
