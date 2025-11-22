@@ -1,5 +1,5 @@
-// api/orders.js — List recent emoji orders for admin using Supabase JS client
-import { createClient } from '@supabase/supabase-js';
+// api/orders.js — List recent emoji orders for admin using Supabase REST (Node + node-fetch)
+import fetch from 'node-fetch';
 
 const TABLE = 'emoji_orders';
 
@@ -41,31 +41,62 @@ export default async function handler(req, res) {
       });
     }
 
-    // 4) Create Supabase client
-    const supabase = createClient(url, key, {
-      auth: { persistSession: false },
+    // 4) Pagination params
+    const base = url.replace(/\/$/, ''); // remove trailing slash if any
+
+    const limit = Math.min(
+      parseInt(req.query.limit, 10) || 50,  // default 50
+      500                                   // safety cap
+    );
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const offset = (page - 1) * limit;
+
+    const restUrl =
+      `${base}/rest/v1/${TABLE}` +
+      `?select=id,created_at,pack_type,expressions,email,phone,promo_code,` +
+      `base_price_cents,final_price_cents,status` +
+      `&order=created_at.desc` +
+      `&limit=${limit}` +
+      `&offset=${offset}`;
+
+    // 5) Call Supabase REST with count
+    const supaRes = await fetch(restUrl, {
+      method: 'GET',
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+        Prefer: 'count=exact', // so we get total row count
+      },
     });
 
-    // 5) Query latest orders
-    const { data, error } = await supabase
-      .from(TABLE)
-      .select('id, created_at, pack_type, expressions, email, phone, promo_code, status, base_price_cents, final_price_cents')
-      .order('created_at', { ascending: false })
-      .limit(100);
+    if (!supaRes.ok) {
+      const text = await supaRes.text().catch(() => '');
+      console.error('[orders] Supabase REST error', supaRes.status, text);
 
-    if (error) {
-      console.error('[orders] Supabase query error', error);
       return res.status(500).json({
         ok: false,
-        error: 'Failed to load orders (db)',
-        detail: error.message,
+        error: 'Failed to load orders',
       });
+    }
+
+    const data = await supaRes.json();
+
+    // Parse "0-49/1234" → total = 1234
+    const contentRange = supaRes.headers.get('content-range') || '';
+    let total = null;
+    const match = contentRange.match(/\/(\d+)$/);
+    if (match) {
+      total = parseInt(match[1], 10);
     }
 
     // 6) Success
     return res.status(200).json({
       ok: true,
       orders: data || [],
+      page,
+      limit,
+      total,
     });
   } catch (err) {
     console.error('[orders] handler fatal error', err);
@@ -73,7 +104,6 @@ export default async function handler(req, res) {
     return res.status(500).json({
       ok: false,
       error: 'Orders endpoint failed',
-      detail: err.message,
     });
   }
 }
