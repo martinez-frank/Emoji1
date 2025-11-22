@@ -45,6 +45,12 @@ export default async function handler(req, res) {
 
     // 3) Basic validation
     if (!email || !packType || !PRICE_MAP[packType] || !imageUrl) {
+      console.error('[create-checkout-session] Invalid request payload', {
+        email,
+        packType,
+        hasPrice: !!PRICE_MAP[packType],
+        hasImage: !!imageUrl,
+      });
       return res.status(400).json({ error: 'Invalid request' });
     }
 
@@ -70,35 +76,51 @@ export default async function handler(req, res) {
       .single();
 
     if (insertError) {
-      console.error('[create-checkout-session] Supabase insert error', insertError);
-      return res.status(500).json({ error: 'Failed to create order' });
+      console.error(
+        '[create-checkout-session] Supabase insert error',
+        insertError
+      );
+      return res
+        .status(500)
+        .json({ error: 'Failed to create order (db_insert)' });
     }
 
     // 5) Create Stripe Checkout Session
     const frontendBase =
       process.env.FRONTEND_BASE_URL || 'https://frankiemoji.com';
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        discounts: promoId ? [{ promotion_code: promoId }] : [],
+        success_url: `${frontendBase}/processing.html?orderId=${order.id}`,
+        cancel_url: `${frontendBase}/upload.html?canceled=1`,
+        metadata: {
+          orderId: order.id,
+          email,
+          phone: phone || '',
+          packType,
+          promoCode: normalizedPromo || '',
+          expressions: JSON.stringify(expressions || []),
+          imageUrl,
         },
-      ],
-      discounts: promoId ? [{ promotion_code: promoId }] : [],
-      success_url: `${frontendBase}/processing.html?orderId=${order.id}`,
-      cancel_url: `${frontendBase}/upload.html?canceled=1`,
-      metadata: {
-        orderId: order.id,
-        email,
-        phone: phone || '',
-        packType,
-        promoCode: normalizedPromo || '',
-        expressions: JSON.stringify(expressions || []),
-        imageUrl,
-      },
-    });
+      });
+    } catch (stripeErr) {
+      console.error(
+        '[create-checkout-session] Stripe error creating session',
+        stripeErr
+      );
+      return res
+        .status(500)
+        .json({ error: 'Failed to create Stripe session', detail: stripeErr.message });
+    }
 
     // 6) Save Stripe session ID on the order
     const { error: updateError } = await supabase
@@ -107,14 +129,19 @@ export default async function handler(req, res) {
       .eq('id', order.id);
 
     if (updateError) {
-      console.error('[create-checkout-session] Supabase update error', updateError);
-      // not fatal to the user; they can still pay, but log it
+      console.error(
+        '[create-checkout-session] Supabase update error',
+        updateError
+      );
+      // Not fatal; user can still pay, we just log it.
     }
 
     // 7) Return URL for redirect
     return res.status(200).json({ url: session.url });
   } catch (err) {
     console.error('[create-checkout-session] Unexpected error', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res
+      .status(500)
+      .json({ error: 'Server error (unhandled)', detail: err.message });
   }
 }
