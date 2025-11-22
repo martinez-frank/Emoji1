@@ -30,9 +30,66 @@
     }
     /* Mobile-friendly admin layout */
 @media (max-width:900px){
+
+  /* Layout becomes vertical */
   .admin-layout{
     flex-direction:column;
   }
+
+  /* Sidebar becomes a top bar */
+  .admin-sidebar{
+    position:static;
+    width:100%;
+    min-height:auto;
+    padding:1rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-right:none;
+    border-bottom:1px solid var(--border);
+    background:#F6EBD7;
+  }
+
+  .admin-logo{
+    font-size:1.25rem;
+    margin-bottom:0;
+  }
+
+  /* Nav links inline */
+  .admin-nav{
+    display:flex;
+    flex-direction:row;
+    gap:0.5rem;
+    margin-bottom:0;
+  }
+
+  .admin-nav a{
+    font-size:0.78rem;
+    padding:0.30rem 0.65rem;
+  }
+
+  /* Content Takes Full Width */
+  .admin-main{
+    padding-left:0;
+    padding-right:0;
+  }
+
+  .shell{
+    margin:1.25rem auto;
+    padding:0 1rem;
+    max-width:100%;
+  }
+
+  /* Table scroll cleanly */
+  .table-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  table{
+    width:900px;  /* ensures no cramped columns */
+  }
+}
 
   .admin-sidebar{
     position:static;              /* no sticky on small screens */
