@@ -1,15 +1,6 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-// ---------- Supabase client (service role) ----------
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE
-);
-
-// ---------- Stripe client ----------
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
-
 // ---------- Price + Promo maps from ENV ----------
 const PRICE_MAP = {
   starter: process.env.STRIPE_PRICE_STARTER,
@@ -32,8 +23,30 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // 2) Create Supabase + Stripe clients INSIDE the handler
+  let supabase, stripe;
   try {
-    // 2) Read JSON body from upload.html
+    supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE
+    );
+
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+  } catch (initErr) {
+    console.error('[create-checkout-session] Init error', initErr, {
+      hasSupabaseUrl: !!process.env.SUPABASE_URL,
+      hasSupabaseRole: !!process.env.SUPABASE_SERVICE_ROLE,
+      hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+    });
+
+    return res.status(500).json({
+      error: 'Server configuration error',
+      detail: initErr.message,
+    });
+  }
+
+  try {
+    // 3) Read JSON body from upload.html
     const {
       email,
       phone,
@@ -43,7 +56,7 @@ export default async function handler(req, res) {
       imageUrl,
     } = req.body || {};
 
-    // 3) Basic validation
+    // 4) Basic validation
     if (!email || !packType || !PRICE_MAP[packType] || !imageUrl) {
       console.error('[create-checkout-session] Invalid request payload', {
         email,
@@ -61,7 +74,7 @@ export default async function handler(req, res) {
     const priceId = PRICE_MAP[packType];
     const promoId = normalizedPromo ? PROMO_MAP[normalizedPromo] : null;
 
-    // 4) Create pending order in Supabase
+    // 5) Create pending order in Supabase
     const { data: order, error: insertError } = await supabase
       .from('emoji_orders')
       .insert({
@@ -85,7 +98,7 @@ export default async function handler(req, res) {
         .json({ error: 'Failed to create order (db_insert)' });
     }
 
-    // 5) Create Stripe Checkout Session
+    // 6) Create Stripe Checkout Session
     const frontendBase =
       process.env.FRONTEND_BASE_URL || 'https://frankiemoji.com';
 
@@ -117,12 +130,13 @@ export default async function handler(req, res) {
         '[create-checkout-session] Stripe error creating session',
         stripeErr
       );
-      return res
-        .status(500)
-        .json({ error: 'Failed to create Stripe session', detail: stripeErr.message });
+      return res.status(500).json({
+        error: 'Failed to create Stripe session',
+        detail: stripeErr.message,
+      });
     }
 
-    // 6) Save Stripe session ID on the order
+    // 7) Save Stripe session ID on the order (non-fatal if this fails)
     const { error: updateError } = await supabase
       .from('emoji_orders')
       .update({ stripe_session_id: session.id })
@@ -133,19 +147,18 @@ export default async function handler(req, res) {
         '[create-checkout-session] Supabase update error',
         updateError
       );
-      // Not fatal; user can still pay, we just log it.
     }
 
-    // 7) Return URL for redirect
-    // 7) Return URL for redirect
+    // 8) Return URL for redirect
     return res.status(200).json({
       ok: true,
       checkoutUrl: session.url,
-      });
-   } catch (err) {
-     console.error('[create-checkout-session] Unexpected error', err);
-     return res
-      .status(500)
-      .json({ error: 'Server error (unhandled)', detail: err.message });
+    });
+  } catch (err) {
+    console.error('[create-checkout-session] Unexpected error', err);
+    return res.status(500).json({
+      error: 'Server error (unhandled)',
+      detail: err.message,
+    });
   }
 }
