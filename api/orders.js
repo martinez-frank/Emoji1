@@ -1,5 +1,5 @@
-// api/orders.js — List recent emoji orders for admin using Supabase REST (Node + node-fetch)
-import fetch from 'node-fetch';
+// api/orders.js — List recent emoji orders for admin using Supabase JS client
+import { createClient } from '@supabase/supabase-js';
 
 const TABLE = 'emoji_orders';
 
@@ -41,35 +41,26 @@ export default async function handler(req, res) {
       });
     }
 
-    // 4) Build Supabase REST URL
-const base = url.replace(/\/$/, ''); // remove trailing slash if any
-const restUrl =
-  `${base}/rest/v1/${TABLE}` +
-  `?select=id,created_at,pack_type,expressions,email,phone,promo_code` +
-  `&order=created_at.desc` +
-  `&limit=100`;
-
-    // 5) Call Supabase REST
-    const supaRes = await fetch(restUrl, {
-      method: 'GET',
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        'Content-Type': 'application/json',
-      },
+    // 4) Create Supabase client
+    const supabase = createClient(url, key, {
+      auth: { persistSession: false },
     });
 
-    if (!supaRes.ok) {
-      const text = await supaRes.text().catch(() => '');
-      console.error('[orders] Supabase REST error', supaRes.status, text);
+    // 5) Query latest orders
+    const { data, error } = await supabase
+      .from(TABLE)
+      .select('id, created_at, pack_type, expressions, email, phone, promo_code, status, base_price_cents, final_price_cents')
+      .order('created_at', { ascending: false })
+      .limit(100);
 
+    if (error) {
+      console.error('[orders] Supabase query error', error);
       return res.status(500).json({
         ok: false,
-        error: 'Failed to load orders',
+        error: 'Failed to load orders (db)',
+        detail: error.message,
       });
     }
-
-    const data = await supaRes.json();
 
     // 6) Success
     return res.status(200).json({
@@ -82,6 +73,7 @@ const restUrl =
     return res.status(500).json({
       ok: false,
       error: 'Orders endpoint failed',
+      detail: err.message,
     });
   }
 }
