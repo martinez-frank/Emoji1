@@ -468,9 +468,50 @@
   .status-done       { background:#059669; }  /* green */
   .status-error      { background:#B91C1C; }  /* red   */
 
+  /* ===== PAGINATION BAR ===== */
+
+  .pagination-bar{
+    margin-top:0.5rem;
+    margin-bottom:0.25rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:0.75rem;
+    font-size:0.78rem;
+    flex-wrap:wrap;
+  }
+
+  .pagination-info{
+    color:var(--graphite);
+  }
+
+  .pagination-controls{
+    display:flex;
+    align-items:center;
+    gap:0.4rem;
+  }
+
+  .page-btn{
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#fff;
+    padding:0.25rem 0.8rem;
+    font-size:0.78rem;
+    cursor:pointer;
+  }
+
+  .page-btn:hover:not(:disabled){
+    background:#FFF8EC;
+    border-color:var(--accent);
+  }
+
+  .page-btn:disabled{
+    opacity:0.4;
+    cursor:default;
+  }
+
   /* ===== RESPONSIVE ===== */
 
-  /* Mobile / tablet sidebar + table behavior */
   @media (max-width:900px){
 
     .admin-layout{
@@ -551,7 +592,6 @@
       -webkit-overflow-scrolling:touch;
     }
 
-    /* Make table scroll instead of crushing columns */
     table{
       min-width:900px;
     }
@@ -563,7 +603,6 @@
     }
   }
 
-  /* Extra-tight small screens (phone) */
   @media (max-width:720px){
     header{
       flex-direction:column;
@@ -596,7 +635,6 @@
       <nav class="admin-nav">
         <a href="/orders.html" class="is-active">Orders</a>
         <a href="/upload.html">Upload test</a>
-        <!-- future: <a href="/reports.html">Reports</a> -->
       </nav>
 
       <div class="admin-footnote">Internal tools</div>
@@ -678,6 +716,15 @@
 
           <p class="pill-meta" id="summary"></p>
 
+          <!-- NEW: Pagination bar -->
+          <div class="pagination-bar" id="paginationBar" style="display:none;">
+            <div class="pagination-info" id="paginationInfo"></div>
+            <div class="pagination-controls">
+              <button type="button" class="page-btn" id="prevPageBtn">‹ Prev</button>
+              <button type="button" class="page-btn" id="nextPageBtn">Next ›</button>
+            </div>
+          </div>
+
           <div class="table-wrap">
             <table id="ordersTable">
               <thead>
@@ -721,6 +768,12 @@
     const menuToggle        = document.getElementById('adminMenuToggle');
     const adminNav          = document.querySelector('.admin-nav');
 
+    // Pagination DOM
+    const paginationBar   = document.getElementById('paginationBar');
+    const paginationInfo  = document.getElementById('paginationInfo');
+    const prevPageBtn     = document.getElementById('prevPageBtn');
+    const nextPageBtn     = document.getElementById('nextPageBtn');
+
     let allOrders        = [];
     let currentRange     = 'all';   // 'all' | 'today' | '7d'
     let currentStatus    = 'any';   // 'any' or specific status
@@ -728,9 +781,35 @@
     let lastAdminKey     = '';
     let autoRefreshTimer = null;
 
+    // Pagination state (server-side)
+    let currentPage  = 1;
+    let pageLimit    = 50;   // default page size
+    let totalCount   = 0;    // total orders in DB (from API)
+
     function setStatus(msg, type){
       statusEl.textContent = msg || '';
       statusEl.className = 'status' + (type ? ' ' + type : '');
+    }
+
+    function renderPagination(){
+      if (!paginationBar) return;
+
+      const totalPages = pageLimit > 0 ? Math.ceil(totalCount / pageLimit) : 1;
+      const hasMultiplePages = totalPages > 1;
+
+      if (!totalCount || !hasMultiplePages){
+        paginationBar.style.display = 'none';
+        return;
+      }
+
+      paginationBar.style.display = 'flex';
+      const pageCountText = `Page ${currentPage} of ${totalPages}`;
+      const showingText = `Showing ${allOrders.length} of ${totalCount} orders`;
+
+      paginationInfo.textContent = `${pageCountText} • ${showingText}`;
+
+      prevPageBtn.disabled = currentPage <= 1;
+      nextPageBtn.disabled = currentPage >= totalPages;
     }
 
     function renderOrders(orders){
@@ -739,10 +818,15 @@
       if (!orders || !orders.length){
         summaryEl.textContent = 'No orders in this range yet.';
         if (statusSummaryEl) statusSummaryEl.textContent = '';
+        renderPagination();
         return;
       }
 
-      summaryEl.textContent = `${orders.length} orders in this view (newest first).`;
+      const pageText = totalCount
+        ? `Page ${currentPage}, newest first.`
+        : 'Newest first.';
+      summaryEl.textContent =
+        `${orders.length} orders on this page (${pageText})`;
 
       const statusClassMap = {
         received:        'status-new',
@@ -802,12 +886,13 @@
 
         // Row deep-link to detailed admin view
         tr.addEventListener('click', () => {
-          // opens /admin/order/?id=xxxxx in the SAME tab
           window.location.href = '/admin/order/?id=' + encodeURIComponent(o.id);
         });
 
         tbody.appendChild(tr);
       });
+
+      renderPagination();
     }
 
     function updateStatusSummary(orders){
@@ -833,7 +918,7 @@
       });
 
       statusSummaryEl.innerHTML = `
-        <span class="status-pill status-new">Total: ${orders.length}</span>
+        <span class="status-pill status-new">Total (page): ${orders.length}</span>
         ${counts.received ? `<span class="status-pill status-new">received: ${counts.received}</span>` : ''}
         ${(counts.payment_pending || counts.queued) ? `<span class="status-pill status-queued">queued/pending: ${counts.payment_pending + counts.queued}</span>` : ''}
         ${counts.in_progress ? `<span class="status-pill status-in_progress">in progress: ${counts.in_progress}</span>` : ''}
@@ -845,7 +930,7 @@
     function applyFilters(){
       let filtered = allOrders.slice();
 
-      // Date range filter
+      // Date range filter (client side on current page)
       const now = new Date();
       filtered = filtered.filter(o => {
         if (!o.created_at) return true;
@@ -898,12 +983,12 @@
       }
       if (enabled){
         autoRefreshTimer = setInterval(() => {
-          loadOrders(true); // silent auto-refresh
+          loadOrders(true); // silent auto-refresh, same page
         }, 30000);
       }
     }
 
-        async function loadOrders(fromAuto = false){
+    async function loadOrders(fromAuto = false){
       const key = lastAdminKey || adminInput.value.trim();
       if (!key){
         if (!fromAuto){
@@ -917,31 +1002,38 @@
       }
       ordersCard.style.display = 'none';
 
+      const query = `?page=${encodeURIComponent(currentPage)}&limit=${encodeURIComponent(pageLimit)}`;
+
       try {
-        const res = await fetch('/api/orders', {
+        const res = await fetch('/api/orders' + query, {
           headers: { 'x-admin-key': key }
         });
 
-        // Try to parse JSON; fall back to null on error
         const data = await res.json().catch(() => null);
 
         if (!res.ok){
-          // True HTTP error
           const msg = (data && data.error) || `Request failed (${res.status})`;
           throw new Error(msg);
         }
 
-        // ---- Handle both possible success shapes ----
         let ordersPayload;
 
         if (Array.isArray(data)) {
-          // API returned a plain array of orders
           ordersPayload = data;
         } else if (data && Array.isArray(data.orders)) {
-          // API returned { ok: true, orders: [...] }
           ordersPayload = data.orders;
+          if (typeof data.totalCount === 'number') {
+            totalCount = data.totalCount;
+          } else {
+            totalCount = ordersPayload.length;
+          }
+          if (typeof data.limit === 'number') {
+            pageLimit = data.limit;
+          }
+          if (typeof data.page === 'number') {
+            currentPage = data.page;
+          }
         } else {
-          // Unexpected shape – surface something useful
           console.error('[admin] Unexpected /api/orders payload', data);
           throw new Error('Unexpected response from orders API');
         }
@@ -965,10 +1057,33 @@
     }
 
     // Button + Enter key
-    loadBtn.addEventListener('click', () => loadOrders(false));
-    adminInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') loadOrders(false);
+    loadBtn.addEventListener('click', () => {
+      currentPage = 1; // reset to first page on fresh load
+      loadOrders(false);
     });
+    adminInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        currentPage = 1;
+        loadOrders(false);
+      }
+    });
+
+    // Pagination buttons
+    if (prevPageBtn && nextPageBtn){
+      prevPageBtn.addEventListener('click', () => {
+        if (currentPage > 1){
+          currentPage -= 1;
+          loadOrders(false);
+        }
+      });
+      nextPageBtn.addEventListener('click', () => {
+        const totalPages = pageLimit > 0 ? Math.ceil(totalCount / pageLimit) : 1;
+        if (currentPage < totalPages){
+          currentPage += 1;
+          loadOrders(false);
+        }
+      });
+    }
 
     // Range buttons
     rangeButtons.forEach(btn => {
