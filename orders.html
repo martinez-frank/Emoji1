@@ -28,10 +28,48 @@
     }
   
     }
-    @media (max-width:960px){
-      .admin-layout{
-        flex-direction:column;
-      }
+    /* Mobile-friendly admin layout */
+@media (max-width:900px){
+  .admin-layout{
+    flex-direction:column;
+  }
+
+  .admin-sidebar{
+    position:static;              /* no sticky on small screens */
+    width:100%;
+    min-height:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:1rem 1.25rem;
+    border-right:none;
+    border-bottom:1px solid var(--border);
+  }
+
+  .admin-logo{
+    margin-bottom:0;
+    font-size:1.1rem;
+  }
+
+  .admin-nav{
+    flex-direction:row;
+    margin-bottom:0;
+    gap:0.5rem;
+  }
+
+  .admin-nav a{
+    font-size:0.78rem;
+    padding:0.3rem 0.7rem;
+  }
+
+  .admin-main{
+    padding-left:0;
+  }
+
+  .shell{
+    margin:1.5rem auto 2.5rem;
+  }
+}
       
     }
     .shell{
@@ -236,9 +274,53 @@
       color: var(--espresso);
     }
 
-      .admin-nav {
-      margin-bottom: 2rem;
-    }
+      /* Sidebar nav buttons */
+.admin-nav{
+  margin-bottom:2rem;
+  display:flex;
+  flex-direction:column;
+  gap:0.35rem;
+}
+
+.admin-nav a{
+  display:inline-flex;
+  align-items:center;
+  gap:0.35rem;
+  padding:0.35rem 0.85rem;
+  border-radius:999px;
+  font-size:0.85rem;
+  text-decoration:none;
+  color:var(--graphite);
+  border:1px solid transparent;
+  background:transparent;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease,
+    box-shadow 0.08s ease,
+    transform 0.08s ease;
+}
+
+.admin-nav a:hover{
+  background:#FFF7EA;
+  border-color:var(--border);
+  transform:translateY(-1px);
+  box-shadow:4px 10px 18px rgba(44,36,25,0.08);
+}
+
+.admin-nav a.is-active{
+  background:var(--espresso);
+  color:#FFF7EA;
+  border-color:var(--espresso);
+  box-shadow:6px 14px 22px rgba(44,36,25,0.22);
+}
+
+.admin-nav a.is-active{
+  background:var(--espresso);
+  color:#FFF7EA;
+  border-color:var(--espresso);
+  box-shadow:0 6px 14px rgba(44,36,25,0.22);
+}
 
       .admin-footnote {
       margin-top: 2rem;
@@ -246,13 +328,13 @@
       color: var(--graphite);
     }
 
-/* --- CENTER MAIN CONTENT & EXPAND TABLE --- */
-     .admin-main {
-     flex: 1;
-     display: flex;
-     justify-content: center;     /* centers the shell */
-     padding: 2rem 1.5rem;
-    }
+/* Main area next to sidebar */
+.admin-main{
+  flex:1;
+  display:flex;
+  justify-content:center;  /* center the shell horizontally */
+  padding-left:1rem;
+}
 
      .shell {
      width: 100%;
