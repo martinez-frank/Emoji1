@@ -303,6 +303,51 @@
     background:#221A11;
   }
 
+  /* Secondary button for notifications */
+  button.secondary{
+    border-radius:999px;
+    padding:0.5rem 1.1rem;
+    font-size:0.85rem;
+    font-weight:500;
+    cursor:pointer;
+    background:transparent;
+    color:var(--espresso);
+    border:1px solid var(--border);
+    display:inline-flex;
+    align-items:center;
+    gap:0.4rem;
+    transition:transform 0.08s ease,
+               box-shadow 0.08s ease,
+               background 0.15s ease,
+               border-color 0.15s ease;
+  }
+
+  button.secondary:hover{
+    background:#FFF7EA;
+    border-color:var(--accent);
+    transform:translateY(-1px);
+    box-shadow:0 4px 10px rgba(44,36,25,0.12);
+  }
+
+  /* Spinner that only shows while button is loading */
+  .spinner{
+    display:none;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    border:2px solid rgba(90,83,80,0.25);
+    border-top-color:var(--espresso);
+    animation:spin 0.6s linear infinite;
+  }
+
+  button.secondary.is-loading .spinner{
+    display:inline-block;
+  }
+
+  @keyframes spin{
+    to{ transform:rotate(360deg); }
+  }
+
   .status{
     margin-top:0.4rem;
     font-size:0.85rem;
@@ -741,14 +786,15 @@
             </button>
           </div>
           <div id="authStatus" class="status"></div>
+
           <!-- Notifications trigger -->
           <div class="auth-row" style="margin-top:1rem;">
-           <button class="secondary" id="notifyBtn">
-             <span>Send notifications</span>
-             <span class="spinner"></span>
-           </button>
-          <span id="notifyStatus" style="font-size:0.85rem;margin-left:0.75rem;"></span>
-        </div>
+            <button class="secondary" id="notifyBtn">
+              <span>Send notifications</span>
+              <span class="spinner"></span>
+            </button>
+            <span id="notifyStatus" style="font-size:0.85rem;margin-left:0.75rem;"></span>
+          </div>
         </section>
 
         <!-- Orders table -->
@@ -852,6 +898,8 @@
     const shadowRight       = document.getElementById('shadowRight');
     const navToggle         = document.getElementById('navToggle');
     const adminSidebar      = document.getElementById('adminSidebar');
+    const notifyBtn         = document.getElementById('notifyBtn');
+    const notifyStatus      = document.getElementById('notifyStatus');
 
     let allOrders     = [];
     let currentRange  = 'all';   // 'all' | 'today' | '7d'
@@ -1125,6 +1173,60 @@
     if (autoRefreshToggle){
       autoRefreshToggle.addEventListener('change', () => {
         setAutoRefresh(autoRefreshToggle.checked);
+      });
+    }
+
+    // Send notifications button → /api/notify
+    if (notifyBtn && notifyStatus){
+      notifyBtn.addEventListener('click', async () => {
+        const key = adminInput.value.trim();
+        if (!key){
+          notifyStatus.textContent = 'Enter admin passphrase first.';
+          notifyStatus.style.color = '#B02020';
+          return;
+        }
+
+        notifyStatus.textContent = 'Sending notifications…';
+        notifyStatus.style.color = '#5A5350';
+        notifyBtn.disabled = true;
+        notifyBtn.classList.add('is-loading');
+
+        try{
+          const res = await fetch('/api/notify', {
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json',
+              'x-admin-key': key
+            }
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (res.status === 401){
+            notifyStatus.textContent = 'Invalid admin passphrase.';
+            notifyStatus.style.color = '#B02020';
+          } else if (!res.ok){
+            notifyStatus.textContent =
+              data.error || 'Notification error – check logs.';
+            notifyStatus.style.color = '#B02020';
+          } else{
+            const msg =
+              data.message ||
+              `Done. SMS: ${data.smsSent ?? 0}, Email: ${data.emailSent ?? 0}, Delivery flags: ${data.deliveryNotified ?? 0}.`;
+            notifyStatus.textContent = msg;
+            notifyStatus.style.color = '#137D3B';
+
+            // Optional: reload orders so sms_sent / email_sent / delivery_notified flags update
+            await loadOrders(false);
+          }
+        } catch (err){
+          console.error('notify error', err);
+          notifyStatus.textContent = 'Network error – could not reach /api/notify.';
+          notifyStatus.style.color = '#B02020';
+        } finally{
+          notifyBtn.disabled = false;
+          notifyBtn.classList.remove('is-loading');
+        }
       });
     }
 
