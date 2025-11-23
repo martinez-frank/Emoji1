@@ -3,22 +3,22 @@ import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
 // ---------- Supabase client ----------
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE
-);
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE;
+const supabase =
+  supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 // ---------- Stripe client ----------
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
-// Tell Vercel/Next not to parse the body (Stripe needs raw)
+// Tell Vercel/Next NOT to parse the body (Stripe needs raw)
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-// helper to read raw body
+// Helper to read raw body for Stripe signature verification
 function buffer(readable) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -31,6 +31,11 @@ function buffer(readable) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method not allowed');
+  }
+
+  if (!supabase) {
+    console.error('[stripe-webhook] Missing Supabase URL or key');
+    return res.status(500).send('Server misconfigured');
   }
 
   let event;
@@ -52,10 +57,15 @@ export default async function handler(req, res) {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
 
-      const orderId = session.metadata?.orderId;
-      const amountTotal = session.amount_total || 0;
-      const discountTotal = session.total_details?.amount_discount || 0;
-      const baseAmount = amountTotal + discountTotal;
+      const orderId = session.metadata?.orderId || null;
+      const amountTotal =
+        typeof session.amount_total === 'number' ? session.amount_total : null;
+      const discountTotal =
+        typeof session.total_details?.amount_discount === 'number'
+          ? session.total_details.amount_discount
+          : 0;
+      const baseAmount =
+        amountTotal !== null ? amountTotal + (discountTotal || 0) : null;
 
       console.log('[stripe-webhook] checkout.session.completed', {
         eventId: event.id,
@@ -65,57 +75,35 @@ export default async function handler(req, res) {
         email: session.customer_details?.email || session.metadata?.email,
       });
 
-            if (orderId) {
-        // Only update columns that actually exist right now
+      if (!orderId) {
+        console.warn('[stripe-webhook] Missing orderId in metadata', {
+          eventId: event.id,
+        });
+      } else {
         const { error: updateError } = await supabase
           .from('emoji_orders')
-          .update({        
-            status: 'received',
+          .update({
+            status: 'received',          // treat this as "paid + landed in admin"
             base_price_cents: baseAmount,
             final_price_cents: amountTotal,
           })
           .eq('id', orderId);
 
         if (updateError) {
-          console.error('[stripe-webhook] Supabase update error:', updateError);
-          // Let Stripe retry so we don't lose the event
-          return res.status(500).send('Supabase update failed');
-        }
-
-        console.log('[stripe-webhook] Order updated OK', {
-          orderId,
-          baseAmount,
-          amountTotal,
-        });
-
-        try {
-          const frontendBase =
-            process.env.FRONTEND_BASE_URL || 'https://frankiemoji.com';
-
-          const markRes = await fetch(`${frontendBase}/api/mark-paid`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderId }),
+          console.error(
+            '[stripe-webhook] Supabase update error:',
+            updateError
+          );
+          // We still return 200 so Stripe doesn't hammer retries forever.
+        } else {
+          console.log('[stripe-webhook] Order updated OK', {
+            orderId,
+            baseAmount,
+            amountTotal,
           });
-
-          if (!markRes.ok) {
-            const text = await markRes.text().catch(() => '');
-            console.error(
-              '[stripe-webhook] /api/mark-paid failed',
-              markRes.status,
-              text
-            );
-          } else {
-            console.log('[stripe-webhook] /api/mark-paid OK', { orderId });
-          }
-        } catch (err) {
-          console.error('[stripe-webhook] Error calling /api/mark-paid', err);
         }
-      } else {
-        console.warn('[stripe-webhook] Missing orderId in metadata', {
-          eventId: event.id,
-        });
       }
+    }
 
     return res.json({ received: true });
   } catch (err) {
