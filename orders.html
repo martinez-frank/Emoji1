@@ -928,25 +928,28 @@
     }
 
     function applyFilters(){
-      let filtered = allOrders.slice();
+  let filtered = allOrders.slice();
 
-      // Date range filter (client side on current page)
-      const now = new Date();
-      filtered = filtered.filter(o => {
-        if (!o.created_at) return true;
-        const created = new Date(o.created_at);
+  // Date range filter
+  const now = new Date();
+  filtered = filtered.filter(o => {
+    if (!o.created_at) return true;
+    const created = new Date(o.created_at);
 
-        if (currentRange === 'today'){
-          const todayStr   = now.toISOString().slice(0,10);
-          const createdStr = created.toISOString().slice(0,10);
-          if (createdStr !== todayStr) return false;
-        } else if (currentRange === '7d'){
-          const diffMs   = now - created;
-          const diffDays = diffMs / (1000 * 60 * 60 * 24);
-          if (diffDays > 7) return false;
-        }
-        return true;
-      });
+    if (currentRange === 'today'){
+      const todayStr   = now.toISOString().slice(0,10);
+      const createdStr = created.toISOString().slice(0,10);
+      if (createdStr !== todayStr) return false;
+    } else if (currentRange === '7d'){
+      const diffMs   = now - created;
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+      if (diffDays > 7) return false;
+    }
+    return true;
+  });
+
+  // ...rest of function...
+}
 
       // Status filter
       if (currentStatus && currentStatus !== 'any'){
