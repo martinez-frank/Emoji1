@@ -772,7 +772,7 @@ function showPromoBanner(appliedPromo) {
   // Read ?pack= from the URL (default to starter)
   const params = new URLSearchParams(window.location.search);
   const pack = (params.get('pack') || 'starter').toLowerCase();
-  const paid = params.get('paid') === '1';
+  const paid = params.get('paid') === '1' || params.get('success') === '1';
 
   // How many expressions allowed for this pack
   const MAX = PACK_MAX[pack] || 3;
