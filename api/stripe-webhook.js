@@ -65,12 +65,11 @@ export default async function handler(req, res) {
         email: session.customer_details?.email || session.metadata?.email,
       });
 
-      if (orderId) {
+            if (orderId) {
         // Only update columns that actually exist right now
         const { error: updateError } = await supabase
           .from('emoji_orders')
-          .update({
-            // For now we treat a paid order as "received" in your admin view
+          .update({        
             status: 'received',
             base_price_cents: baseAmount,
             final_price_cents: amountTotal,
@@ -88,12 +87,35 @@ export default async function handler(req, res) {
           baseAmount,
           amountTotal,
         });
+
+        try {
+          const frontendBase =
+            process.env.FRONTEND_BASE_URL || 'https://frankiemoji.com';
+
+          const markRes = await fetch(`${frontendBase}/api/mark-paid`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId }),
+          });
+
+          if (!markRes.ok) {
+            const text = await markRes.text().catch(() => '');
+            console.error(
+              '[stripe-webhook] /api/mark-paid failed',
+              markRes.status,
+              text
+            );
+          } else {
+            console.log('[stripe-webhook] /api/mark-paid OK', { orderId });
+          }
+        } catch (err) {
+          console.error('[stripe-webhook] Error calling /api/mark-paid', err);
+        }
       } else {
         console.warn('[stripe-webhook] Missing orderId in metadata', {
           eventId: event.id,
         });
       }
-    }
 
     return res.json({ received: true });
   } catch (err) {
