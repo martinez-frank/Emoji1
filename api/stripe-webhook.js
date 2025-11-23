@@ -1,3 +1,4 @@
+// api/stripe-webhook.js
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
@@ -55,34 +56,48 @@ export default async function handler(req, res) {
       const amountTotal = session.amount_total || 0;
       const discountTotal = session.total_details?.amount_discount || 0;
       const baseAmount = amountTotal + discountTotal;
-      const paymentIntentId = session.payment_intent || null;
 
-      const firstDiscount = (session.discounts && session.discounts[0]) || null;
-      const couponId = firstDiscount?.discount?.coupon?.id || null;
-      const promoId = firstDiscount?.promotion_code || null;
+      console.log('[stripe-webhook] checkout.session.completed', {
+        eventId: event.id,
+        orderId,
+        amountTotal,
+        baseAmount,
+        email: session.customer_details?.email || session.metadata?.email,
+      });
 
       if (orderId) {
+        // Only update columns that actually exist right now
         const { error: updateError } = await supabase
           .from('emoji_orders')
           .update({
-            status: 'paid', // later: 'queued' → 'generating' → 'ready'
+            // For now we treat a paid order as "received" in your admin view
+            status: 'received',
             base_price_cents: baseAmount,
             final_price_cents: amountTotal,
-            stripe_payment_intent_id: paymentIntentId,
-            stripe_coupon_id: couponId,
-            stripe_promo_id: promoId,
           })
           .eq('id', orderId);
 
         if (updateError) {
           console.error('[stripe-webhook] Supabase update error:', updateError);
+          // Let Stripe retry so we don't lose the event
+          return res.status(500).send('Supabase update failed');
         }
+
+        console.log('[stripe-webhook] Order updated OK', {
+          orderId,
+          baseAmount,
+          amountTotal,
+        });
+      } else {
+        console.warn('[stripe-webhook] Missing orderId in metadata', {
+          eventId: event.id,
+        });
       }
     }
 
-    res.json({ received: true });
+    return res.json({ received: true });
   } catch (err) {
     console.error('[stripe-webhook] Handler error:', err);
-    res.status(500).send('Server error');
+    return res.status(500).send('Server error');
   }
 }
