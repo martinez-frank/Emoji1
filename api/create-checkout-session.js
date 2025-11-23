@@ -105,32 +105,34 @@ export default async function handler(req, res) {
     }
 
     // 6) Create Stripe Checkout Session
-    const frontendBase =
-      process.env.FRONTEND_BASE_URL || 'https://frankiemoji.com';
+    // Hard-code your live frontend for now so redirect is unambiguous
+    const frontendBase = 'https://www.frankiemoji.com';
 
     let session;
     try {
-      session = await stripe.checkout.sessions.create({
-        mode: 'payment',
-        line_items: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        discounts: promoId ? [{ promotion_code: promoId }] : [],
-        success_url: `${frontendBase}/upload.html?paid=1&orderId=${order.id}`,
-        cancel_url: `${frontendBase}/upload.html?canceled=1`,
-        metadata: {
-          orderId: order.id,
-          email,
-          phone: phone || '',
-          packType: finalPackType,
-          promoCode: finalPromo || '',
-          expressions: JSON.stringify(expressions || []),
-          imageUrl: finalImageUrl,
-        },
-      });
+    session = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    line_items: [
+      {
+        price: priceId,
+        quantity: 1,
+      },
+    ],
+    discounts: promoId ? [{ promotion_code: promoId }] : [],
+    // Include both paid=1 and success=1 (upload.html checks either)
+    success_url: `${frontendBase}/upload.html?paid=1&success=1&orderId=${order.id}`,
+    cancel_url: `${frontendBase}/upload.html?canceled=1`,
+    metadata: {
+      orderId: order.id,
+      email,
+      phone: phone || '',
+      packType: finalPackType,
+      promoCode: finalPromo || '',
+      expressions: JSON.stringify(expressions || []),
+      imageUrl: finalImageUrl,
+    },
+  });
+
     } catch (stripeErr) {
       console.error(
         '[create-checkout-session] Stripe error creating session',
