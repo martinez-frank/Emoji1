@@ -1083,30 +1083,33 @@
         let ordersPayload;
 
         if (Array.isArray(data)) {
-          // very old shape: just an array
-          ordersPayload = data;
-          totalCount    = ordersPayload.length;
+        // Fallback shape: plain array
+         ordersPayload = data;
+         totalCount = ordersPayload.length;
         } else if (data && Array.isArray(data.orders)) {
-          // current /api/orders.js shape
-          ordersPayload = data.orders;
+        // Normal shape from /api/orders.js
+         ordersPayload = data.orders;
 
-          if (typeof data.total === 'number') {
-            totalCount = data.total;
-          } else {
-            totalCount = ordersPayload.length;
-          }
+        // Total rows in emoji_orders
+        if (typeof data.total === 'number') {
+         totalCount = data.total;
+        } else {
+         totalCount = ordersPayload.length;
+        }
 
-          if (typeof data.limit === 'number') {
-            pageLimit = data.limit;
-          }
+        // Page size actually used
+        if (typeof data.limit === 'number') {
+         pageLimit = data.limit;
+        }
 
-          if (typeof data.offset === 'number') {
-            const pageFromOffset = Math.floor(data.offset / pageLimit) + 1;
-            currentPage = pageFromOffset > 0 ? pageFromOffset : 1;
+        // Compute current page from offset + limit
+          if (typeof data.offset === 'number' && pageLimit > 0) {
+          const off = data.offset;
+          currentPage = Math.floor(off / pageLimit) + 1;
           }
         } else {
-          console.error('[admin] Unexpected /api/orders payload', data);
-          throw new Error('Unexpected response from orders API');
+         console.error('[admin] Unexpected /api/orders payload', data);
+         throw new Error('Unexpected response from orders API');
         }
 
         lastAdminKey = key;
