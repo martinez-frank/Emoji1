@@ -57,14 +57,35 @@ function normalizePhone(phone) {
 
 // ---------- API handler ----------
 
- export default async function handler(req, res) {
-  // Allow both POST and GET (for browser console / curl), still gated by x-admin-key
-  if (req.method !== 'POST' && req.method !== 'GET') {
-    return res.status(405).json({ ok: false, error: 'Method not allowed' });
+export default async function handler(req, res) {
+  console.log('[notify] Incoming request', req.method, req.url);
+
+  // Handle CORS/preflight quietly if the browser sends OPTIONS
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
 
-  const headerKey = (req.headers['x-admin-key'] || '').toString();
-  if (!headerKey || headerKey !== adminKey) {
+  // Allow both POST and GET (for browser console / curl), still gated by admin key
+  if (req.method !== 'POST' && req.method !== 'GET') {
+    return res
+      .status(405)
+      .json({ ok: false, error: `Method ${req.method} not allowed` });
+  }
+
+  // Support auth via header OR ?key= query param
+  let headerKey = (req.headers['x-admin-key'] || '').toString();
+  let queryKey = '';
+
+  try {
+    const url = new URL(req.url, 'https://frankiemoji.com');
+    queryKey = url.searchParams.get('key') || '';
+  } catch (err) {
+    // ignore URL parse issues, we'll just rely on header
+  }
+
+  const effectiveKey = headerKey || queryKey;
+
+  if (!effectiveKey || effectiveKey !== adminKey) {
     return res.status(401).json({ ok: false, error: 'Unauthorized' });
   }
 
@@ -73,14 +94,14 @@ function normalizePhone(phone) {
   }
 
   try {
-    // 1) Fetch orders that are PAID but not yet notified
+    // 1) Fetch orders that are PAID/RECEIVED but not yet notified
     const { data: orders, error } = await supabase
-   .from('emoji_orders')
-   .select('*')
-   .in('status', ['received', 'paid']) // look at both
-   .or('sms_sent.is.false,email_sent.is.false')
-   .order('created_at', { ascending: true })
-   .limit(50);
+      .from('emoji_orders')
+      .select('*')
+      .in('status', ['received', 'paid'])               // look at both states
+      .or('sms_sent.is.false,email_sent.is.false')      // at least one not sent
+      .order('created_at', { ascending: true })
+      .limit(50);                                       // safety cap
 
     if (error) throw error;
 
@@ -99,9 +120,10 @@ function normalizePhone(phone) {
             await twilioClient.messages.create({
               to,
               from: twilioFrom,
-              body: `Your Frankiemoji order is confirmed! 🎨\n` +
-                    `Pack: ${packLabel(pack_type)}.\n` +
-                    `We’ll send your artwork preview soon — reply STOP to opt out.`
+              body:
+                `Your Frankiemoji order is confirmed! 🎨\n` +
+                `Pack: ${packLabel(pack_type)}.\n` +
+                `We’ll send your artwork preview soon — reply STOP to opt out.`,
             });
             smsCount += 1;
             await supabase
@@ -109,7 +131,11 @@ function normalizePhone(phone) {
               .update({ sms_sent: true })
               .eq('id', id);
           } catch (err) {
-            console.error('[notify] SMS failed for order', id, err?.message || err);
+            console.error(
+              '[notify] SMS failed for order',
+              id,
+              err?.message || err
+            );
           }
         }
       }
@@ -123,7 +149,9 @@ function normalizePhone(phone) {
             subject: 'Your Frankiemoji order is confirmed 🎨',
             html: `
               <p>Hi!</p>
-              <p>Thanks for ordering a <strong>${packLabel(pack_type)}</strong> from Frankiemoji.</p>
+              <p>Thanks for ordering a <strong>${packLabel(
+                pack_type
+              )}</strong> from Frankiemoji.</p>
               <p>We’ve received your photo and expressions and will send a preview of your artwork soon.</p>
               <p>If you have any questions, you can reply to this email.</p>
               <p>Frankiemoji — Born with a pencil. Evolved with technology.</p>
@@ -135,7 +163,11 @@ function normalizePhone(phone) {
             .update({ email_sent: true })
             .eq('id', id);
         } catch (err) {
-          console.error('[notify] Email failed for order', id, err?.message || err);
+          console.error(
+            '[notify] Email failed for order',
+            id,
+            err?.message || err
+          );
         }
       }
     }
@@ -148,6 +180,8 @@ function normalizePhone(phone) {
     });
   } catch (err) {
     console.error('[notify] Unexpected error', err);
-    return res.status(500).json({ ok: false, error: 'Unexpected server error' });
+    return res
+      .status(500)
+      .json({ ok: false, error: 'Unexpected server error' });
   }
 }
