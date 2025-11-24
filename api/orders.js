@@ -1,109 +1,94 @@
-// api/orders.js — List recent emoji orders for admin using Supabase REST (Node + node-fetch)
-import fetch from 'node-fetch';
+// /api/orders.js — list emoji orders for the admin panel with pagination
 
-const TABLE = 'emoji_orders';
+import { createClient } from '@supabase/supabase-js';
+
+// ---------- Env + clients ----------
+
+const supabaseUrl   = process.env.SUPABASE_URL;
+const supabaseKey   = process.env.SUPABASE_SERVICE_ROLE;
+const adminKey      = process.env.ADMIN_ORDERS_KEY || '';
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('[orders] Missing Supabase env vars');
+}
+
+const supabase = supabaseUrl && supabaseKey
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
+
+// ---------- Helpers ----------
+
+function unauthorized(res, message = 'Unauthorized') {
+  res.statusCode = 401;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ ok: false, error: message }));
+}
+
+function badRequest(res, message = 'Bad request') {
+  res.statusCode = 400;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ ok: false, error: message }));
+}
+
+function serverError(res, message = 'Server error') {
+  res.statusCode = 500;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ ok: false, error: message }));
+}
+
+// ---------- Handler ----------
 
 export default async function handler(req, res) {
+  // Only allow GET
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET');
+    return badRequest(res, 'Only GET is allowed');
+  }
+
+  if (!supabase) {
+    console.error('[orders] Supabase client not initialized');
+    return serverError(res, 'Supabase not configured');
+  }
+
+  // Simple admin-key header check
+  const headerKey = req.headers['x-admin-key'];
+  if (!adminKey || headerKey !== adminKey) {
+    console.warn('[orders] Unauthorized access attempt');
+    return unauthorized(res);
+  }
+
   try {
-    // 1) Only allow GET
-    if (req.method !== 'GET') {
-      return res.status(405).json({
-        ok: false,
-        error: 'Method not allowed',
-      });
+    // Pagination params
+    const { limit, offset } = req.query || {};
+    const pageSize = Math.min(parseInt(limit, 10) || 20, 100); // cap at 100
+    const pageOffset = Math.max(parseInt(offset, 10) || 0, 0);
+
+    const from = pageOffset;
+    const to   = pageOffset + pageSize - 1;
+
+    // Pull orders newest first + total count
+    const { data, error, count } = await supabase
+      .from('emoji_orders')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, to);
+
+    if (error) {
+      console.error('[orders] Supabase query error', error);
+      return serverError(res, 'Error fetching orders');
     }
 
-    // 2) Simple admin auth via header
-    // Node lowercases all header names to "x-admin-key"
-    const adminHeader = (req.headers['x-admin-key'] || '').toString();
-    const adminSecret = process.env.ADMIN_ORDERS_KEY || '';
-
-    if (!adminSecret || adminHeader !== adminSecret) {
-      return res.status(401).json({
-        ok: false,
-        error: 'Unauthorized',
-      });
-    }
-
-    // 3) Supabase env vars (service role)
-    const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE;
-
-    if (!url || !key) {
-      console.error('[orders] Missing Supabase env vars', {
-        hasUrl: !!url,
-        hasKey: !!key,
-      });
-
-      return res.status(500).json({
-        ok: false,
-        error: 'Server misconfigured: missing Supabase env vars',
-      });
-    }
-
-    // 4) Pagination params
-    const base = url.replace(/\/$/, ''); // remove trailing slash if any
-
-    const limit = Math.min(
-      parseInt(req.query.limit, 10) || 50,  // default 50
-      500                                   // safety cap
-    );
-    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-    const offset = (page - 1) * limit;
-
-    const restUrl =
-      `${base}/rest/v1/${TABLE}` +
-      `?select=id,created_at,pack_type,expressions,email,phone,promo_code,` +
-      `base_price_cents,final_price_cents,status` +
-      `&order=created_at.desc` +
-      `&limit=${limit}` +
-      `&offset=${offset}`;
-
-    // 5) Call Supabase REST with count
-    const supaRes = await fetch(restUrl, {
-      method: 'GET',
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        'Content-Type': 'application/json',
-        Prefer: 'count=exact', // so we get total row count
-      },
-    });
-
-    if (!supaRes.ok) {
-      const text = await supaRes.text().catch(() => '');
-      console.error('[orders] Supabase REST error', supaRes.status, text);
-
-      return res.status(500).json({
-        ok: false,
-        error: 'Failed to load orders',
-      });
-    }
-
-    const data = await supaRes.json();
-
-    // Parse "0-49/1234" → total = 1234
-    const contentRange = supaRes.headers.get('content-range') || '';
-    let total = null;
-    const match = contentRange.match(/\/(\d+)$/);
-    if (match) {
-      total = parseInt(match[1], 10);
-    }
-
-    // 6) Success
-    return res.status(200).json({
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({
       ok: true,
       orders: data || [],
-      page,
-      limit,
-      total,
-    });
+      total: typeof count === 'number' ? count : (data ? data.length : 0),
+      limit: pageSize,
+      offset: pageOffset,
+    }));
   } catch (err) {
-    console.error('[orders] handler fatal error', err);
-
-    return res.status(500).json({
-      ok: false,
-      error: 'Orders endpoint failed',
-    });
+    console.error('[orders] Unexpected error', err);
+    return serverError(res, 'Unexpected error');
   }
 }
