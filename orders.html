@@ -29,7 +29,7 @@
     }
 
     .admin-shell{
-      max-width:1120px;
+      max-width:1260px;           /* a little wider for breathing room */
       margin:32px auto 40px;
       padding:24px 24px 40px;
       background:#fff;
@@ -88,23 +88,25 @@
       justify-content:flex-end;
     }
 
-    .toolbar .key-hint{
-      padding:4px 8px;
+    .key-hint{
+      padding:4px 10px;
       border-radius:999px;
       border:1px dashed var(--border);
       background:var(--pill);
       color:var(--graphite);
       display:flex;
       align-items:center;
-      gap:4px;
+      gap:6px;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
     }
 
-    .toolbar code{
-      font-family:Menlo,Consolas,monospace;
-      font-size:11px;
-      background:#f6efe0;
-      padding:2px 6px;
-      border-radius:6px;
+    .key-hint.ok{
+      border-style:solid;
+      border-color:var(--success);
+      background:#EAF7F0;
+      color:var(--success);
     }
 
     .toolbar button{
@@ -118,6 +120,11 @@
 
     .toolbar button:hover{
       background:var(--pill);
+    }
+
+    .toolbar button[disabled]{
+      opacity:.5;
+      cursor:default;
     }
 
     .table-wrap{
@@ -311,10 +318,11 @@
         <p>Review emoji orders, send notifications, and track SMS / email status.</p>
       </div>
       <div class="toolbar">
-        <div class="key-hint">
-          Header <code>x-admin-key: Romans116*</code>
+        <div id="auth-status" class="key-hint">
+          <span id="auth-label">Locked</span>
         </div>
-        <button id="refresh-btn" type="button">↻ Refresh</button>
+        <button id="unlock-btn" type="button">Unlock admin</button>
+        <button id="refresh-btn" type="button" disabled>↻ Refresh</button>
       </div>
     </header>
 
@@ -333,7 +341,7 @@
           </tr>
         </thead>
         <tbody id="orders-body">
-          <tr><td colspan="8" class="empty">Loading orders…</td></tr>
+          <tr><td colspan="8" class="empty">Admin key required. Click “Unlock admin” above.</td></tr>
         </tbody>
       </table>
     </section>
@@ -342,10 +350,30 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const ADMIN_KEY = 'Romans116*'; // must match your API admin key header
-    const tbody = document.getElementById('orders-body');
-    const toastEl = document.getElementById('toast');
+    // Admin key is NOT hard-coded; you type it at runtime.
+    let adminKey = null;
+
+    const tbody      = document.getElementById('orders-body');
+    const toastEl    = document.getElementById('toast');
     const refreshBtn = document.getElementById('refresh-btn');
+    const unlockBtn  = document.getElementById('unlock-btn');
+    const authStatus = document.getElementById('auth-status');
+    const authLabel  = document.getElementById('auth-label');
+
+    function setLockedUI(locked){
+      if (locked){
+        adminKey = null;
+        authLabel.textContent = 'Locked';
+        authStatus.classList.remove('ok');
+        refreshBtn.disabled = true;
+        tbody.innerHTML =
+          '<tr><td colspan="8" class="empty">Admin key required. Click “Unlock admin” above.</td></tr>';
+      } else {
+        authLabel.textContent = 'Unlocked';
+        authStatus.classList.add('ok');
+        refreshBtn.disabled = false;
+      }
+    }
 
     function showToast(message, type='ok', duration=2600){
       toastEl.textContent = message;
@@ -390,8 +418,10 @@
     }
 
     function buildRow(order){
-      const expCount = Array.isArray(order.expressions) ? order.expressions.length : (order.expressions_count || 0);
-      const sms = !!(order.sms_sent || order.smsSent);
+      const expCount = Array.isArray(order.expressions)
+        ? order.expressions.length
+        : (order.expressions_count || 0);
+      const sms   = !!(order.sms_sent   || order.smsSent);
       const email = !!(order.email_sent || order.emailSent);
 
       const tr = document.createElement('tr');
@@ -425,20 +455,36 @@
     }
 
     async function loadOrders(){
+      if (!adminKey){
+        setLockedUI(true);
+        showToast('Enter admin key first','error');
+        return;
+      }
+
       tbody.innerHTML = '<tr><td colspan="8" class="empty">Loading orders…</td></tr>';
+
       try{
         const res = await fetch('/api/orders', {
           method:'GET',
           headers:{
             'Content-Type':'application/json',
-            'x-admin-key': ADMIN_KEY
+            'x-admin-key': adminKey
           }
         });
+
+        if(res.status === 401 || res.status === 403){
+          setLockedUI(true);
+          const text = await res.text();
+          console.error('[orders] Unauthorized', res.status, text);
+          showToast('Admin key rejected','error');
+          return;
+        }
 
         if(!res.ok){
           const text = await res.text();
           console.error('[orders] Load failed', res.status, text);
-          tbody.innerHTML = '<tr><td colspan="8" class="empty">Error loading orders ('+res.status+'). Check console.</td></tr>';
+          tbody.innerHTML =
+            '<tr><td colspan="8" class="empty">Error loading orders ('+res.status+'). Check console.</td></tr>';
           showToast('Failed to load orders ('+res.status+')','error');
           return;
         }
@@ -447,7 +493,8 @@
         const orders = json.orders || json.data || [];
 
         if(!orders.length){
-          tbody.innerHTML = '<tr><td colspan="8" class="empty">No orders yet.</td></tr>';
+          tbody.innerHTML =
+            '<tr><td colspan="8" class="empty">No orders yet.</td></tr>';
           return;
         }
 
@@ -458,12 +505,17 @@
         });
       }catch(err){
         console.error('[orders] Unexpected error', err);
-        tbody.innerHTML = '<tr><td colspan="8" class="empty">Unexpected error loading orders. See console.</td></tr>';
+        tbody.innerHTML =
+          '<tr><td colspan="8" class="empty">Unexpected error loading orders. See console.</td></tr>';
         showToast('Unexpected error loading orders','error');
       }
     }
 
     async function sendNotify(orderId, type, buttonEl){
+      if (!adminKey){
+        showToast('Enter admin key first','error');
+        return;
+      }
       if(!orderId || !type) return;
 
       const originalLabel = buttonEl.textContent;
@@ -475,10 +527,18 @@
           method:'POST',
           headers:{
             'Content-Type':'application/json',
-            'x-admin-key': ADMIN_KEY
+            'x-admin-key': adminKey
           },
           body: JSON.stringify({ orderId, type })
         });
+
+        if(res.status === 401 || res.status === 403){
+          setLockedUI(true);
+          const text = await res.text();
+          console.error('[notify] Unauthorized', res.status, text);
+          showToast('Admin key rejected','error');
+          return;
+        }
 
         const text = await res.text();
         let json = {};
@@ -488,10 +548,9 @@
           console.error('[notify] Error', res.status, text);
           showToast('Notify failed ('+res.status+')','error');
         }else{
-          // optimistic UI update if API returns smsSent/emailSent
           const row = buttonEl.closest('tr');
           if(row && json){
-            const smsCell = row.querySelector('.sms-cell');
+            const smsCell   = row.querySelector('.sms-cell');
             const emailCell = row.querySelector('.email-cell');
             if(typeof json.smsSent === 'boolean' && smsCell){
               smsCell.innerHTML = renderTag(json.smsSent);
@@ -515,7 +574,9 @@
     tbody.addEventListener('click', (evt) => {
       const btn = evt.target.closest('button[data-action]');
       if(!btn) return;
-      const type = btn.getAttribute('data-action') === 'pack_ready' ? 'pack_ready' : 'order_received';
+      const type = btn.getAttribute('data-action') === 'pack_ready'
+        ? 'pack_ready'
+        : 'order_received';
       const id = btn.getAttribute('data-id');
       if(!id) return;
       sendNotify(id, type, btn);
@@ -525,8 +586,17 @@
       loadOrders();
     });
 
-    // Initial load
-    loadOrders();
+    unlockBtn.addEventListener('click', () => {
+      const key = window.prompt('Enter admin key (x-admin-key)');
+      if(!key) return;
+      adminKey = key.trim();
+      setLockedUI(false);
+      showToast('Admin key set','ok');
+      loadOrders();
+    });
+
+    // Start in locked state
+    setLockedUI(true);
   </script>
 </body>
 </html>
