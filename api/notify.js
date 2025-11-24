@@ -1,187 +1,209 @@
-// /api/notify.js — Send SMS + Email notifications for new / delivered orders
+// /api/notify.js
+// Send SMS + Email notifications for Frankiemoji orders (admin-only)
 
 import { createClient } from '@supabase/supabase-js';
 import twilio from 'twilio';
 import { Resend } from 'resend';
 
-// ---------- Env + clients ----------
+// ---------- Env ----------
 
 const supabaseUrl   = process.env.SUPABASE_URL;
 const supabaseKey   = process.env.SUPABASE_SERVICE_ROLE;
+
 const adminKey      = process.env.ADMIN_ORDERS_KEY || '';
 
 const twilioSid     = process.env.TWILIO_ACCOUNT_SID;
 const twilioToken   = process.env.TWILIO_AUTH_TOKEN;
-const twilioFrom    = process.env.TWILIO_FROM_NUMBER; // e.g. +19803507029
+const twilioFrom    = process.env.TWILIO_FROM_NUMBER; // e.g. +1980...
 
 const resendKey     = process.env.RESEND_API_KEY;
 const resendFrom    = process.env.RESEND_FROM_EMAIL || 'orders@frankiemoji.com';
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error('[notify] Missing Supabase env vars');
-}
+// Create clients lazily but **don’t** throw at import time
+const supabase =
+  supabaseUrl && supabaseKey
+    ? createClient(supabaseUrl, supabaseKey)
+    : null;
 
-const supabase      = createClient(supabaseUrl, supabaseKey);
-const twilioClient  = (twilioSid && twilioToken) ? twilio(twilioSid, twilioToken) : null;
-const resend        = resendKey ? new Resend(resendKey) : null;
+const twilioClient =
+  twilioSid && twilioToken
+    ? twilio(twilioSid, twilioToken)
+    : null;
+
+const resendClient =
+  resendKey
+    ? new Resend(resendKey)
+    : null;
 
 // ---------- Helpers ----------
 
-function packLabel(packType) {
-  const t = (packType || '').toLowerCase();
-  if (t === 'starter')  return 'Starter (3 emoji)';
-  if (t === 'standard') return 'Standard (9 emoji)';
-  if (t === 'premium')  return 'Premium (18 emoji)';
-  return (packType || 'Custom') + ' pack';
+function unauthorized(res) {
+  res.statusCode = 401;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ ok: false, error: 'Unauthorized' }));
 }
 
-function normalizePhone(phone) {
-  if (!phone) return null;
-  const raw = phone.toString().replace(/[^\d+]/g, '');
-
-  // Already looks like +1...
-  if (raw.startsWith('+')) return raw;
-
-  // US numbers: 10 or 11 digits
-  const digits = raw.replace(/[^\d]/g, '');
-  if (digits.length === 11 && digits.startsWith('1')) {
-    return '+' + digits;
-  }
-  if (digits.length === 10) {
-    return '+1' + digits;
-  }
-
-  // Fallback: try to prefix +
-  return '+' + digits;
+function badRequest(res, message) {
+  res.statusCode = 400;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ ok: false, error: message }));
 }
 
-// ---------- API handler ----------
+function serverError(res, message) {
+  res.statusCode = 500;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ ok: false, error: message }));
+}
+
+// Build copy for different notification types
+function buildMessages(type, order) {
+  const packLabel = order.pack_type || order.packType || 'emoji pack';
+  const exprCount = Array.isArray(order.expressions)
+    ? order.expressions.length
+    : null;
+
+  if (type === 'pack_ready') {
+    const subject = 'Your Frankiemoji pack is ready 🎨';
+    const text = [
+      `Your ${packLabel} is ready!`,
+      exprCount ? `We’ve finished ${exprCount} custom expressions.` : '',
+      order.download_url
+        ? `Download it here: ${order.download_url}`
+        : 'We’ll send your download link shortly.'
+    ]
+      .filter(Boolean)
+      .join('\n\n');
+
+    return { subject, text };
+  }
+
+  // default: order_received
+  const subject = 'We received your Frankiemoji order ✨';
+  const text = [
+    `Thanks for your order!`,
+    `You’re getting a ${packLabel} from Frankiemoji.`,
+    exprCount ? `You chose ${exprCount} expressions.` : '',
+    'We’ll let you know as soon as your pack is ready.'
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+
+  return { subject, text };
+}
+
+// ---------- Handler ----------
 
 export default async function handler(req, res) {
-  console.log('[notify] Incoming request', req.method, req.url);
-
-  // Handle CORS/preflight quietly if the browser sends OPTIONS
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  // Method check
+  if (req.method !== 'POST') {
+    res.statusCode = 405;
+    res.setHeader('Allow', 'POST');
+    res.end('Method Not Allowed');
+    return;
   }
 
-  // Allow both POST and GET (for browser console / curl), still gated by admin key
-  if (req.method !== 'POST' && req.method !== 'GET') {
-    return res
-      .status(405)
-      .json({ ok: false, error: `Method ${req.method} not allowed` });
+  // Env guard (inside handler so it doesn’t break import)
+  if (!supabase) {
+    console.error('[notify] Supabase env vars missing');
+    return serverError(res, 'Server not configured');
   }
 
-  // Support auth via header OR ?key= query param
-  let headerKey = (req.headers['x-admin-key'] || '').toString();
-  let queryKey = '';
+  // Admin key check (header or query)
+  const incomingKey =
+    req.headers['x-admin-key'] ||
+    req.headers['x-admin-orders-key'] ||
+    req.query.adminKey ||
+    req.query.key;
 
+  if (!adminKey || !incomingKey || incomingKey !== adminKey) {
+    console.warn('[notify] Invalid admin key');
+    return unauthorized(res);
+  }
+
+  // Parse body
+  let body = {};
   try {
-    const url = new URL(req.url, 'https://frankiemoji.com');
-    queryKey = url.searchParams.get('key') || '';
+    body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
   } catch (err) {
-    // ignore URL parse issues, we'll just rely on header
+    console.error('[notify] Failed to parse JSON body', err);
+    return badRequest(res, 'Invalid JSON body');
   }
 
-  const effectiveKey = headerKey || queryKey;
+  const { orderId, type = 'pack_ready' } = body;
 
-  if (!effectiveKey || effectiveKey !== adminKey) {
-    return res.status(401).json({ ok: false, error: 'Unauthorized' });
+  if (!orderId) {
+    return badRequest(res, 'Missing orderId');
   }
 
-  if (!supabaseUrl || !supabaseKey) {
-    return res.status(500).json({ ok: false, error: 'Server misconfigured' });
-  }
+  console.log('[notify] Starting notification', { orderId, type });
 
   try {
-    // 1) Fetch orders that are PAID/RECEIVED but not yet notified
-    const { data: orders, error } = await supabase
+    // ----- Fetch order from DB -----
+    const { data: order, error } = await supabase
       .from('emoji_orders')
       .select('*')
-      .in('status', ['received', 'paid'])               // look at both states
-      .or('sms_sent.is.false,email_sent.is.false')      // at least one not sent
-      .order('created_at', { ascending: true })
-      .limit(50);                                       // safety cap
+      .eq('id', orderId)
+      .single();
 
-    if (error) throw error;
-
-    let smsCount = 0;
-    let emailCount = 0;
-
-    // 2) Loop through candidates
-    for (const order of orders) {
-      const { id, pack_type, email, phone, sms_sent, email_sent } = order;
-
-      // --- SMS ---
-      if (twilioClient && phone && sms_sent !== true) {
-        const to = normalizePhone(phone);
-        if (to) {
-          try {
-            await twilioClient.messages.create({
-              to,
-              from: twilioFrom,
-              body:
-                `Your Frankiemoji order is confirmed! 🎨\n` +
-                `Pack: ${packLabel(pack_type)}.\n` +
-                `We’ll send your artwork preview soon — reply STOP to opt out.`,
-            });
-            smsCount += 1;
-            await supabase
-              .from('emoji_orders')
-              .update({ sms_sent: true })
-              .eq('id', id);
-          } catch (err) {
-            console.error(
-              '[notify] SMS failed for order',
-              id,
-              err?.message || err
-            );
-          }
-        }
-      }
-
-      // --- Email ---
-      if (resend && email && email_sent !== true) {
-        try {
-          await resend.emails.send({
-            from: resendFrom,
-            to: email,
-            subject: 'Your Frankiemoji order is confirmed 🎨',
-            html: `
-              <p>Hi!</p>
-              <p>Thanks for ordering a <strong>${packLabel(
-                pack_type
-              )}</strong> from Frankiemoji.</p>
-              <p>We’ve received your photo and expressions and will send a preview of your artwork soon.</p>
-              <p>If you have any questions, you can reply to this email.</p>
-              <p>Frankiemoji — Born with a pencil. Evolved with technology.</p>
-            `,
-          });
-          emailCount += 1;
-          await supabase
-            .from('emoji_orders')
-            .update({ email_sent: true })
-            .eq('id', id);
-        } catch (err) {
-          console.error(
-            '[notify] Email failed for order',
-            id,
-            err?.message || err
-          );
-        }
-      }
+    if (error || !order) {
+      console.error('[notify] Order fetch error', error);
+      return serverError(res, 'Order not found');
     }
 
-    return res.status(200).json({
-      ok: true,
-      checked: orders.length,
-      smsSent: smsCount,
-      emailsSent: emailCount,
-    });
+    const { subject, text } = buildMessages(type, order);
+
+    let emailSent = false;
+    let smsSent = false;
+
+    // ----- Send email (Resend) -----
+    if (resendClient && order.email) {
+      try {
+        await resendClient.emails.send({
+          from: resendFrom,
+          to: order.email,
+          subject,
+          text
+        });
+        emailSent = true;
+        console.log('[notify] Email sent to', order.email);
+      } catch (err) {
+        console.error('[notify] Error sending email', err);
+      }
+    } else {
+      console.warn('[notify] Email not sent — missing client or recipient');
+    }
+
+    // ----- Send SMS (Twilio) -----
+    if (twilioClient && twilioFrom && order.phone) {
+      try {
+        await twilioClient.messages.create({
+          from: twilioFrom,
+          to: order.phone,
+          body: text
+        });
+        smsSent = true;
+        console.log('[notify] SMS sent to', order.phone);
+      } catch (err) {
+        console.error('[notify] Error sending SMS', err);
+      }
+    } else {
+      console.warn('[notify] SMS not sent — missing client/from/phone');
+    }
+
+    // ----- Respond -----
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(
+      JSON.stringify({
+        ok: true,
+        orderId,
+        type,
+        emailSent,
+        smsSent
+      })
+    );
   } catch (err) {
     console.error('[notify] Unexpected error', err);
-    return res
-      .status(500)
-      .json({ ok: false, error: 'Unexpected server error' });
+    return serverError(res, 'Unexpected server error');
   }
 }
