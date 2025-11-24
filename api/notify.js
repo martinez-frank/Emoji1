@@ -57,9 +57,9 @@ function normalizePhone(phone) {
 
 // ---------- API handler ----------
 
-export default async function handler(req, res) {
-  // Only allow POST, protected by x-admin-key (same as /api/orders)
-  if (req.method !== 'POST') {
+ export default async function handler(req, res) {
+  // Allow both POST and GET (for browser console / curl), still gated by x-admin-key
+  if (req.method !== 'POST' && req.method !== 'GET') {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
   }
 
@@ -75,14 +75,12 @@ export default async function handler(req, res) {
   try {
     // 1) Fetch orders that are PAID but not yet notified
     const { data: orders, error } = await supabase
-      .from('emoji_orders')
-      .select('*')
-      // treat both "paid" and existing "received" as completed
-      .in('status', ['paid', 'received'])
-      // treat NULL as "not sent" so old rows are eligible
-      .or('sms_sent.is.false,sms_sent.is.null,email_sent.is.false,email_sent.is.null')
-      .order('created_at', { ascending: true })
-      .limit(50); // safety cap
+   .from('emoji_orders')
+   .select('*')
+   .in('status', ['received', 'paid']) // look at both
+   .or('sms_sent.is.false,email_sent.is.false')
+   .order('created_at', { ascending: true })
+   .limit(50);
 
     if (error) throw error;
 
