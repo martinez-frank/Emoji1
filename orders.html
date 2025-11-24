@@ -537,6 +537,74 @@
     background:#C0392B;
   }
 
+  /* ===== PAGINATION BAR ===== */
+
+  .pagination-bar{
+    margin-top:0.45rem;
+    padding-top:0.45rem;
+    border-top:1px dashed var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:0.5rem;
+    font-size:0.78rem;
+  }
+
+  .pagination-info{
+    color:var(--graphite);
+  }
+
+  .pagination-controls{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:0.35rem;
+  }
+
+  .page-btn{
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#fff;
+    padding:0.25rem 0.7rem;
+    font-size:0.78rem;
+    cursor:pointer;
+  }
+
+  .page-btn:hover:not(:disabled){
+    background:#FFEFD9;
+    border-color:var(--accent);
+  }
+
+  .page-btn:disabled{
+    opacity:0.4;
+    cursor:default;
+  }
+
+  .page-size-label,
+  .page-jump-label{
+    display:inline-flex;
+    align-items:center;
+    gap:0.25rem;
+  }
+
+  #pageSizeSelect{
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#fff;
+    padding:0.18rem 0.5rem;
+    font-size:0.78rem;
+  }
+
+  #pageJumpInput{
+    width:60px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    padding:0.18rem 0.5rem;
+    font-size:0.78rem;
+    background:#fff;
+  }
+
   /* ===== RESPONSIVE ===== */
 
   @media (max-width:900px){
@@ -740,8 +808,25 @@
           <div class="pagination-bar" id="paginationBar" style="display:none;">
             <div class="pagination-info" id="paginationInfo"></div>
             <div class="pagination-controls">
+              <span class="page-size-label">
+                Per page:
+                <select id="pageSizeSelect">
+                  <option value="25">25</option>
+                  <option value="50" selected>50</option>
+                  <option value="100">100</option>
+                </select>
+              </span>
+
+              <button type="button" class="page-btn" id="firstPageBtn">« First</button>
               <button type="button" class="page-btn" id="prevPageBtn">‹ Prev</button>
               <button type="button" class="page-btn" id="nextPageBtn">Next ›</button>
+              <button type="button" class="page-btn" id="lastPageBtn">Last »</button>
+
+              <span class="page-jump-label">
+                Page
+                <input type="number" id="pageJumpInput" min="1" step="1" />
+                <button type="button" class="page-btn" id="pageJumpBtn">Go</button>
+              </span>
             </div>
           </div>
 
@@ -797,6 +882,11 @@
     const paginationInfo  = document.getElementById('paginationInfo');
     const prevPageBtn     = document.getElementById('prevPageBtn');
     const nextPageBtn     = document.getElementById('nextPageBtn');
+    const firstPageBtn    = document.getElementById('firstPageBtn');
+    const lastPageBtn     = document.getElementById('lastPageBtn');
+    const pageSizeSelect  = document.getElementById('pageSizeSelect');
+    const pageJumpInput   = document.getElementById('pageJumpInput');
+    const pageJumpBtn     = document.getElementById('pageJumpBtn');
 
     const toastEl         = document.getElementById('toast');
 
@@ -843,10 +933,14 @@
       return '<span class="tag off">–</span>';
     }
 
+    function getTotalPages(){
+      return pageLimit > 0 ? Math.max(1, Math.ceil(totalCount / pageLimit)) : 1;
+    }
+
     function renderPagination(){
       if (!paginationBar) return;
 
-      const totalPages = pageLimit > 0 ? Math.ceil(totalCount / pageLimit) : 1;
+      const totalPages = getTotalPages();
       const hasMultiplePages = totalPages > 1;
 
       if (!totalCount || !hasMultiplePages){
@@ -860,8 +954,26 @@
 
       paginationInfo.textContent = `${pageCountText} • ${showingText}`;
 
-      prevPageBtn.disabled = currentPage <= 1;
-      nextPageBtn.disabled = currentPage >= totalPages;
+      // update controls
+      if (pageSizeSelect){
+        pageSizeSelect.value = String(pageLimit);
+      }
+      if (pageJumpInput){
+        pageJumpInput.placeholder = `${currentPage}/${totalPages}`;
+      }
+
+      if (firstPageBtn){
+        firstPageBtn.disabled = currentPage <= 1;
+      }
+      if (prevPageBtn){
+        prevPageBtn.disabled = currentPage <= 1;
+      }
+      if (nextPageBtn){
+        nextPageBtn.disabled = currentPage >= totalPages;
+      }
+      if (lastPageBtn){
+        lastPageBtn.disabled = currentPage >= totalPages;
+      }
     }
 
     function renderOrders(orders){
@@ -1064,7 +1176,6 @@
       }
       ordersCard.style.display = 'none';
 
-      // new: backend expects limit + offset, not page
       const offset = (currentPage - 1) * pageLimit;
       const query  = `?limit=${encodeURIComponent(pageLimit)}&offset=${encodeURIComponent(offset)}`;
 
@@ -1083,33 +1194,33 @@
         let ordersPayload;
 
         if (Array.isArray(data)) {
-        // Fallback shape: plain array
-         ordersPayload = data;
-         totalCount = ordersPayload.length;
+          // Fallback shape: plain array
+          ordersPayload = data;
+          totalCount    = ordersPayload.length;
         } else if (data && Array.isArray(data.orders)) {
-        // Normal shape from /api/orders.js
-         ordersPayload = data.orders;
+          // Normal shape from /api/orders.js
+          ordersPayload = data.orders;
 
-        // Total rows in emoji_orders
-        if (typeof data.total === 'number') {
-         totalCount = data.total;
-        } else {
-         totalCount = ordersPayload.length;
-        }
+          // Total rows in emoji_orders
+          if (typeof data.total === 'number') {
+            totalCount = data.total;
+          } else {
+            totalCount = ordersPayload.length;
+          }
 
-        // Page size actually used
-        if (typeof data.limit === 'number') {
-         pageLimit = data.limit;
-        }
+          // Page size actually used
+          if (typeof data.limit === 'number') {
+            pageLimit = data.limit;
+          }
 
-        // Compute current page from offset + limit
+          // Compute current page from offset + limit
           if (typeof data.offset === 'number' && pageLimit > 0) {
-          const off = data.offset;
-          currentPage = Math.floor(off / pageLimit) + 1;
+            const off = data.offset;
+            currentPage = Math.floor(off / pageLimit) + 1;
           }
         } else {
-         console.error('[admin] Unexpected /api/orders payload', data);
-         throw new Error('Unexpected response from orders API');
+          console.error('[admin] Unexpected /api/orders payload', data);
+          throw new Error('Unexpected response from orders API');
         }
 
         lastAdminKey = key;
@@ -1205,17 +1316,57 @@
       }
     });
 
-    if (prevPageBtn && nextPageBtn){
+    // Pagination controls
+    if (prevPageBtn && nextPageBtn && firstPageBtn && lastPageBtn){
+      firstPageBtn.addEventListener('click', () => {
+        if (currentPage > 1){
+          currentPage = 1;
+          loadOrders(false);
+        }
+      });
+
       prevPageBtn.addEventListener('click', () => {
         if (currentPage > 1){
           currentPage -= 1;
           loadOrders(false);
         }
       });
+
       nextPageBtn.addEventListener('click', () => {
-        const totalPages = pageLimit > 0 ? Math.ceil(totalCount / pageLimit) : 1;
+        const totalPages = getTotalPages();
         if (currentPage < totalPages){
           currentPage += 1;
+          loadOrders(false);
+        }
+      });
+
+      lastPageBtn.addEventListener('click', () => {
+        const totalPages = getTotalPages();
+        if (currentPage < totalPages){
+          currentPage = totalPages;
+          loadOrders(false);
+        }
+      });
+    }
+
+    if (pageSizeSelect){
+      pageSizeSelect.addEventListener('change', () => {
+        const val = parseInt(pageSizeSelect.value, 10);
+        pageLimit = (!isNaN(val) && val > 0) ? val : 50;
+        currentPage = 1;
+        loadOrders(false);
+      });
+    }
+
+    if (pageJumpBtn && pageJumpInput){
+      pageJumpBtn.addEventListener('click', () => {
+        const totalPages = getTotalPages();
+        let target = parseInt(pageJumpInput.value, 10);
+        if (isNaN(target)) return;
+        if (target < 1) target = 1;
+        if (target > totalPages) target = totalPages;
+        if (target !== currentPage){
+          currentPage = target;
           loadOrders(false);
         }
       });
