@@ -807,9 +807,10 @@
     let lastAdminKey     = '';
     let autoRefreshTimer = null;
 
+    // Page state
     let currentPage  = 1;
-    let pageLimit    = 50;
-    let totalCount   = 0;
+    let pageLimit    = 50;  // how many per page
+    let totalCount   = 0;   // total rows in DB (from API "total")
 
     function showToast(message, type='ok', duration=2600){
       if(!toastEl) return;
@@ -855,7 +856,7 @@
 
       paginationBar.style.display = 'flex';
       const pageCountText = `Page ${currentPage} of ${totalPages}`;
-      const showingText = `Showing ${allOrders.length} of ${totalCount} orders`;
+      const showingText   = `Showing ${allOrders.length} of ${totalCount} orders`;
 
       paginationInfo.textContent = `${pageCountText} • ${showingText}`;
 
@@ -889,6 +890,9 @@
         pack_ready:      'status-done'
       };
 
+      // global offset so "#" keeps counting across pages
+      const globalOffset = (currentPage - 1) * pageLimit;
+
       orders.forEach((o, idx) => {
         const tr = document.createElement('tr');
 
@@ -912,7 +916,7 @@
         const emailFlag = !!(o.email_sent || o.emailSent);
 
         tr.innerHTML = `
-          <td>${idx + 1}</td>
+          <td>${globalOffset + idx + 1}</td>
           <td>${created}</td>
           <td>
             <span class="chip-pack">
@@ -1060,7 +1064,9 @@
       }
       ordersCard.style.display = 'none';
 
-      const query = `?page=${encodeURIComponent(currentPage)}&limit=${encodeURIComponent(pageLimit)}`;
+      // new: backend expects limit + offset, not page
+      const offset = (currentPage - 1) * pageLimit;
+      const query  = `?limit=${encodeURIComponent(pageLimit)}&offset=${encodeURIComponent(offset)}`;
 
       try {
         const res = await fetch('/api/orders' + query, {
@@ -1069,7 +1075,7 @@
 
         const data = await res.json().catch(() => null);
 
-        if (!res.ok){
+        if (!res.ok || (data && data.ok === false)){
           const msg = (data && data.error) || `Request failed (${res.status})`;
           throw new Error(msg);
         }
@@ -1077,19 +1083,26 @@
         let ordersPayload;
 
         if (Array.isArray(data)) {
+          // very old shape: just an array
           ordersPayload = data;
+          totalCount    = ordersPayload.length;
         } else if (data && Array.isArray(data.orders)) {
+          // current /api/orders.js shape
           ordersPayload = data.orders;
-          if (typeof data.totalCount === 'number') {
-            totalCount = data.totalCount;
+
+          if (typeof data.total === 'number') {
+            totalCount = data.total;
           } else {
             totalCount = ordersPayload.length;
           }
+
           if (typeof data.limit === 'number') {
             pageLimit = data.limit;
           }
-          if (typeof data.page === 'number') {
-            currentPage = data.page;
+
+          if (typeof data.offset === 'number') {
+            const pageFromOffset = Math.floor(data.offset / pageLimit) + 1;
+            currentPage = pageFromOffset > 0 ? pageFromOffset : 1;
           }
         } else {
           console.error('[admin] Unexpected /api/orders payload', data);
@@ -1097,7 +1110,7 @@
         }
 
         lastAdminKey = key;
-        allOrders = ordersPayload;
+        allOrders    = ordersPayload;
 
         setStatus(
           fromAuto ? 'Orders auto-refreshed.' : 'Access granted. Orders loaded.',
@@ -1147,7 +1160,7 @@
         }else{
           const row = buttonEl.closest('tr');
           if(row && json){
-            const smsCell = row.querySelector('.sms-cell');
+            const smsCell   = row.querySelector('.sms-cell');
             const emailCell = row.querySelector('.email-cell');
             if(typeof json.smsSent === 'boolean' && smsCell){
               smsCell.innerHTML = renderTag(json.smsSent);
@@ -1172,7 +1185,7 @@
       const btn = evt.target.closest('button[data-action]');
       if(!btn) return;
       const type = btn.getAttribute('data-action') === 'pack_ready' ? 'pack_ready' : 'order_received';
-      const id = btn.getAttribute('data-id');
+      const id   = btn.getAttribute('data-id');
       if(!id) return;
       sendNotify(id, type, btn);
     });
