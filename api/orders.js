@@ -1,41 +1,45 @@
-// /api/orders.js — paginated emoji orders API for admin panel
+// /api/orders.js — list emoji orders for the admin panel with pagination
+
 import { createClient } from '@supabase/supabase-js';
 
-// ---------- Env ----------
-const supabaseUrl  = process.env.SUPABASE_URL;
-const supabaseKey  = process.env.SUPABASE_SERVICE_ROLE;
-const adminKey     = process.env.ADMIN_ORDERS_KEY || '';
+// ---------- Env + clients ----------
+
+const supabaseUrl   = process.env.SUPABASE_URL;
+const supabaseKey   = process.env.SUPABASE_SERVICE_ROLE;
+const adminKey      = process.env.ADMIN_ORDERS_KEY || '';
 
 if (!supabaseUrl || !supabaseKey) {
   console.error('[orders] Missing Supabase env vars');
 }
 
-const supabase = (supabaseUrl && supabaseKey)
+const supabase = supabaseUrl && supabaseKey
   ? createClient(supabaseUrl, supabaseKey)
   : null;
 
 // ---------- Helpers ----------
-function send(res, status, payload) {
-  res.statusCode = status;
+
+function unauthorized(res, message = 'Unauthorized') {
+  res.statusCode = 401;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(payload));
+  res.end(JSON.stringify({ ok: false, error: message }));
 }
 
-function unauthorized(res) {
-  return send(res, 401, { ok: false, error: 'Unauthorized' });
+function badRequest(res, message = 'Bad request') {
+  res.statusCode = 400;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ ok: false, error: message }));
 }
 
-function badRequest(res, msg = 'Bad request') {
-  return send(res, 400, { ok: false, error: msg });
-}
-
-function serverError(res, msg = 'Server error') {
-  return send(res, 500, { ok: false, error: msg });
+function serverError(res, message = 'Server error') {
+  res.statusCode = 500;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ ok: false, error: message }));
 }
 
 // ---------- Handler ----------
+
 export default async function handler(req, res) {
-  // Only GET allowed
+  // Only allow GET
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     return badRequest(res, 'Only GET is allowed');
@@ -46,7 +50,7 @@ export default async function handler(req, res) {
     return serverError(res, 'Supabase not configured');
   }
 
-  // Admin key check
+  // Simple admin-key header check
   const headerKey = req.headers['x-admin-key'];
   if (!adminKey || headerKey !== adminKey) {
     console.warn('[orders] Unauthorized access attempt');
@@ -54,43 +58,52 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Pagination params
+    // Pagination params: limit + offset (NOT page)
     const { limit, offset } = req.query || {};
-
-    // Page size options: 50, 100, 250, 500
-    const pageSize = [50, 100, 250, 500].includes(parseInt(limit, 10))
-      ? parseInt(limit, 10)
-      : 50;
-
+    const pageSize   = Math.min(parseInt(limit, 10) || 20, 100); // cap at 100
     const pageOffset = Math.max(parseInt(offset, 10) || 0, 0);
 
     const from = pageOffset;
     const to   = pageOffset + pageSize - 1;
 
-    // Fetch orders newest first WITH total count
-    const { data, error, count } = await supabase
+    // 1) Count ALL rows in emoji_orders (no range)
+    const { count, error: countError } = await supabase
       .from('emoji_orders')
-      .select('*', { count: 'exact' })
+      .select('*', { count: 'exact', head: true });
+
+    if (countError) {
+      console.error('[orders] Supabase count error', countError);
+      return serverError(res, 'Error counting orders');
+    }
+
+    // 2) Fetch this page of rows, newest first
+    const { data, error } = await supabase
+      .from('emoji_orders')
+      .select('*')
       .order('created_at', { ascending: false })
       .range(from, to);
 
     if (error) {
-      console.error('[orders] Supabase query error:', error);
+      console.error('[orders] Supabase query error', error);
       return serverError(res, 'Error fetching orders');
     }
 
-    return send(res, 200, {
+    const safeTotal =
+      typeof count === 'number'
+        ? count
+        : (data ? data.length + pageOffset : pageOffset);
+
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({
       ok: true,
       orders: data || [],
-      totalCount: typeof count === 'number' ? count : 0,
-      limit: pageSize,
-      offset: pageOffset,
-      page: Math.floor(pageOffset / pageSize) + 1,
-      pageCount: count ? Math.ceil(count / pageSize) : 1
-    });
-
+      total: safeTotal,      // total rows in emoji_orders
+      limit: pageSize,       // page size actually used
+      offset: pageOffset,    // starting index for this page
+    }));
   } catch (err) {
-    console.error('[orders] Unexpected error:', err);
+    console.error('[orders] Unexpected error', err);
     return serverError(res, 'Unexpected error');
   }
 }
