@@ -1,10 +1,14 @@
 # Changelog
 
-## v0.9.0 — Admin + Orders MVP (2025-11-24)
+## v0.9.0-ops-stable
+- Upload → Supabase `emoji_orders`
+- Admin orders panel with filters & pagination
+- Notify API (SMS + Email)
+- Auto-refresh + per-page controls
+- Production-ready admin tooling
 
-- Added `emoji_orders` admin panel with secure passphrase access.
-- Wired upload → Supabase `emoji_orders` table.
-- Implemented `/api/orders` endpoint with pagination (limit + offset).
-- Implemented `/api/notify` endpoint for email/SMS notifications.
-- Added auto-refresh, filtering, and pagination controls in `orders.html`.
-- Verified end-to-end flow with 80+ test orders and successful email notifications.
+## v0.9.1-stable-stripe
+- Stripe Checkout integration
+- Webhook validation + order updates
+- Promo code support (frontend + backend)
+- Admin pricing summary & final-amount tracking
