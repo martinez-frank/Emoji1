@@ -77,8 +77,10 @@ export default async function handler(req, res) {
     const { data: orders, error } = await supabase
       .from('emoji_orders')
       .select('*')
-      .eq('status', 'paid')
-      .or('sms_sent.is.false,email_sent.is.false')
+      // treat both "paid" and existing "received" as completed
+      .in('status', ['paid', 'received'])
+      // treat NULL as "not sent" so old rows are eligible
+      .or('sms_sent.is.false,sms_sent.is.null,email_sent.is.false,email_sent.is.null')
       .order('created_at', { ascending: true })
       .limit(50); // safety cap
 
