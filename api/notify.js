@@ -37,6 +37,17 @@ const resendClient =
 
 // ---------- Helpers ----------
 
+function setCorsHeaders(res) {
+  // Lock to your domain to be safe
+  const origin = process.env.FRONTEND_BASE_URL || 'https://www.frankiemoji.com';
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type, x-admin-key, x-admin-orders-key'
+  );
+}
+
 function unauthorized(res) {
   res.statusCode = 401;
   res.setHeader('Content-Type', 'application/json');
@@ -94,10 +105,24 @@ function buildMessages(type, order) {
 // ---------- Handler ----------
 
 export default async function handler(req, res) {
-  // Method check
+  // CORS + method logging
+  setCorsHeaders(res);
+  console.log('[notify] Incoming request', {
+    method: req.method,
+    url: req.url,
+  });
+
+  // Handle preflight cleanly
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 200;
+    res.end('OK');
+    return;
+  }
+
+  // Only allow POST for actual work
   if (req.method !== 'POST') {
     res.statusCode = 405;
-    res.setHeader('Allow', 'POST');
+    res.setHeader('Allow', 'POST,OPTIONS');
     res.end('Method Not Allowed');
     return;
   }
@@ -112,18 +137,21 @@ export default async function handler(req, res) {
   const incomingKey =
     req.headers['x-admin-key'] ||
     req.headers['x-admin-orders-key'] ||
-    req.query.adminKey ||
-    req.query.key;
+    req.query?.adminKey ||
+    req.query?.key;
 
   if (!adminKey || !incomingKey || incomingKey !== adminKey) {
-    console.warn('[notify] Invalid admin key');
+    console.warn('[notify] Invalid admin key', { incomingKey });
     return unauthorized(res);
   }
 
   // Parse body
   let body = {};
   try {
-    body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+    body =
+      typeof req.body === 'string'
+        ? JSON.parse(req.body)
+        : req.body || {};
   } catch (err) {
     console.error('[notify] Failed to parse JSON body', err);
     return badRequest(res, 'Invalid JSON body');
