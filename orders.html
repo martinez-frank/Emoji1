@@ -7,375 +7,812 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --cream:#FAF3E0;
-      --espresso:#2C2419;
-      --graphite:#5A5350;
-      --accent:#F5A623;
-      --pill:#FFF8EC;
-      --border:#E2D4BE;
-      --danger:#C0392B;
-      --success:#1B8748;
-      --pending:#F39C12;
+  :root{
+    --cream:#FAF3E0;
+    --espresso:#2C2419;
+    --graphite:#5A5350;
+    --accent:#F5A623;
+    --pill:#FFF8EC;
+    --border:#E2D4BE;
+    --danger:#C0392B;
+    --success:#1B8748;
+    --pending:#F39C12;
+  }
+
+  *{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+  }
+
+  body{
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--cream);
+    color:var(--espresso);
+    min-height:100vh;
+  }
+
+  /* ===== LAYOUT: SIDEBAR + MAIN ===== */
+
+  .admin-layout{
+    display:flex;
+    min-height:100vh;
+  }
+
+  .admin-sidebar{
+    position:sticky;
+    top:0;
+    align-self:flex-start;
+    min-height:100vh;
+    width:220px;
+    padding:2rem 1.25rem 2rem;
+    border-right:1px solid var(--border);
+    background:#F6EBD7;
+  }
+
+  .admin-sidebar-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:0.75rem;
+    margin-bottom:1.5rem;
+  }
+
+  .admin-logo{
+    font-family:"DM Serif Display",serif;
+    font-size:1.35rem;
+    color:var(--espresso);
+  }
+
+  .admin-menu-toggle{
+    display:none;
+    border:none;
+    background:transparent;
+    padding:0.25rem 0.4rem;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .admin-menu-toggle span{
+    display:block;
+    width:18px;
+    height:2px;
+    border-radius:999px;
+    background:var(--espresso);
+    margin:3px 0;
+  }
+
+  .admin-nav{
+    display:flex;
+    flex-direction:column;
+    gap:0.35rem;
+    margin-bottom:2rem;
+    font-size:0.85rem;
+  }
+
+  .admin-nav a{
+    display:flex;
+    align-items:center;
+    padding:0.45rem 0.9rem;
+    border-radius:999px;
+    font-size:0.85rem;
+    font-weight:500;
+    text-decoration:none;
+    background:#FFF7EA;
+    color:var(--espresso);
+    border:1px solid var(--border);
+    margin-bottom:0.35rem;
+    transition:all 0.15s ease;
+  }
+
+  .admin-nav a:hover{
+    background:#FFEFD9;
+    border-color:var(--accent);
+    transform:translateY(-1px);
+    box-shadow:0 4px 10px rgba(44,36,25,0.10);
+  }
+
+  .admin-nav a.is-active{
+    background:var(--espresso);
+    color:#FFF7EA;
+    border-color:var(--espresso);
+    box-shadow:0 6px 14px rgba(44,36,25,0.22);
+  }
+
+  .admin-footnote{
+    margin-top:2rem;
+    font-size:0.78rem;
+    color:var(--graphite);
+  }
+
+  .admin-main{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    padding:2rem 1.5rem;
+  }
+
+  .shell{
+    width:100%;
+    max-width:1080px;
+  }
+
+  /* ===== ADMIN META BAR ===== */
+
+  .admin-meta-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:0.75rem;
+    font-size:0.78rem;
+    color:var(--graphite);
+  }
+  .admin-meta-left,
+  .admin-meta-right{
+    display:flex;
+    align-items:center;
+    gap:0.4rem;
+    flex-wrap:wrap;
+  }
+  .meta-pill{
+    padding:0.18rem 0.6rem;
+    border-radius:999px;
+    background:#FFF7EA;
+    border:1px solid var(--border);
+  }
+  .admin-meta-right a{
+    text-decoration:none;
+    font-size:0.78rem;
+    padding:0.18rem 0.55rem;
+    border-radius:999px;
+    border:1px solid transparent;
+    color:var(--graphite);
+  }
+  .admin-meta-right a:hover{
+    border-color:var(--border);
+    background:#FFF8EC;
+  }
+
+  /* ===== HEADER ===== */
+
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:1.5rem;
+    gap:1rem;
+  }
+
+  header h1{
+    font-family:"DM Serif Display",serif;
+    font-size:2.1rem;
+    letter-spacing:0.03em;
+  }
+
+  header span.badge{
+    background:var(--pill);
+    border-radius:999px;
+    padding:0.35rem 0.9rem;
+    font-size:0.8rem;
+    border:1px solid var(--border);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+  }
+
+  /* ===== CARDS / AUTH ===== */
+
+  .card{
+    background:#FFF7EA;
+    border-radius:18px;
+    border:1px solid var(--border);
+    padding:1.25rem 1.5rem;
+    box-shadow:0 10px 30px rgba(44,36,25,0.06);
+    margin-bottom:1.25rem;
+  }
+
+  .card h2{
+    font-size:1rem;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    font-weight:600;
+    color:var(--graphite);
+    margin-bottom:0.5rem;
+  }
+
+  .auth-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.75rem;
+    align-items:center;
+  }
+
+  .auth-row input{
+    flex:1;
+    min-width:220px;
+    padding:0.55rem 0.75rem;
+    border-radius:10px;
+    border:1px solid var(--border);
+    font-size:0.9rem;
+    background:#fff;
+  }
+
+  button.primary{
+    border:none;
+    border-radius:999px;
+    padding:0.55rem 1.2rem;
+    font-size:0.9rem;
+    font-weight:600;
+    cursor:pointer;
+    background:var(--espresso);
+    color:#fff;
+    display:inline-flex;
+    align-items:center;
+    gap:0.4rem;
+    transition:transform 0.08s ease,
+               box-shadow 0.08s ease,
+               background 0.15s ease;
+  }
+
+  button.primary:hover{
+    transform:translateY(-1px);
+    box-shadow:0 6px 14px rgba(44,36,25,0.18);
+    background:#221A11;
+  }
+
+  .status{
+    margin-top:0.4rem;
+    font-size:0.85rem;
+  }
+  .status.ok{color:#137D3B;}
+  .status.err{color:#B02020;}
+
+  /* ===== TABLE & ROWS ===== */
+
+  .table-wrap{
+    margin-top:0.5rem;
+    border-radius:18px;
+    border:1px solid var(--border);
+    overflow:auto;
+    background:#FFFDF7;
+    width:100%;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.85rem;
+    min-width:1120px;
+  }
+
+  thead{
+    background:#F2E5CF;
+    position:sticky;
+    top:0;
+    z-index:1;
+    box-shadow:0 2px 4px rgba(44,36,25,0.10);
+  }
+
+  th,
+  td{
+    padding:0.55rem 0.7rem;
+    border-bottom:1px solid #EDE0CC;
+    text-align:left;
+    vertical-align:top;
+  }
+
+  th{
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    font-size:0.75rem;
+    color:var(--graphite);
+    white-space:nowrap;
+  }
+
+  tbody tr:nth-child(even){
+    background:#FFF9EF;
+  }
+
+  .table-wrap tbody tr{
+    transition:background 0.12s ease, transform 0.08s ease;
+  }
+
+  .table-wrap tbody tr:hover{
+    background:#FFEFD9;
+    transform:translateY(-1px);
+  }
+
+  .chip-pack{
+    display:inline-flex;
+    align-items:center;
+    gap:0.25rem;
+    padding:0.1rem 0.55rem;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#FFF;
+    font-size:0.78rem;
+    text-transform:capitalize;
+  }
+
+  .chip-pack span.dot{
+    width:7px;
+    height:7px;
+    border-radius:999px;
+    background:var(--accent);
+  }
+
+  .expr{
+    max-width:280px;
+    white-space:normal;
+  }
+
+  .expr span{
+    display:inline-block;
+    padding:0.08rem 0.4rem;
+    margin:0.06rem 0.14rem 0.06rem 0;
+    border-radius:999px;
+    background:#FFF2D8;
+    border:1px solid #F1D7A5;
+    font-size:0.75rem;
+  }
+
+  .pill-meta{
+    font-size:0.78rem;
+    color:var(--graphite);
+  }
+
+  th.amount-col,
+  td.amount-col{
+    text-align:right;
+    white-space:nowrap;
+  }
+
+  footer{
+    margin-top:1.75rem;
+    text-align:center;
+    font-size:0.78rem;
+    color:var(--graphite);
+    opacity:0.8;
+  }
+
+  /* ===== STATUS SUMMARY + FILTERS ===== */
+
+  .status-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:0.75rem;
+    margin-bottom:0.75rem;
+  }
+
+  .status-summary{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.35rem;
+  }
+
+  .status-pill{
+    display:inline-flex;
+    align-items:center;
+    padding:0.12rem 0.6rem;
+    border-radius:999px;
+    font-size:0.78rem;
+    font-weight:500;
+    color:#fff;
+    text-transform:capitalize;
+  }
+
+  .filter-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.5rem;
+    align-items:center;
+    font-size:0.78rem;
+    justify-content:flex-end;
+  }
+
+  .filter-btn{
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#fff;
+    padding:0.25rem 0.75rem;
+    font-size:0.78rem;
+    cursor:pointer;
+  }
+
+  .filter-btn.is-active{
+    background:var(--espresso);
+    color:#fff;
+    border-color:var(--espresso);
+  }
+
+  #statusFilter{
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#fff;
+    padding:0.25rem 0.6rem;
+    font-size:0.78rem;
+  }
+
+  .order-search{
+    border-radius:999px;
+    border:1px solid var(--border);
+    padding:0.25rem 0.7rem;
+    font-size:0.78rem;
+    min-width:190px;
+    background:#fff;
+  }
+
+  .auto-refresh-toggle{
+    display:inline-flex;
+    align-items:center;
+    gap:0.25rem;
+    font-size:0.78rem;
+  }
+  .auto-refresh-toggle input{
+    accent-color:var(--espresso);
+  }
+
+  .status-new        { background:#6B7280; }
+  .status-queued     { background:#D97706; }
+  .status-in_progress{ background:#2563EB; }
+  .status-done       { background:#059669; }
+  .status-error      { background:#B91C1C; }
+
+  /* SMS / email tags + buttons */
+
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:999px;
+    font-size:13px;
+    border:1px solid var(--border);
+    background:#fff;
+  }
+
+  .tag.ok{
+    border-color:var(--success);
+    color:var(--success);
+    background:#EAF7F0;
+  }
+
+  .tag.off{
+    color:var(--graphite);
+    background:#F7EFE0;
+  }
+
+  .btn-ghost{
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#fff;
+    padding:4px 10px;
+    font-size:12px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+  }
+
+  .btn-ghost.small{
+    font-size:11px;
+    padding:3px 8px;
+  }
+
+  .btn-ghost.primary{
+    border-color:var(--accent);
+    color:var(--espresso);
+    background:#FFE9C4;
+  }
+
+  .btn-ghost[disabled]{
+    opacity:.55;
+    cursor:default;
+  }
+
+  /* Toast */
+
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:16px;
+    transform:translateX(-50%);
+    padding:10px 14px;
+    border-radius:999px;
+    font-size:13px;
+    background:#2C2419;
+    color:#fff;
+    display:none;
+    box-shadow:0 12px 30px rgba(0,0,0,0.25);
+    z-index:999;
+  }
+
+  .toast.ok{
+    background:#1B8748;
+  }
+  .toast.error{
+    background:#C0392B;
+  }
+
+  /* ===== RESPONSIVE ===== */
+
+  @media (max-width:900px){
+
+    .admin-layout{
+      flex-direction:column;
     }
 
-    *{box-sizing:border-box;margin:0;padding:0}
-
-    body{
-      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:var(--cream);
-      color:var(--espresso);
-      min-height:100vh;
+    .admin-sidebar{
+      position:static;
+      width:100%;
+      min-height:auto;
+      padding:0.75rem 1rem;
+      border-right:none;
+      border-bottom:1px solid var(--border);
+      background:#F6EBD7;
     }
 
-    .admin-shell{
-      max-width:1260px;           /* a little wider for breathing room */
-      margin:32px auto 40px;
-      padding:24px 24px 40px;
-      background:#fff;
-      border-radius:24px;
-      box-shadow:0 18px 45px rgba(0,0,0,0.06);
-      border:1px solid rgba(44,36,25,0.06);
+    .admin-sidebar-top{
+      margin-bottom:0;
     }
 
-    .admin-header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:24px;
+    .admin-logo{
+      font-size:1.25rem;
     }
 
-    .admin-title-block h1{
-      font-family:"DM Serif Display",serif;
-      font-size:28px;
-      letter-spacing:.02em;
-      margin-bottom:4px;
-    }
-
-    .admin-title-block p{
-      font-size:14px;
-      color:var(--graphite);
-    }
-
-    .badge{
+    .admin-menu-toggle{
       display:inline-flex;
+      flex-direction:column;
       align-items:center;
-      gap:6px;
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      padding:4px 10px;
-      border-radius:999px;
-      background:var(--pill);
-      border:1px solid var(--border);
-      color:var(--graphite);
+      justify-content:center;
     }
 
-    .badge span.dot{
-      width:6px;
-      height:6px;
-      border-radius:999px;
-      background:#27AE60;
+    .admin-nav{
+      position:absolute;
+      left:0;
+      right:0;
+      top:100%;
+      padding:0.6rem 1rem 1rem;
+      background:#F6EBD7;
+      border-bottom:1px solid var(--border);
+      box-shadow:0 8px 24px rgba(44,36,25,0.18);
+      flex-direction:column;
+      gap:0.35rem;
+      margin-bottom:0;
+      display:none;
+      z-index:20;
     }
 
-    .toolbar{
+    .admin-nav.is-open{
       display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      font-size:12px;
-      align-items:center;
-      justify-content:flex-end;
     }
 
-    .key-hint{
-      padding:4px 10px;
-      border-radius:999px;
-      border:1px dashed var(--border);
-      background:var(--pill);
-      color:var(--graphite);
-      display:flex;
-      align-items:center;
-      gap:6px;
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.14em;
+    .admin-nav a{
+      font-size:0.8rem;
+      padding:0.35rem 0.75rem;
+      margin-bottom:0;
     }
 
-    .key-hint.ok{
-      border-style:solid;
-      border-color:var(--success);
-      background:#EAF7F0;
-      color:var(--success);
+    .admin-footnote{
+      display:none;
     }
 
-    .toolbar button{
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:#fff;
-      padding:6px 10px;
-      font-size:12px;
-      cursor:pointer;
+    .admin-main{
+      padding:1.5rem 0;
     }
 
-    .toolbar button:hover{
-      background:var(--pill);
-    }
-
-    .toolbar button[disabled]{
-      opacity:.5;
-      cursor:default;
+    .shell{
+      max-width:100%;
+      margin:1.25rem auto;
+      padding:0 1rem;
     }
 
     .table-wrap{
-      margin-top:8px;
-      border-radius:18px;
-      border:1px solid var(--border);
-      overflow:hidden;
-      background:var(--pill);
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
     }
 
     table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:13px;
+      min-width:900px;
     }
 
-    thead{
-      background:#F4E7CF;
+    .admin-meta-bar{
+      flex-direction:column;
+      align-items:flex-start;
+      gap:0.3rem;
     }
+  }
 
-    th,td{
-      padding:9px 10px;
-      text-align:left;
-      border-bottom:1px solid rgba(0,0,0,0.03);
-      vertical-align:middle;
+  @media (max-width:720px){
+    header{
+      flex-direction:column;
+      align-items:flex-start;
     }
-
-    th{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:var(--graphite);
-      white-space:nowrap;
+    header h1{
+      font-size:1.7rem;
     }
-
-    tbody tr:nth-child(even){
-      background:#FFFDF8;
+    .card{
+      padding:1rem 1rem;
     }
-
-    tbody tr:hover{
-      background:#FFF7E8;
+    .filter-row{
+      justify-content:flex-start;
     }
-
-    .mono{
-      font-family:Menlo,Consolas,monospace;
-      font-size:11px;
-    }
-
-    .pill-status{
-      display:inline-flex;
-      align-items:center;
-      gap:4px;
-      padding:3px 8px;
-      border-radius:999px;
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-    }
-
-    .pill-status.new{
-      background:#FDF2D8;
-      color:var(--pending);
-    }
-
-    .pill-status.ready{
-      background:#E4F7EB;
-      color:var(--success);
-    }
-
-    .pill-status.error{
-      background:#FDEAEA;
-      color:var(--danger);
-    }
-
-    .pill-status.paid{
-      background:#E8F3FF;
-      color:#1A73E8;
-    }
-
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:22px;
-      height:22px;
-      border-radius:999px;
-      font-size:13px;
-      border:1px solid var(--border);
-      background:#fff;
-    }
-
-    .tag.ok{
-      border-color:var(--success);
-      color:var(--success);
-      background:#EAF7F0;
-    }
-
-    .tag.off{
-      color:var(--graphite);
-      background:#F7EFE0;
-    }
-
-    .btn-ghost{
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:#fff;
-      padding:4px 10px;
-      font-size:12px;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      white-space:nowrap;
-    }
-
-    .btn-ghost.small{
-      font-size:11px;
-      padding:3px 8px;
-    }
-
-    .btn-ghost.primary{
-      border-color:var(--accent);
-      color:var(--espresso);
-      background:#FFE9C4;
-    }
-
-    .btn-ghost[disabled]{
-      opacity:.55;
-      cursor:default;
-    }
-
-    .empty{
-      padding:18px;
-      font-size:13px;
-      color:var(--graphite);
-    }
-
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:16px;
-      transform:translateX(-50%);
-      padding:10px 14px;
-      border-radius:999px;
-      font-size:13px;
-      background:#2C2419;
-      color:#fff;
-      display:none;
-      box-shadow:0 12px 30px rgba(0,0,0,0.25);
-      z-index:999;
-    }
-
-    .toast.ok{
-      background:#1B8748;
-    }
-    .toast.error{
-      background:#C0392B;
-    }
-
-    @media (max-width:760px){
-      .admin-shell{
-        margin:16px;
-        padding:18px 14px 28px;
-      }
-      .admin-header{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-      .toolbar{
-        justify-content:flex-start;
-      }
-      table{
-        font-size:12px;
-      }
-      th:nth-child(3), td:nth-child(3),
-      th:nth-child(4), td:nth-child(4){
-        display:none; /* hide some columns on tiny screens */
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <div class="admin-shell">
-    <header class="admin-header">
-      <div class="admin-title-block">
-        <div class="badge">
-          <span class="dot"></span>
-          <span>Frankiemoji Admin</span>
-        </div>
-        <h1>Orders</h1>
-        <p>Review emoji orders, send notifications, and track SMS / email status.</p>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-top">
+        <div class="admin-logo">Frankiemoji™</div>
+        <button class="admin-menu-toggle" id="adminMenuToggle" type="button" aria-label="Toggle admin navigation" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
-      <div class="toolbar">
-        <div id="auth-status" class="key-hint">
-          <span id="auth-label">Locked</span>
-        </div>
-        <button id="unlock-btn" type="button">Unlock admin</button>
-        <button id="refresh-btn" type="button" disabled>↻ Refresh</button>
-      </div>
-    </header>
 
-    <section class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Customer</th>
-            <th>Pack</th>
-            <th>Expressions</th>
-            <th>Status</th>
-            <th>SMS</th>
-            <th>Email</th>
-            <th>Notify</th>
-          </tr>
-        </thead>
-        <tbody id="orders-body">
-          <tr><td colspan="8" class="empty">Admin key required. Click “Unlock admin” above.</td></tr>
-        </tbody>
-      </table>
-    </section>
+      <nav class="admin-nav">
+        <a href="/orders.html" class="is-active">Orders</a>
+        <a href="/upload.html">Upload test</a>
+      </nav>
+
+      <div class="admin-footnote">Internal tools</div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="shell">
+
+        <div class="admin-meta-bar">
+          <div class="admin-meta-left">
+            <span class="meta-pill">Admin: Frank Martinez</span>
+            <span class="meta-pill">Env: Production</span>
+            <span class="meta-pill">Build v0.9.0</span>
+          </div>
+          <div class="admin-meta-right">
+            <a href="/orders.html">Orders</a>
+            <a href="/upload.html">Upload</a>
+          </div>
+        </div>
+
+        <header>
+          <h1>Frankiemoji Orders</h1>
+          <span class="badge">Internal · Admin View</span>
+        </header>
+
+        <!-- Auth card -->
+        <section class="card">
+          <h2>Access</h2>
+          <p style="font-size:0.9rem;margin-bottom:0.6rem;">
+            Enter your admin passphrase to view the latest emoji pack orders.
+          </p>
+          <div class="auth-row">
+            <input type="password" id="adminKey" placeholder="Admin passphrase" autocomplete="current-password" />
+            <button class="primary" id="loadBtn">
+              <span>View orders</span> <span>📦</span>
+            </button>
+          </div>
+          <div id="authStatus" class="status"></div>
+        </section>
+
+        <!-- Orders table -->
+        <section class="card" id="ordersCard" style="display:none;">
+          <h2>Recent Orders</h2>
+
+          <div class="status-bar">
+            <div class="status-summary" id="statusSummary"></div>
+
+            <div class="filter-row">
+              <span style="font-weight:600;">Range:</span>
+              <button type="button" class="filter-btn is-active" data-range="all">All time</button>
+              <button type="button" class="filter-btn" data-range="today">Today</button>
+              <button type="button" class="filter-btn" data-range="7d">Last 7 days</button>
+
+              <span style="font-weight:600;margin-left:0.5rem;">Status:</span>
+              <select id="statusFilter">
+                <option value="any">Any status</option>
+                <option value="received">received</option>
+                <option value="payment_pending">payment_pending</option>
+                <option value="queued">queued</option>
+                <option value="in_progress">in_progress</option>
+                <option value="done">done</option>
+                <option value="error">error</option>
+              </select>
+
+              <input
+                type="search"
+                id="orderSearch"
+                class="order-search"
+                placeholder="Search email, promo, ID…" />
+
+              <label class="auto-refresh-toggle">
+                <input type="checkbox" id="autoRefreshToggle" />
+                <span>Auto-refresh 30s</span>
+              </label>
+            </div>
+          </div>
+
+          <p class="pill-meta" id="summary"></p>
+
+          <div class="pagination-bar" id="paginationBar" style="display:none;">
+            <div class="pagination-info" id="paginationInfo"></div>
+            <div class="pagination-controls">
+              <button type="button" class="page-btn" id="prevPageBtn">‹ Prev</button>
+              <button type="button" class="page-btn" id="nextPageBtn">Next ›</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table id="ordersTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Created</th>
+                  <th>Pack</th>
+                  <th>Status</th>
+                  <th class="amount-col">Amount</th>
+                  <th>Expressions</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Promo</th>
+                  <th>SMS</th>
+                  <th>Email sent</th>
+                  <th>Notify</th>
+                  <th>Order&nbsp;ID</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <footer>
+          Internal tooling for Frankiemoji™ Studios. Do not share this URL publicly.
+        </footer>
+
+        <div id="toast" class="toast"></div>
+      </div>
+    </main>
   </div>
 
-  <div id="toast" class="toast"></div>
-
   <script>
-    // Admin key is NOT hard-coded; you type it at runtime.
-    let adminKey = null;
+    const adminInput        = document.getElementById('adminKey');
+    const loadBtn           = document.getElementById('loadBtn');
+    const statusEl          = document.getElementById('authStatus');
+    const ordersCard        = document.getElementById('ordersCard');
+    const tbody             = document.querySelector('#ordersTable tbody');
+    const summaryEl         = document.getElementById('summary');
+    const statusSummaryEl   = document.getElementById('statusSummary');
+    const rangeButtons      = Array.from(document.querySelectorAll('.filter-btn'));
+    const statusSelect      = document.getElementById('statusFilter');
+    const searchInput       = document.getElementById('orderSearch');
+    const autoRefreshToggle = document.getElementById('autoRefreshToggle');
+    const menuToggle        = document.getElementById('adminMenuToggle');
+    const adminNav          = document.querySelector('.admin-nav');
 
-    const tbody      = document.getElementById('orders-body');
-    const toastEl    = document.getElementById('toast');
-    const refreshBtn = document.getElementById('refresh-btn');
-    const unlockBtn  = document.getElementById('unlock-btn');
-    const authStatus = document.getElementById('auth-status');
-    const authLabel  = document.getElementById('auth-label');
+    const paginationBar   = document.getElementById('paginationBar');
+    const paginationInfo  = document.getElementById('paginationInfo');
+    const prevPageBtn     = document.getElementById('prevPageBtn');
+    const nextPageBtn     = document.getElementById('nextPageBtn');
 
-    function setLockedUI(locked){
-      if (locked){
-        adminKey = null;
-        authLabel.textContent = 'Locked';
-        authStatus.classList.remove('ok');
-        refreshBtn.disabled = true;
-        tbody.innerHTML =
-          '<tr><td colspan="8" class="empty">Admin key required. Click “Unlock admin” above.</td></tr>';
-      } else {
-        authLabel.textContent = 'Unlocked';
-        authStatus.classList.add('ok');
-        refreshBtn.disabled = false;
-      }
-    }
+    const toastEl         = document.getElementById('toast');
+
+    let allOrders        = [];
+    let currentRange     = 'all';
+    let currentStatus    = 'any';
+    let searchQuery      = '';
+    let lastAdminKey     = '';
+    let autoRefreshTimer = null;
+
+    let currentPage  = 1;
+    let pageLimit    = 50;
+    let totalCount   = 0;
 
     function showToast(message, type='ok', duration=2600){
+      if(!toastEl) return;
       toastEl.textContent = message;
       toastEl.className = 'toast ' + type;
       toastEl.style.display = 'block';
@@ -385,31 +822,19 @@
       }, duration);
     }
 
+    function setStatus(msg, type){
+      statusEl.textContent = msg || '';
+      statusEl.className = 'status' + (type ? ' ' + type : '');
+    }
+
     function formatDate(iso){
-      if(!iso) return '—';
+      if(!iso) return '';
       try{
         const d = new Date(iso);
-        return d.toLocaleString(undefined,{
-          month:'short',day:'2-digit',
-          hour:'2-digit',minute:'2-digit'
-        });
+        return d.toLocaleString();
       }catch(e){
         return iso;
       }
-    }
-
-    function renderStatus(order){
-      const s = (order.status || '').toLowerCase();
-      if(s === 'pack_ready' || s === 'ready'){
-        return '<span class="pill-status ready">Ready</span>';
-      }
-      if(s === 'payment_received' || s === 'paid'){
-        return '<span class="pill-status paid">Paid</span>';
-      }
-      if(s === 'error'){
-        return '<span class="pill-status error">Error</span>';
-      }
-      return '<span class="pill-status new">New</span>';
     }
 
     function renderTag(flag){
@@ -417,106 +842,286 @@
       return '<span class="tag off">–</span>';
     }
 
-    function buildRow(order){
-      const expCount = Array.isArray(order.expressions)
-        ? order.expressions.length
-        : (order.expressions_count || 0);
-      const sms   = !!(order.sms_sent   || order.smsSent);
-      const email = !!(order.email_sent || order.emailSent);
+    function renderPagination(){
+      if (!paginationBar) return;
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${formatDate(order.created_at)}</td>
-        <td>
-          <div>${order.email || '—'}</div>
-          <div class="mono">${order.id}</div>
-        </td>
-        <td>${order.pack_type || '—'}</td>
-        <td>${expCount || '—'}</td>
-        <td>${renderStatus(order)}</td>
-        <td class="sms-cell">${renderTag(sms)}</td>
-        <td class="email-cell">${renderTag(email)}</td>
-        <td>
-          <div style="display:flex;gap:4px;flex-wrap:wrap">
-            <button class="btn-ghost small"
-              data-action="order_received"
-              data-id="${order.id}">
-              Order received
-            </button>
-            <button class="btn-ghost small primary"
-              data-action="pack_ready"
-              data-id="${order.id}">
-              Pack ready
-            </button>
-          </div>
-        </td>
-      `;
-      return tr;
-    }
+      const totalPages = pageLimit > 0 ? Math.ceil(totalCount / pageLimit) : 1;
+      const hasMultiplePages = totalPages > 1;
 
-    async function loadOrders(){
-      if (!adminKey){
-        setLockedUI(true);
-        showToast('Enter admin key first','error');
+      if (!totalCount || !hasMultiplePages){
+        paginationBar.style.display = 'none';
         return;
       }
 
-      tbody.innerHTML = '<tr><td colspan="8" class="empty">Loading orders…</td></tr>';
+      paginationBar.style.display = 'flex';
+      const pageCountText = `Page ${currentPage} of ${totalPages}`;
+      const showingText = `Showing ${allOrders.length} of ${totalCount} orders`;
 
-      try{
-        const res = await fetch('/api/orders', {
-          method:'GET',
-          headers:{
-            'Content-Type':'application/json',
-            'x-admin-key': adminKey
+      paginationInfo.textContent = `${pageCountText} • ${showingText}`;
+
+      prevPageBtn.disabled = currentPage <= 1;
+      nextPageBtn.disabled = currentPage >= totalPages;
+    }
+
+    function renderOrders(orders){
+      tbody.innerHTML = '';
+
+      if (!orders || !orders.length){
+        summaryEl.textContent = 'No orders in this range yet.';
+        if (statusSummaryEl) statusSummaryEl.textContent = '';
+        renderPagination();
+        return;
+      }
+
+      const pageText = totalCount
+        ? `Page ${currentPage}, newest first.`
+        : 'Newest first.';
+      summaryEl.textContent =
+        `${orders.length} orders on this page (${pageText})`;
+
+      const statusClassMap = {
+        received:        'status-new',
+        payment_pending: 'status-queued',
+        queued:          'status-queued',
+        in_progress:     'status-in_progress',
+        done:            'status-done',
+        error:           'status-error',
+        pack_ready:      'status-done'
+      };
+
+      orders.forEach((o, idx) => {
+        const tr = document.createElement('tr');
+
+        const created = formatDate(o.created_at);
+
+        const exprList = Array.isArray(o.expressions) ? o.expressions : [];
+        const exprHtml = exprList.map(e => `<span>${e}</span>`).join('');
+
+        const rawStatus   = (o.status || 'received').toLowerCase();
+        const statusClass = statusClassMap[rawStatus] || 'status-new';
+        const statusLabel = rawStatus.replace('_', ' ');
+
+        const baseCents  = (typeof o.base_price_cents  === 'number') ? o.base_price_cents  : null;
+        const finalCents = (typeof o.final_price_cents === 'number') ? o.final_price_cents : baseCents;
+        let amountStr = '';
+        if (typeof finalCents === 'number'){
+          amountStr = '$' + (finalCents / 100).toFixed(2);
+        }
+
+        const smsFlag   = !!(o.sms_sent   || o.smsSent);
+        const emailFlag = !!(o.email_sent || o.emailSent);
+
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${created}</td>
+          <td>
+            <span class="chip-pack">
+              <span class="dot"></span>
+              <span>${o.pack_type || 'starter'}</span>
+            </span>
+          </td>
+          <td>
+            <span class="status-pill ${statusClass}">
+              ${statusLabel}
+            </span>
+          </td>
+          <td class="amount-col">${amountStr}</td>
+          <td class="expr">${exprHtml}</td>
+          <td>${o.email || ''}</td>
+          <td>${o.phone || ''}</td>
+          <td>${o.promo_code || ''}</td>
+          <td class="sms-cell">${renderTag(smsFlag)}</td>
+          <td class="email-cell">${renderTag(emailFlag)}</td>
+          <td>
+            <div style="display:flex;gap:4px;flex-wrap:wrap">
+              <button class="btn-ghost small"
+                data-action="order_received"
+                data-id="${o.id}">
+                Order received
+              </button>
+              <button class="btn-ghost small primary"
+                data-action="pack_ready"
+                data-id="${o.id}">
+                Pack ready
+              </button>
+            </div>
+          </td>
+          <td style="font-family:monospace;font-size:0.78rem;">${o.id}</td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      renderPagination();
+    }
+
+    function updateStatusSummary(orders){
+      if (!statusSummaryEl) return;
+
+      if (!orders || !orders.length){
+        statusSummaryEl.textContent = '';
+        return;
+      }
+
+      const counts = {
+        received: 0,
+        payment_pending: 0,
+        queued: 0,
+        in_progress: 0,
+        done: 0,
+        pack_ready: 0,
+        error: 0,
+      };
+
+      orders.forEach(o => {
+        const s = (o.status || 'received').toLowerCase();
+        if (counts.hasOwnProperty(s)) counts[s] += 1;
+      });
+
+      statusSummaryEl.innerHTML = `
+        <span class="status-pill status-new">Total (page): ${orders.length}</span>
+        ${counts.received ? `<span class="status-pill status-new">received: ${counts.received}</span>` : ''}
+        ${(counts.payment_pending || counts.queued) ? `<span class="status-pill status-queued">queued/pending: ${counts.payment_pending + counts.queued}</span>` : ''}
+        ${counts.in_progress ? `<span class="status-pill status-in_progress">in progress: ${counts.in_progress}</span>` : ''}
+        ${(counts.done || counts.pack_ready) ? `<span class="status-pill status-done">done/ready: ${counts.done + counts.pack_ready}</span>` : ''}
+        ${counts.error ? `<span class="status-pill status-error">error: ${counts.error}</span>` : ''}
+      `;
+    }
+
+    function applyFilters(){
+      let filtered = allOrders.slice();
+
+      const now = new Date();
+      filtered = filtered.filter(o => {
+        if (!o.created_at) return true;
+        const created = new Date(o.created_at);
+
+        if (currentRange === 'today'){
+          const todayStr   = now.toISOString().slice(0,10);
+          const createdStr = created.toISOString().slice(0,10);
+          if (createdStr !== todayStr) return false;
+        } else if (currentRange === '7d'){
+          const diffMs   = now - created;
+          const diffDays = diffMs / (1000 * 60 * 60 * 24);
+          if (diffDays > 7) return false;
+        }
+        return true;
+      });
+
+      if (currentStatus && currentStatus !== 'any'){
+        filtered = filtered.filter(o =>
+          (o.status || '').toLowerCase() === currentStatus
+        );
+      }
+
+      if (searchQuery){
+        const q = searchQuery;
+        filtered = filtered.filter(o => {
+          const email = (o.email || '').toLowerCase();
+          const promo = (o.promo_code || '').toLowerCase();
+          const id    = (o.id || '').toLowerCase();
+          const pack  = (o.pack_type || '').toLowerCase();
+          return (
+            email.includes(q) ||
+            promo.includes(q) ||
+            id.includes(q) ||
+            pack.includes(q)
+          );
+        });
+      }
+
+      renderOrders(filtered);
+      updateStatusSummary(filtered);
+    }
+
+    function setAutoRefresh(enabled){
+      if (autoRefreshTimer){
+        clearInterval(autoRefreshTimer);
+        autoRefreshTimer = null;
+      }
+      if (enabled){
+        autoRefreshTimer = setInterval(() => {
+          loadOrders(true);
+        }, 30000);
+      }
+    }
+
+    async function loadOrders(fromAuto = false){
+      const key = lastAdminKey || adminInput.value.trim();
+      if (!key){
+        if (!fromAuto){
+          setStatus('Please enter your admin passphrase.', 'err');
+        }
+        return;
+      }
+
+      if (!fromAuto){
+        setStatus('Loading orders…', '');
+      }
+      ordersCard.style.display = 'none';
+
+      const query = `?page=${encodeURIComponent(currentPage)}&limit=${encodeURIComponent(pageLimit)}`;
+
+      try {
+        const res = await fetch('/api/orders' + query, {
+          headers: { 'x-admin-key': key }
+        });
+
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok){
+          const msg = (data && data.error) || `Request failed (${res.status})`;
+          throw new Error(msg);
+        }
+
+        let ordersPayload;
+
+        if (Array.isArray(data)) {
+          ordersPayload = data;
+        } else if (data && Array.isArray(data.orders)) {
+          ordersPayload = data.orders;
+          if (typeof data.totalCount === 'number') {
+            totalCount = data.totalCount;
+          } else {
+            totalCount = ordersPayload.length;
           }
-        });
-
-        if(res.status === 401 || res.status === 403){
-          setLockedUI(true);
-          const text = await res.text();
-          console.error('[orders] Unauthorized', res.status, text);
-          showToast('Admin key rejected','error');
-          return;
+          if (typeof data.limit === 'number') {
+            pageLimit = data.limit;
+          }
+          if (typeof data.page === 'number') {
+            currentPage = data.page;
+          }
+        } else {
+          console.error('[admin] Unexpected /api/orders payload', data);
+          throw new Error('Unexpected response from orders API');
         }
 
-        if(!res.ok){
-          const text = await res.text();
-          console.error('[orders] Load failed', res.status, text);
-          tbody.innerHTML =
-            '<tr><td colspan="8" class="empty">Error loading orders ('+res.status+'). Check console.</td></tr>';
-          showToast('Failed to load orders ('+res.status+')','error');
-          return;
+        lastAdminKey = key;
+        allOrders = ordersPayload;
+
+        setStatus(
+          fromAuto ? 'Orders auto-refreshed.' : 'Access granted. Orders loaded.',
+          'ok'
+        );
+        ordersCard.style.display = 'block';
+        applyFilters();
+      } catch (err) {
+        console.error('loadOrders error', err);
+        if (!fromAuto){
+          setStatus(err.message || 'Failed to load orders.', 'err');
+          ordersCard.style.display = 'none';
         }
-
-        const json = await res.json();
-        const orders = json.orders || json.data || [];
-
-        if(!orders.length){
-          tbody.innerHTML =
-            '<tr><td colspan="8" class="empty">No orders yet.</td></tr>';
-          return;
-        }
-
-        tbody.innerHTML = '';
-        orders.forEach(order => {
-          const row = buildRow(order);
-          tbody.appendChild(row);
-        });
-      }catch(err){
-        console.error('[orders] Unexpected error', err);
-        tbody.innerHTML =
-          '<tr><td colspan="8" class="empty">Unexpected error loading orders. See console.</td></tr>';
-        showToast('Unexpected error loading orders','error');
       }
     }
 
     async function sendNotify(orderId, type, buttonEl){
-      if (!adminKey){
-        showToast('Enter admin key first','error');
+      if(!orderId || !type) return;
+
+      const key = lastAdminKey || adminInput.value.trim();
+      if(!key){
+        showToast('Enter admin passphrase first','error');
         return;
       }
-      if(!orderId || !type) return;
 
       const originalLabel = buttonEl.textContent;
       buttonEl.disabled = true;
@@ -527,18 +1132,10 @@
           method:'POST',
           headers:{
             'Content-Type':'application/json',
-            'x-admin-key': adminKey
+            'x-admin-key': key
           },
           body: JSON.stringify({ orderId, type })
         });
-
-        if(res.status === 401 || res.status === 403){
-          setLockedUI(true);
-          const text = await res.text();
-          console.error('[notify] Unauthorized', res.status, text);
-          showToast('Admin key rejected','error');
-          return;
-        }
 
         const text = await res.text();
         let json = {};
@@ -550,7 +1147,7 @@
         }else{
           const row = buttonEl.closest('tr');
           if(row && json){
-            const smsCell   = row.querySelector('.sms-cell');
+            const smsCell = row.querySelector('.sms-cell');
             const emailCell = row.querySelector('.email-cell');
             if(typeof json.smsSent === 'boolean' && smsCell){
               smsCell.innerHTML = renderTag(json.smsSent);
@@ -574,29 +1171,75 @@
     tbody.addEventListener('click', (evt) => {
       const btn = evt.target.closest('button[data-action]');
       if(!btn) return;
-      const type = btn.getAttribute('data-action') === 'pack_ready'
-        ? 'pack_ready'
-        : 'order_received';
+      const type = btn.getAttribute('data-action') === 'pack_ready' ? 'pack_ready' : 'order_received';
       const id = btn.getAttribute('data-id');
       if(!id) return;
       sendNotify(id, type, btn);
     });
 
-    refreshBtn.addEventListener('click', () => {
-      loadOrders();
+    // Load actions
+    loadBtn.addEventListener('click', () => {
+      currentPage = 1;
+      loadOrders(false);
+    });
+    adminInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        currentPage = 1;
+        loadOrders(false);
+      }
     });
 
-    unlockBtn.addEventListener('click', () => {
-      const key = window.prompt('Enter admin key (x-admin-key)');
-      if(!key) return;
-      adminKey = key.trim();
-      setLockedUI(false);
-      showToast('Admin key set','ok');
-      loadOrders();
+    if (prevPageBtn && nextPageBtn){
+      prevPageBtn.addEventListener('click', () => {
+        if (currentPage > 1){
+          currentPage -= 1;
+          loadOrders(false);
+        }
+      });
+      nextPageBtn.addEventListener('click', () => {
+        const totalPages = pageLimit > 0 ? Math.ceil(totalCount / pageLimit) : 1;
+        if (currentPage < totalPages){
+          currentPage += 1;
+          loadOrders(false);
+        }
+      });
+    }
+
+    rangeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        rangeButtons.forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        currentRange = btn.dataset.range || 'all';
+        applyFilters();
+      });
     });
 
-    // Start in locked state
-    setLockedUI(true);
+    if (statusSelect){
+      statusSelect.addEventListener('change', () => {
+        currentStatus = statusSelect.value || 'any';
+        applyFilters();
+      });
+    }
+
+    if (searchInput){
+      searchInput.addEventListener('input', () => {
+        searchQuery = searchInput.value.trim().toLowerCase();
+        applyFilters();
+      });
+    }
+
+    if (autoRefreshToggle){
+      autoRefreshToggle.addEventListener('change', () => {
+        setAutoRefresh(autoRefreshToggle.checked);
+      });
+    }
+
+    if (menuToggle && adminNav){
+      menuToggle.addEventListener('click', () => {
+        const isOpen = adminNav.classList.toggle('is-open');
+        menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+    }
   </script>
 </body>
 </html>
