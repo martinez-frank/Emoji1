@@ -6,11 +6,11 @@
     { "src": "api/orders.js", "use": "@vercel/node" },
     { "src": "api/create-checkout-session.js", "use": "@vercel/node" },
     { "src": "api/stripe-webhook.js", "use": "@vercel/node" },
+    { "src": "api/notify.js", "use": "@vercel/node" },
 
     { "src": "*.html", "use": "@vercel/static" },
     { "src": "images/**", "use": "@vercel/static" }
   ],
-
   "routes": [
     { "src": "/api/upload", "dest": "/api/upload.js" },
     { "src": "/api/upload/.*", "dest": "/api/upload.js" },
@@ -23,6 +23,8 @@
 
     { "src": "/api/create-checkout-session$", "dest": "/api/create-checkout-session.js" },
     { "src": "/api/stripe-webhook$", "dest": "/api/stripe-webhook.js" },
+
+    { "src": "/api/notify$", "dest": "/api/notify.js" },
 
     { "src": "/images/(.*)$", "dest": "/images/$1" },
 
