@@ -1,4 +1,5 @@
 <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -16,11 +17,18 @@
     *{box-sizing:border-box;}
     body{
       margin:0;
+      /* Slightly darker, warm holiday gradient */
       background:
+        radial-gradient(circle at 50% 0,
+          #f0d39a 0%,
+          #f5e1b8 32%,
+          rgba(245,229,196,0.9) 55%,
+          transparent 75%
+        ),
         linear-gradient(to bottom,
-          rgba(255,255,255,0.7) 0%,
-          rgba(250,243,224,0.9) 32%,
-          var(--cream) 70%,
+          #f0d4a0 0%,
+          #f3dfb8 40%,
+          #f6ebd2 75%,
           var(--cream) 100%
         );
       color:var(--espresso);
@@ -31,6 +39,47 @@
       position:relative;
       overflow-x:hidden;
     }
+
+    /* ORNAMENT FRAME (soft baubles) — only above fold */
+    .ornaments-wrap{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      height:75vh;
+      pointer-events:none;
+      z-index:0;
+    }
+    .ornament{
+      position:absolute;
+      border-radius:50%;
+      opacity:0.55;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.95) 0%, rgba(255,248,230,0.85) 18%, transparent 55%),
+        radial-gradient(circle at 50% 70%, rgba(228,166,72,0.8) 0%, rgba(196,132,54,0.25) 35%, transparent 70%);
+      box-shadow:0 12px 26px rgba(44,36,25,0.18);
+      filter:blur(0.2px);
+    }
+    .ornament::before{
+      /* tiny string */
+      content:"";
+      position:absolute;
+      top:-16px;
+      left:50%;
+      transform:translateX(-50%);
+      width:2px;
+      height:18px;
+      background:linear-gradient(to bottom, rgba(44,36,25,0.3), rgba(44,36,25,0.05));
+      border-radius:999px;
+    }
+
+    /* positions / sizes for frame */
+    .ornament--tl-large{ top:6vh;  left:9vw;  width:78px; height:78px; }
+    .ornament--tl-small{ top:19vh; left:4vw;  width:52px; height:52px; opacity:0.42; }
+    .ornament--tr-large{ top:9vh;  right:10vw; width:80px; height:80px; }
+    .ornament--tr-small{ top:24vh; right:5vw; width:54px; height:54px; opacity:0.4; }
+    .ornament--bl-small{ top:35vh; left:14vw; width:48px; height:48px; opacity:0.38; }
+    .ornament--br-small{ top:38vh; right:15vw;width:50px; height:50px; opacity:0.38; }
 
     /* SNOW + STARS WRAP (only above the fold) */
     .snow-wrap{
@@ -60,7 +109,7 @@
     .snow{
       background:rgba(255,255,255,0.9);
       box-shadow:0 0 8px rgba(255,255,255,0.7);
-      opacity:0.85;
+      opacity:0.9;
       animation:snowfallDrift linear infinite;
       filter:blur(0.8px);
     }
@@ -70,7 +119,7 @@
       width:3px;
       height:3px;
       background:transparent;
-      box-shadow:0 0 7px rgba(255,255,255,0.9);
+      box-shadow:0 0 7px rgba(255,255,255,0.95);
       opacity:0;
       animation:twinkle 4.5s ease-in-out infinite;
       filter:blur(0.3px);
@@ -78,16 +127,16 @@
 
     /* depth layers */
     .snow-layer.back .snow{
-      width:4px;
-      height:4px;
-      opacity:0.45;
-      filter:blur(1.2px);
+      width:5px;
+      height:5px;
+      opacity:0.55;
+      filter:blur(1.4px);
       animation-duration:28s;
     }
     .snow-layer.front .snow{
-      width:7px;
-      height:7px;
-      opacity:0.9;
+      width:8px;
+      height:8px;
+      opacity:0.92;
       filter:blur(0.9px);
       animation-duration:18s;
     }
@@ -98,21 +147,21 @@
         transform:translate3d(0,-24px,0);
       }
       50%{
-        transform:translate3d(12px,45vh,0);
+        transform:translate3d(14px,46vh,0);
       }
       100%{
-        transform:translate3d(-6px,100vh,0);
+        transform:translate3d(-8px,100vh,0);
       }
     }
 
     /* twinkle pulse */
     @keyframes twinkle{
       0%,100%{ opacity:0; transform:scale(0.9); }
-      30%{ opacity:0.9; transform:scale(1.15); }
-      55%{ opacity:0.35; }
+      30%{ opacity:1; transform:scale(1.18); }
+      55%{ opacity:0.4; }
     }
 
-    /* individual positions & timings (back layer) */
+    /* individual positions & timings (back layer snow) */
     .snow-layer.back .snow:nth-child(1){ left:4%;  animation-delay:-2s;}
     .snow-layer.back .snow:nth-child(2){ left:14%; animation-delay:-9s;}
     .snow-layer.back .snow:nth-child(3){ left:24%; animation-delay:-5s;}
@@ -124,7 +173,7 @@
     .snow-layer.back .snow:nth-child(9){ left:88%; animation-delay:-6s;}
     .snow-layer.back .snow:nth-child(10){left:96%; animation-delay:-14s;}
 
-    /* front layer */
+    /* front layer snow */
     .snow-layer.front .snow:nth-child(1){ left:10%; animation-delay:-3s;}
     .snow-layer.front .snow:nth-child(2){ left:20%; animation-delay:-8s;}
     .snow-layer.front .snow:nth-child(3){ left:32%; animation-delay:-12s;}
@@ -171,7 +220,7 @@
       width:100%;
       text-align:center;
       padding:2rem 2.4rem 2.1rem;
-      box-shadow:0 22px 60px rgba(44,36,25,.08);
+      box-shadow:0 22px 60px rgba(44,36,25,.12);
     }
     .pill{
       display:inline-block;
@@ -268,8 +317,8 @@
       transform:translate(-50%, -50%);
       width:270px; height:270px;
       background:
-        radial-gradient(circle at 50% 35%, rgba(255,255,255,0.85) 0%, transparent 52%),
-        radial-gradient(circle, rgba(250,243,224,0.6) 0%, transparent 70%);
+        radial-gradient(circle at 50% 35%, rgba(255,255,255,0.9) 0%, transparent 52%),
+        radial-gradient(circle, rgba(250,243,224,0.7) 0%, transparent 70%);
       z-index:-1;
     }
     .secret-logo img{
@@ -351,10 +400,22 @@
       h1{font-size:2.05rem;}
       .subtitle{margin-bottom:1.1rem;}
       .secret-logo::before{width:210px; height:210px;}
+      .ornament--tl-large{ left:4vw;}
+      .ornament--tr-large{ right:4vw;}
     }
   </style>
 </head>
 <body>
+
+  <!-- ORNAMENT FRAME -->
+  <div class="ornaments-wrap">
+    <div class="ornament ornament--tl-large"></div>
+    <div class="ornament ornament--tl-small"></div>
+    <div class="ornament ornament--tr-large"></div>
+    <div class="ornament ornament--tr-small"></div>
+    <div class="ornament ornament--bl-small"></div>
+    <div class="ornament ornament--br-small"></div>
+  </div>
 
   <!-- SNOW + STARS (two depth layers, above the fold) -->
   <div class="snow-wrap">
@@ -496,16 +557,18 @@
       });
     }
 
-    // === Parallax for snow wrap ===
+    // === Parallax for snow + ornaments ===
     const snowWrap = document.querySelector(".snow-wrap");
-    if (snowWrap) {
-      window.addEventListener("scroll", () => {
-        const y = window.scrollY || window.pageYOffset || 0;
-        const maxShift = 22; // px
-        const offset = Math.max(-maxShift, Math.min(maxShift, y * -0.2));
-        snowWrap.style.transform = `translateY(${offset}px)`;
-      });
+    const ornamentsWrap = document.querySelector(".ornaments-wrap");
+    function handleScroll(){
+      const y = window.scrollY || window.pageYOffset || 0;
+      const maxShift = 22; // px
+      const snowOffset = Math.max(-maxShift, Math.min(maxShift, y * -0.2));
+      const ornamentOffset = Math.max(-maxShift, Math.min(maxShift, y * -0.1));
+      if (snowWrap) snowWrap.style.transform = `translateY(${snowOffset}px)`;
+      if (ornamentsWrap) ornamentsWrap.style.transform = `translateY(${ornamentOffset}px)`;
     }
+    window.addEventListener("scroll", handleScroll);
 
     // === modal gate (secret preview) ===
     const SECRET_CODE = "frankiemoji2025";
