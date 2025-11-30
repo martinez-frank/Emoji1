@@ -1,33 +1,26 @@
 // /api/notify.js
-// Send SMS + Email notifications for Frankiemoji orders (admin-only)
+// Holiday waitlist: capture emails from the splash page
+// and send a confirmation via Resend.
 
 import { createClient } from '@supabase/supabase-js';
-import twilio from 'twilio';
 import { Resend } from 'resend';
 
 // ---------- Env ----------
 
-const supabaseUrl   = process.env.SUPABASE_URL;
-const supabaseKey   = process.env.SUPABASE_SERVICE_ROLE;
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE; // server-side key
 
-const adminKey      = process.env.ADMIN_ORDERS_KEY || '';
+const resendKey  = process.env.RESEND_API_KEY;
+const resendFrom = process.env.RESEND_FROM_EMAIL || 'orders@frankiemoji.com';
 
-const twilioSid     = process.env.TWILIO_ACCOUNT_SID;
-const twilioToken   = process.env.TWILIO_AUTH_TOKEN;
-const twilioFrom    = process.env.TWILIO_FROM_NUMBER; // e.g. +1980...
+// Optional: where the frontend is hosted (for CORS)
+const FRONTEND_ORIGIN =
+  process.env.FRONTEND_BASE_URL || 'https://www.frankiemoji.com';
 
-const resendKey     = process.env.RESEND_API_KEY;
-const resendFrom    = process.env.RESEND_FROM_EMAIL || 'orders@frankiemoji.com';
-
-// Create clients lazily but **don’t** throw at import time
+// Create clients lazily so missing envs don’t crash import
 const supabase =
   supabaseUrl && supabaseKey
     ? createClient(supabaseUrl, supabaseKey)
-    : null;
-
-const twilioClient =
-  twilioSid && twilioToken
-    ? twilio(twilioSid, twilioToken)
     : null;
 
 const resendClient =
@@ -38,114 +31,59 @@ const resendClient =
 // ---------- Helpers ----------
 
 function setCorsHeaders(res) {
-  // Lock to your domain to be safe
-  const origin = process.env.FRONTEND_BASE_URL || 'https://www.frankiemoji.com';
-  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Access-Control-Allow-Origin', FRONTEND_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'Content-Type, x-admin-key, x-admin-orders-key'
+    'Content-Type'
   );
 }
 
-function unauthorized(res) {
-  res.statusCode = 401;
+function sendJson(res, status, payload) {
+  res.statusCode = status;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ ok: false, error: 'Unauthorized' }));
+  res.end(JSON.stringify(payload));
 }
 
 function badRequest(res, message) {
-  res.statusCode = 400;
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ ok: false, error: message }));
+  return sendJson(res, 400, { ok: false, error: message });
 }
 
 function serverError(res, message) {
-  res.statusCode = 500;
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ ok: false, error: message }));
+  return sendJson(res, 500, { ok: false, error: message });
 }
 
-// Build copy for different notification types
-function buildMessages(type, order) {
-  const packLabel = order.pack_type || order.packType || 'emoji pack';
-  const exprCount = Array.isArray(order.expressions)
-    ? order.expressions.length
-    : null;
-
-  if (type === 'pack_ready') {
-    const subject = 'Your Frankiemoji pack is ready 🎨';
-    const text = [
-      `Your ${packLabel} is ready!`,
-      exprCount ? `We’ve finished ${exprCount} custom expressions.` : '',
-      order.download_url
-        ? `Download it here: ${order.download_url}`
-        : 'We’ll send your download link shortly.'
-    ]
-      .filter(Boolean)
-      .join('\n\n');
-
-    return { subject, text };
-  }
-
-  // default: order_received
-  const subject = 'We received your Frankiemoji order ✨';
-  const text = [
-    `Thanks for your order!`,
-    `You’re getting a ${packLabel} from Frankiemoji.`,
-    exprCount ? `You chose ${exprCount} expressions.` : '',
-    'We’ll let you know as soon as your pack is ready.'
-  ]
-    .filter(Boolean)
-    .join('\n\n');
-
-  return { subject, text };
+function isValidEmail(email) {
+  if (!email) return false;
+  const value = String(email).trim();
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(value);
 }
 
 // ---------- Handler ----------
 
 export default async function handler(req, res) {
-  // CORS + method logging
   setCorsHeaders(res);
   console.log('[notify] Incoming request', {
     method: req.method,
     url: req.url,
   });
 
-  // Handle preflight cleanly
+  // CORS preflight
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;
     res.end('OK');
     return;
   }
 
-  // Only allow POST for actual work
   if (req.method !== 'POST') {
-    res.statusCode = 405;
     res.setHeader('Allow', 'POST,OPTIONS');
+    res.statusCode = 405;
     res.end('Method Not Allowed');
     return;
   }
 
-  // Env guard (inside handler so it doesn’t break import)
-  if (!supabase) {
-    console.error('[notify] Supabase env vars missing');
-    return serverError(res, 'Server not configured');
-  }
-
-  // Admin key check (header or query)
-  const incomingKey =
-    req.headers['x-admin-key'] ||
-    req.headers['x-admin-orders-key'] ||
-    req.query?.adminKey ||
-    req.query?.key;
-
-  if (!adminKey || !incomingKey || incomingKey !== adminKey) {
-    console.warn('[notify] Invalid admin key', { incomingKey });
-    return unauthorized(res);
-  }
-
-  // Parse body
+  // Parse body (Next.js usually gives an object already)
   let body = {};
   try {
     body =
@@ -153,85 +91,94 @@ export default async function handler(req, res) {
         ? JSON.parse(req.body)
         : req.body || {};
   } catch (err) {
-    console.error('[notify] Failed to parse JSON body', err);
+    console.error('[notify] JSON parse error', err);
     return badRequest(res, 'Invalid JSON body');
   }
 
-  const { orderId, type = 'pack_ready' } = body;
+  const { email, tag = 'holiday_splash' } = body;
 
-  if (!orderId) {
-    return badRequest(res, 'Missing orderId');
+  if (!isValidEmail(email)) {
+    console.warn('[notify] Invalid email', email);
+    return badRequest(res, 'Invalid email');
   }
 
-  console.log('[notify] Starting notification', { orderId, type });
+  const trimmedEmail = String(email).trim().toLowerCase();
+  const ua = req.headers['user-agent'] || null;
+  const referer =
+    req.headers['referer'] ||
+    req.headers['referrer'] ||
+    null;
+
+  console.log('[notify] Capturing email', { email: trimmedEmail, tag });
 
   try {
-    // ----- Fetch order from DB -----
-    const { data: order, error } = await supabase
-      .from('emoji_orders')
-      .select('*')
-      .eq('id', orderId)
-      .single();
+    // ----- Store in Supabase (optional but recommended) -----
+    if (supabase) {
+      // Make sure you have a table similar to:
+      // create table notify_waitlist (
+      //   id uuid primary key default gen_random_uuid(),
+      //   email text unique not null,
+      //   tag text,
+      //   user_agent text,
+      //   referer text,
+      //   created_at timestamptz default now()
+      // );
+      const { error } = await supabase
+        .from('notify_waitlist')
+        .upsert(
+          {
+            email: trimmedEmail,
+            tag,
+            user_agent: ua,
+            referer,
+          },
+          { onConflict: 'email' }
+        );
 
-    if (error || !order) {
-      console.error('[notify] Order fetch error', error);
-      return serverError(res, 'Order not found');
+      if (error) {
+        console.error('[notify] Supabase upsert error', error);
+        // We’ll still try to send the email, but log the failure.
+      }
+    } else {
+      console.warn('[notify] Supabase not configured — skipping DB write');
     }
 
-    const { subject, text } = buildMessages(type, order);
-
-    let emailSent = false;
-    let smsSent = false;
-
-    // ----- Send email (Resend) -----
-    if (resendClient && order.email) {
+    // ----- Send confirmation email via Resend -----
+    if (resendClient) {
       try {
         await resendClient.emails.send({
           from: resendFrom,
-          to: order.email,
-          subject,
-          text
+          to: trimmedEmail,
+          subject: 'You’re on the Frankiemoji holiday list 🎄',
+          text: [
+            'Thanks for joining the Frankiemoji holiday preview list!',
+            '',
+            'You’re in the first wave to hear when the studio opens,',
+            'so you can turn your favorite expressions into custom emojis',
+            'for you, your friends, and your family.',
+            '',
+            'We’ll be in touch soon ✨',
+            '',
+            '— Frankiemoji Studio'
+          ].join('\n')
         });
-        emailSent = true;
-        console.log('[notify] Email sent to', order.email);
+        console.log('[notify] Confirmation email sent to', trimmedEmail);
       } catch (err) {
-        console.error('[notify] Error sending email', err);
+        console.error('[notify] Error sending Resend email', err);
+        // Don’t hard-fail user if email provider hiccups
       }
     } else {
-      console.warn('[notify] Email not sent — missing client or recipient');
+      console.warn('[notify] Resend not configured — skipping email send');
     }
 
-    // ----- Send SMS (Twilio) -----
-    if (twilioClient && twilioFrom && order.phone) {
-      try {
-        await twilioClient.messages.create({
-          from: twilioFrom,
-          to: order.phone,
-          body: text
-        });
-        smsSent = true;
-        console.log('[notify] SMS sent to', order.phone);
-      } catch (err) {
-        console.error('[notify] Error sending SMS', err);
-      }
-    } else {
-      console.warn('[notify] SMS not sent — missing client/from/phone');
-    }
-
-    // ----- Respond -----
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(
-      JSON.stringify({
-        ok: true,
-        orderId,
-        type,
-        emailSent,
-        smsSent
-      })
-    );
+    // ----- Success response -----
+    return sendJson(res, 200, {
+      ok: true,
+      email: trimmedEmail,
+      source: tag
+    });
   } catch (err) {
-    console.error('[notify] Unexpected error', err);
+    console.error('[notify] Unexpected server error', err);
     return serverError(res, 'Unexpected server error');
   }
 }
