@@ -67,8 +67,8 @@
     .ornament{
       position:absolute;
       border-radius:50%;
-      opacity:0.60;
-      box-shadow:0 12px 26px rgba(44,36,25,0.18);
+      opacity:0.9;
+      box-shadow:0 14px 30px rgba(44,36,25,0.28);
       filter:blur(0.15px);
     }
     .ornament::before{
@@ -80,41 +80,48 @@
       transform:translateX(-50%);
       width:2px;
       height:18px;
-      background:linear-gradient(to bottom, rgba(44,36,25,0.32), rgba(44,36,25,0.05));
+      background:linear-gradient(to bottom, rgba(44,36,25,0.38), rgba(44,36,25,0.08));
       border-radius:999px;
     }
-    /* color variants */
+    /* color variants (stronger tones) */
     .ornament--gold{
       background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.95) 0%, rgba(255,248,230,0.9) 20%, transparent 56%),
-        radial-gradient(circle at 50% 75%, rgba(228,166,72,0.85) 0%, rgba(196,132,54,0.3) 36%, transparent 72%);
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.98) 0%, rgba(255,248,230,0.95) 20%, transparent 56%),
+        radial-gradient(circle at 50% 75%, rgba(235,176,82,0.98) 0%, rgba(187,121,37,0.55) 38%, transparent 72%);
     }
     .ornament--red{
       background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.9) 0%, rgba(255,239,234,0.9) 20%, transparent 56%),
-        radial-gradient(circle at 50% 75%, rgba(206,74,74,0.88) 0%, rgba(153,35,51,0.35) 36%, transparent 72%);
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.98) 0%, rgba(255,239,234,0.95) 20%, transparent 56%),
+        radial-gradient(circle at 50% 75%, rgba(214,68,68,0.98) 0%, rgba(153,35,51,0.6) 38%, transparent 72%);
     }
     .ornament--green{
       background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.9) 0%, rgba(233,249,238,0.9) 20%, transparent 56%),
-        radial-gradient(circle at 50% 75%, rgba(32,129,92,0.9) 0%, rgba(14,80,60,0.4) 36%, transparent 72%);
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.98) 0%, rgba(233,249,238,0.95) 20%, transparent 56%),
+        radial-gradient(circle at 50% 75%, rgba(35,141,98,0.98) 0%, rgba(12,86,61,0.6) 38%, transparent 72%);
     }
 
     /* positions / sizes for frame */
-    .orn-pos-1 { top:6vh;  left:7vw;  width:82px; height:82px; }
-    .orn-pos-2 { top:20vh; left:3vw;  width:52px; height:52px; opacity:0.45; }
-    .orn-pos-3 { top:10vh; right:8vw; width:86px; height:86px; }
-    .orn-pos-4 { top:23vh; right:4vw; width:54px; height:54px; opacity:0.45; }
-    .orn-pos-5 { top:32vh; left:14vw; width:46px; height:46px; opacity:0.4; }
-    .orn-pos-6 { top:35vh; right:16vw;width:50px; height:50px; opacity:0.42; }
-    .orn-pos-7 { top:14vh; left:22vw; width:40px; height:40px; opacity:0.5; }
-    .orn-pos-8 { top:16vh; right:23vw;width:44px; height:44px; opacity:0.5; }
-    .orn-pos-9 { top:5vh;  left:34vw; width:38px; height:38px; opacity:0.46; }
-    .orn-pos-10{ top:7vh;  right:34vw;width:42px; height:42px; opacity:0.46; }
-    .orn-pos-11{ top:28vh; left:28vw;width:36px; height:36px; opacity:0.52; }
-    .orn-pos-12{ top:27vh; right:28vw;width:36px; height:36px; opacity:0.52; }
-    .orn-pos-13{ top:40vh; left:6vw; width:40px; height:40px; opacity:0.38; }
-    .orn-pos-14{ top:42vh; right:7vw;width:42px; height:42px; opacity:0.38; }
+    .orn-pos-1 { top:6vh;  left:7vw;  width:86px; height:86px; }
+    .orn-pos-2 { top:22vh; left:3vw;  width:60px; height:60px; opacity:0.8; }
+    .orn-pos-3 { top:10vh; right:8vw; width:90px; height:90px; }
+    .orn-pos-4 { top:23vh; right:4vw; width:60px; height:60px; opacity:0.8; }
+    .orn-pos-5 { top:32vh; left:14vw; width:52px; height:52px; opacity:0.82; }
+    .orn-pos-6 { top:35vh; right:16vw;width:56px; height:56px; opacity:0.82; }
+    .orn-pos-7 { top:14vh; left:22vw; width:46px; height:46px; opacity:0.88; }
+    .orn-pos-8 { top:16vh; right:23vw;width:50px; height:50px; opacity:0.88; }
+    .orn-pos-9 { top:5vh;  left:34vw; width:44px; height:44px; opacity:0.9; }
+    .orn-pos-10{ top:7vh;  right:34vw;width:46px; height:46px; opacity:0.9; }
+    .orn-pos-11{ top:28vh; left:28vw;width:42px; height:42px; opacity:0.9; }
+    .orn-pos-12{ top:27vh; right:28vw;width:42px; height:42px; opacity:0.9; }
+    .orn-pos-13{ top:40vh; left:6vw; width:48px; height:48px; opacity:0.8; }
+    .orn-pos-14{ top:42vh; right:7vw;width:50px; height:50px; opacity:0.8; }
+    /* extra ornaments for richer frame */
+    .orn-pos-15{ top:18vh; left:10vw; width:40px; height:40px; opacity:0.92; }
+    .orn-pos-16{ top:18vh; right:11vw;width:40px; height:40px; opacity:0.92; }
+    .orn-pos-17{ top:30vh; left:20vw;width:36px; height:36px; opacity:0.94; }
+    .orn-pos-18{ top:30vh; right:21vw;width:36px; height:36px; opacity:0.94; }
+    .orn-pos-19{ top:10vh; left:18vw;width:34px; height:34px; opacity:0.96; }
+    .orn-pos-20{ top:10vh; right:19vw;width:34px; height:34px; opacity:0.96; }
 
     /* SNOW + STARS WRAP (only above the fold) */
     .snow-wrap{
@@ -239,14 +246,11 @@
       align-items:center;
       justify-content:center;
       padding:1.6rem 1.2rem 1.6rem;
-      animation:fadeIn 1.4s ease;
       position:relative;
       z-index:1;
     }
-    @keyframes fadeIn{
-      from{opacity:0; transform:translateY(12px);}
-      to{opacity:1; transform:none;}
-    }
+
+    /* delayed storefront-style entrance for the card */
     .card{
       background:var(--paper);
       border:1px solid rgba(44,36,25,.04);
@@ -256,7 +260,26 @@
       text-align:center;
       padding:2rem 2.4rem 2.1rem;
       box-shadow:0 22px 60px rgba(44,36,25,.12);
+      opacity:0;
+      transform:translateY(18px) scale(0.985);
+      animation:cardIn 0.9s ease forwards;
+      animation-delay:0.9s; /* delay so snow/ornaments greet first */
     }
+    @keyframes cardIn{
+      0%{
+        opacity:0;
+        transform:translateY(18px) scale(0.985);
+      }
+      60%{
+        opacity:1;
+        transform:translateY(-4px) scale(1);
+      }
+      100%{
+        opacity:1;
+        transform:translateY(0) scale(1);
+      }
+    }
+
     .pill{
       display:inline-block;
       background:#FAF3E0;
@@ -400,7 +423,7 @@
       width:92%;
       max-width:340px;
       text-align:left;
-      box-shadow:0 18px 50px rgba(44,36,25,.12);
+      box-shadow:0 18px 50px rgba(44,36,25,0.12);
     }
     .access-box h2{margin:0 0 .4rem;font-size:1.25rem;}
     .access-box p{margin:0 0 .7rem;font-size:.8rem;color:rgba(44,36,25,.6);}
@@ -463,6 +486,12 @@
     <div class="ornament ornament--red   orn-pos-12"></div>
     <div class="ornament ornament--green orn-pos-13"></div>
     <div class="ornament ornament--gold  orn-pos-14"></div>
+    <div class="ornament ornament--red   orn-pos-15"></div>
+    <div class="ornament ornament--green orn-pos-16"></div>
+    <div class="ornament ornament--gold  orn-pos-17"></div>
+    <div class="ornament ornament--red   orn-pos-18"></div>
+    <div class="ornament ornament--green orn-pos-19"></div>
+    <div class="ornament ornament--gold  orn-pos-20"></div>
   </div>
 
   <!-- SNOW + STARS (two depth layers, above the fold) -->
@@ -512,10 +541,10 @@
 
       <p class="subtitle">
         We’re warming up the Frankiemoji studio for the holidays —<br />
-        Hand Drawn inspired custom emojis for you, your friends, and your family.
+        Hand-drawn inspired custom emojis for you, your friends, and your family.
       </p>
 
-      <p class="go-live">Our Holiday expressions are on the way.</p>
+      <p class="go-live">Our holiday expressions are on the way.</p>
       <p class="holiday-line">Join the early access list and be the first to know when we open.</p>
 
       <!-- email notify form -->
