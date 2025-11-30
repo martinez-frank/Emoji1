@@ -16,13 +16,60 @@
     *{box-sizing:border-box;}
     body{
       margin:0;
-      background:var(--cream);
+      background:
+        linear-gradient(to bottom,
+          rgba(255,255,255,0.65) 0%,
+          rgba(250,243,224,0.9) 32%,
+          var(--cream) 70%,
+          var(--cream) 100%
+        );
       color:var(--espresso);
       font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       min-height:100vh;
       display:flex;
       flex-direction:column;
+      position:relative;
+      overflow-x:hidden;
     }
+
+    /* subtle snow layer */
+    .snow-layer{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:0;
+    }
+    .snowflake{
+      position:absolute;
+      top:-10px;
+      width:4px;
+      height:4px;
+      background:rgba(255,255,255,0.9);
+      border-radius:50%;
+      opacity:0.75;
+      filter:blur(0.2px);
+      animation:snowfall 14s linear infinite;
+    }
+    @keyframes snowfall{
+      0%{
+        transform:translate3d(0,-10px,0);
+      }
+      100%{
+        transform:translate3d(0,110vh,0);
+      }
+    }
+    .snowflake:nth-child(1){left:8%;  animation-duration:16s; animation-delay:-2s;}
+    .snowflake:nth-child(2){left:22%; animation-duration:18s; animation-delay:-5s;}
+    .snowflake:nth-child(3){left:37%; animation-duration:15s; animation-delay:-8s;}
+    .snowflake:nth-child(4){left:49%; animation-duration:19s; animation-delay:-3s;}
+    .snowflake:nth-child(5){left:61%; animation-duration:17s; animation-delay:-10s;}
+    .snowflake:nth-child(6){left:73%; animation-duration:20s; animation-delay:-6s;}
+    .snowflake:nth-child(7){left:82%; animation-duration:16s; animation-delay:-12s;}
+    .snowflake:nth-child(8){left:29%; animation-duration:21s; animation-delay:-9s;}
+    .snowflake:nth-child(9){left:55%; animation-duration:18s; animation-delay:-14s;}
+    .snowflake:nth-child(10){left:90%; animation-duration:19s; animation-delay:-4s;}
+
     main{
       flex:1;
       display:flex;
@@ -30,6 +77,8 @@
       justify-content:center;
       padding:1.6rem 1.2rem 1.6rem;
       animation:fadeIn 1.4s ease;
+      position:relative;
+      z-index:1;
     }
     @keyframes fadeIn{
       from{opacity:0; transform:translateY(12px);}
@@ -68,68 +117,67 @@
       line-height:1.45;
     }
 
-    /* countdown grid (tightened) */
-    .countdown{
-      display:grid;
-      grid-template-columns:repeat(2, 1fr);
-      gap:0.65rem;
-      justify-items:center;
-      margin-bottom:1.1rem;
-    }
-    .timebox{
-      background:#fff;
-      border:1px solid rgba(44,36,25,.03);
-      border-radius:1.35rem;
-      width:132px;
-      padding:1.02rem .2rem 1.02rem;
-      transition:transform .2s ease, box-shadow .2s ease;
-    }
-    .timebox:hover{
-      transform:translateY(-2px);
-      box-shadow:0 4px 12px rgba(44,36,25,.08);
-    }
-    /* tick pulse (we'll add/remove .pulse in JS) */
-    @keyframes pulse {
-      0% { transform:scale(1); box-shadow:0 0 0 rgba(44,36,25,0); }
-      40% { transform:scale(1.03); box-shadow:0 0 12px rgba(44,36,25,.08); }
-      100% { transform:scale(1); box-shadow:0 0 0 rgba(44,36,25,0); }
-    }
-    .pulse{
-      animation:pulse 0.9s ease;
-    }
-
-    .timevalue{
-      font-size:2.47rem;
-      font-weight:700;
-      line-height:1;
-      color:var(--espresso);
-    }
-    .timelabel{
-      font-size:.63rem;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-      margin-top:.45rem;
-      opacity:.6;
-    }
-
     .go-live{
       font-size:.82rem;
-      color:rgba(44,36,25,.55);
-      margin-bottom:0.25rem;
+      color:rgba(44,36,25,.75);
+      margin-bottom:0.1rem;
+      font-weight:600;
     }
-    .black-friday{
-      font-size:.95rem;
-      color:#000;
-      margin-bottom:1.3rem;
-      font-weight:700;
-      letter-spacing:0.05em;
-      text-transform:uppercase;
+    .holiday-line{
+      font-size:.85rem;
+      color:rgba(44,36,25,.6);
+      margin-bottom:1.1rem;
+      letter-spacing:0;
+      text-transform:none;
+    }
+
+    .email-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.5rem;
+      justify-content:center;
+      margin-bottom:0.8rem;
+    }
+    .email-input{
+      min-width:0;
+      flex:1 1 180px;
+      max-width:260px;
+      padding:0.55rem 0.7rem;
+      border-radius:999px;
+      border:1px solid rgba(44,36,25,.18);
+      font-size:.8rem;
+    }
+
+    .cta{
+      display:inline-block;
+      background:#2C2419;
+      color:#fff;
+      border:none;
+      padding:0.65rem 1.6rem;
+      border-radius:999px;
+      font-weight:600;
+      font-size:.8rem;
+      cursor:pointer;
+      box-shadow:0 10px 26px rgba(44,36,25,.18);
+      transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .cta:hover{
+      transform:translateY(-1px);
+      background:#1f1912;
+      box-shadow:0 12px 30px rgba(44,36,25,.22);
+    }
+
+    #notify-message{
+      font-size:.75rem;
+      color:rgba(44,36,25,.6);
+      min-height:1.1em;
+      margin-bottom:0.5rem;
     }
 
     /* logo trigger */
     .secret-logo{
       text-align:center;
-      margin-top:0;
+      margin-top:1.2rem;
       margin-bottom:.4rem;
       cursor:pointer;
       position:relative;
@@ -140,7 +188,9 @@
       top:50%; left:50%;
       transform:translate(-50%, -50%);
       width:270px; height:270px;
-      background:radial-gradient(circle, rgba(250,243,224,0.6) 0%, transparent 70%);
+      background:
+        radial-gradient(circle at 50% 35%, rgba(255,255,255,0.85) 0%, transparent 52%),
+        radial-gradient(circle, rgba(250,243,224,0.6) 0%, transparent 70%);
       z-index:-1;
     }
     .secret-logo img{
@@ -160,6 +210,8 @@
       padding:1.2rem 1rem 1.5rem;
       font-size:.72rem;
       color:rgba(44,36,25,.45);
+      position:relative;
+      z-index:1;
     }
 
     /* modal */
@@ -219,32 +271,55 @@
       .card{padding:1.6rem 1rem 1.6rem;}
       h1{font-size:2.05rem;}
       .subtitle{margin-bottom:1.1rem;}
-      .timebox{width:120px;}
-      .timevalue{font-size:2.25rem;}
-      .black-friday{margin-bottom:1.1rem;}
       .secret-logo::before{width:210px; height:210px;}
     }
   </style>
 </head>
 <body>
 
+  <!-- subtle snow background -->
+  <div class="snow-layer">
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+  </div>
+
   <main>
     <div class="card">
-      <div class="pill">Launch Countdown</div>
-      <h1>A World of Expressions.</h1>
-      <p class="subtitle">We’re opening the emoji studio very soon.</p>
+      <div class="pill">Holiday Preview</div>
+      <h1>A Season of Expressions.</h1>
 
-      <div class="countdown" id="countdown">
-        <div class="timebox"><div class="timevalue" id="days">00</div><div class="timelabel">days</div></div>
-        <div class="timebox"><div class="timevalue" id="hours">00</div><div class="timelabel">hrs</div></div>
-        <div class="timebox"><div class="timevalue" id="minutes">00</div><div class="timelabel">mins</div></div>
-        <div class="timebox"><div class="timevalue" id="seconds">00</div><div class="timelabel">secs</div></div>
+      <p class="subtitle">
+        We’re warming up the Frankiemoji studio for the holidays —<br />
+        custom emojis for you, your friends, and your family.
+      </p>
+
+      <p class="go-live">Holiday expressions are on the way.</p>
+      <p class="holiday-line">Join the early access list and be the first to know when we open.</p>
+
+      <!-- email notify form -->
+      <div class="email-row">
+        <input
+          id="notify-email"
+          class="email-input"
+          type="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+        />
+        <button class="cta" type="button" id="notify-submit">
+          Notify Me
+        </button>
       </div>
+      <p id="notify-message"></p>
 
-      <p class="go-live">Going live: November 28, 2025</p>
-      <p class="black-friday">Black Friday</p>
-
-      <!-- logo trigger -->
+      <!-- logo trigger (keeps secret preview / pass key) -->
       <div class="secret-logo" onclick="openAccessModal()">
         <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji Logo">
       </div>
@@ -268,46 +343,61 @@
   </div>
 
   <script>
-    // countdown
-    const launchDate = new Date("2025-11-28T00:00:00").getTime();
-    const countdownEl = document.getElementById("countdown");
+    // === Notify form → /api/notify ===
+    const emailInput = document.getElementById("notify-email");
+    const submitBtn  = document.getElementById("notify-submit");
+    const msgEl      = document.getElementById("notify-message");
 
-    const timer = setInterval(function() {
-      const now = new Date().getTime();
-      const distance = launchDate - now;
+    async function submitNotify() {
+      const email = (emailInput.value || "").trim();
+      msgEl.style.color = "rgba(44,36,25,.6)";
+      msgEl.textContent = "";
 
-      if (distance < 0) {
-        clearInterval(timer);
-        countdownEl.innerHTML = "We are live 🎉";
+      if (!email || !email.includes("@")) {
+        msgEl.style.color = "#c0392b";
+        msgEl.textContent = "Please enter a valid email.";
         return;
       }
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending…";
 
-      document.getElementById("days").textContent = String(days).padStart(2,'0');
-      document.getElementById("hours").textContent = String(hours).padStart(2,'0');
-      document.getElementById("minutes").textContent = String(minutes).padStart(2,'0');
-      document.getElementById("seconds").textContent = String(seconds).padStart(2,'0');
+      try {
+        const res = await fetch("/api/notify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
 
-      // re-trigger pulse each tick
-      const boxes = countdownEl.querySelectorAll(".timebox");
-      boxes.forEach(box => {
-        box.classList.remove("pulse");
-        void box.offsetWidth;
-        box.classList.add("pulse");
+        if (!res.ok) throw new Error("Request failed");
+
+        msgEl.style.color = "rgba(44,36,25,.7)";
+        msgEl.textContent = "You’re on the list. Thank you! ✨";
+        emailInput.value = "";
+      } catch (err) {
+        console.error(err);
+        msgEl.style.color = "#c0392b";
+        msgEl.textContent = "Something went wrong. Please try again in a moment.";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Notify Me";
+      }
+    }
+
+    if (submitBtn && emailInput) {
+      submitBtn.addEventListener("click", submitNotify);
+      emailInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") submitNotify();
       });
-    }, 1000);
+    }
 
-    // modal gate
+    // === modal gate (unchanged) ===
     const SECRET_CODE = "frankiemoji2025";
     const PREVIEW_URL = "index-main.html";
 
     const modal = document.getElementById("access-modal");
     const input = document.getElementById("access-input");
-    const submitBtn = document.getElementById("access-submit");
+    const submitBtnAccess = document.getElementById("access-submit");
     const cancelBtn = document.getElementById("access-cancel");
     const errorMsg = document.getElementById("access-error");
 
@@ -318,7 +408,7 @@
       setTimeout(() => input.focus(), 50);
     }
 
-    submitBtn.addEventListener("click", checkCode);
+    submitBtnAccess.addEventListener("click", checkCode);
     input.addEventListener("keydown", (e) => {
       if(e.key === "Enter") checkCode();
     });
