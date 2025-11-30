@@ -18,7 +18,7 @@
       margin:0;
       background:
         linear-gradient(to bottom,
-          rgba(255,255,255,0.65) 0%,
+          rgba(255,255,255,0.7) 0%,
           rgba(250,243,224,0.9) 32%,
           var(--cream) 70%,
           var(--cream) 100%
@@ -32,56 +32,122 @@
       overflow-x:hidden;
     }
 
-    /* subtle snow layer */
-    .snow-layer{
+    /* SNOW + STARS WRAP (only above the fold) */
+    .snow-wrap{
       position:fixed;
-      inset:0;
+      top:0;
+      left:0;
+      right:0;
+      height:75vh;
       pointer-events:none;
       overflow:hidden;
       z-index:0;
+      transform:translateY(0);
+      will-change:transform;
     }
-    .snowflake{
+    .snow-layer{
       position:absolute;
-      top:-12px;
-      width:5px;
-      height:5px;
-      background:rgba(255,255,255,0.95);
-      border-radius:50%;
-      opacity:0.9;
-      box-shadow:0 0 6px rgba(255,255,255,0.7);
-      filter:blur(0.3px);
-      animation:snowfall 16s linear infinite;
+      inset:0;
     }
-    @keyframes snowfall{
+    .flake{
+      position:absolute;
+      top:-24px;
+      border-radius:50%;
+      pointer-events:none;
+    }
+
+    /* base snow */
+    .snow{
+      background:rgba(255,255,255,0.9);
+      box-shadow:0 0 8px rgba(255,255,255,0.7);
+      opacity:0.85;
+      animation:snowfallDrift linear infinite;
+      filter:blur(0.8px);
+    }
+
+    /* tiny twinkling stars */
+    .twinkle{
+      width:3px;
+      height:3px;
+      background:transparent;
+      box-shadow:0 0 7px rgba(255,255,255,0.9);
+      opacity:0;
+      animation:twinkle 4.5s ease-in-out infinite;
+      filter:blur(0.3px);
+    }
+
+    /* depth layers */
+    .snow-layer.back .snow{
+      width:4px;
+      height:4px;
+      opacity:0.45;
+      filter:blur(1.2px);
+      animation-duration:28s;
+    }
+    .snow-layer.front .snow{
+      width:7px;
+      height:7px;
+      opacity:0.9;
+      filter:blur(0.9px);
+      animation-duration:18s;
+    }
+
+    /* drift + fall */
+    @keyframes snowfallDrift{
       0%{
-        transform:translate3d(0,-12px,0);
+        transform:translate3d(0,-24px,0);
+      }
+      50%{
+        transform:translate3d(12px,45vh,0);
       }
       100%{
-        transform:translate3d(0,110vh,0);
+        transform:translate3d(-6px,100vh,0);
       }
     }
 
-    /* positions + slight timing variation */
-    .snowflake:nth-child(1){ left:4%;  animation-duration:18s; animation-delay:-2s;}
-    .snowflake:nth-child(2){ left:10%; animation-duration:20s; animation-delay:-6s;}
-    .snowflake:nth-child(3){ left:18%; animation-duration:17s; animation-delay:-9s;}
-    .snowflake:nth-child(4){ left:25%; animation-duration:21s; animation-delay:-4s;}
-    .snowflake:nth-child(5){ left:32%; animation-duration:19s; animation-delay:-11s;}
-    .snowflake:nth-child(6){ left:39%; animation-duration:20s; animation-delay:-7s;}
-    .snowflake:nth-child(7){ left:46%; animation-duration:18s; animation-delay:-13s;}
-    .snowflake:nth-child(8){ left:53%; animation-duration:22s; animation-delay:-5s;}
-    .snowflake:nth-child(9){ left:60%; animation-duration:19s; animation-delay:-10s;}
-    .snowflake:nth-child(10){left:67%; animation-duration:21s; animation-delay:-3s;}
-    .snowflake:nth-child(11){left:74%; animation-duration:20s; animation-delay:-8s;}
-    .snowflake:nth-child(12){left:81%; animation-duration:18s; animation-delay:-14s;}
-    .snowflake:nth-child(13){left:88%; animation-duration:23s; animation-delay:-6s;}
-    .snowflake:nth-child(14){left:94%; animation-duration:19s; animation-delay:-12s;}
-    .snowflake:nth-child(15){left:12%; animation-duration:24s; animation-delay:-15s;}
-    .snowflake:nth-child(16){left:28%; animation-duration:20s; animation-delay:-1s;}
-    .snowflake:nth-child(17){left:44%; animation-duration:22s; animation-delay:-5s;}
-    .snowflake:nth-child(18){left:58%; animation-duration:18s; animation-delay:-9s;}
-    .snowflake:nth-child(19){left:72%; animation-duration:21s; animation-delay:-4s;}
-    .snowflake:nth-child(20){left:86%; animation-duration:19s; animation-delay:-7s;}
+    /* twinkle pulse */
+    @keyframes twinkle{
+      0%,100%{ opacity:0; transform:scale(0.9); }
+      30%{ opacity:0.9; transform:scale(1.15); }
+      55%{ opacity:0.35; }
+    }
+
+    /* individual positions & timings (back layer) */
+    .snow-layer.back .snow:nth-child(1){ left:4%;  animation-delay:-2s;}
+    .snow-layer.back .snow:nth-child(2){ left:14%; animation-delay:-9s;}
+    .snow-layer.back .snow:nth-child(3){ left:24%; animation-delay:-5s;}
+    .snow-layer.back .snow:nth-child(4){ left:35%; animation-delay:-13s;}
+    .snow-layer.back .snow:nth-child(5){ left:46%; animation-delay:-7s;}
+    .snow-layer.back .snow:nth-child(6){ left:57%; animation-delay:-16s;}
+    .snow-layer.back .snow:nth-child(7){ left:68%; animation-delay:-4s;}
+    .snow-layer.back .snow:nth-child(8){ left:78%; animation-delay:-11s;}
+    .snow-layer.back .snow:nth-child(9){ left:88%; animation-delay:-6s;}
+    .snow-layer.back .snow:nth-child(10){left:96%; animation-delay:-14s;}
+
+    /* front layer */
+    .snow-layer.front .snow:nth-child(1){ left:10%; animation-delay:-3s;}
+    .snow-layer.front .snow:nth-child(2){ left:20%; animation-delay:-8s;}
+    .snow-layer.front .snow:nth-child(3){ left:32%; animation-delay:-12s;}
+    .snow-layer.front .snow:nth-child(4){ left:44%; animation-delay:-5s;}
+    .snow-layer.front .snow:nth-child(5){ left:56%; animation-delay:-10s;}
+    .snow-layer.front .snow:nth-child(6){ left:68%; animation-delay:-15s;}
+    .snow-layer.front .snow:nth-child(7){ left:80%; animation-delay:-4s;}
+    .snow-layer.front .snow:nth-child(8){ left:26%; animation-delay:-18s;}
+    .snow-layer.front .snow:nth-child(9){ left:62%; animation-delay:-1s;}
+    .snow-layer.front .snow:nth-child(10){left:90%; animation-delay:-9s;}
+
+    /* star positions */
+    .snow-layer.back .twinkle:nth-child(11){left:8%;  top:12vh;}
+    .snow-layer.back .twinkle:nth-child(12){left:28%; top:8vh;}
+    .snow-layer.back .twinkle:nth-child(13){left:52%; top:18vh;}
+    .snow-layer.back .twinkle:nth-child(14){left:72%; top:10vh;}
+    .snow-layer.back .twinkle:nth-child(15){left:88%; top:16vh;}
+
+    .snow-layer.front .twinkle:nth-child(11){left:18%; top:26vh;}
+    .snow-layer.front .twinkle:nth-child(12){left:38%; top:30vh;}
+    .snow-layer.front .twinkle:nth-child(13){left:60%; top:24vh;}
+    .snow-layer.front .twinkle:nth-child(14){left:76%; top:32vh;}
+    .snow-layer.front .twinkle:nth-child(15){left:92%; top:22vh;}
 
     main{
       flex:1;
@@ -290,28 +356,44 @@
 </head>
 <body>
 
-  <!-- subtle snow background -->
-  <div class="snow-layer">
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
-    <div class="snowflake"></div>
+  <!-- SNOW + STARS (two depth layers, above the fold) -->
+  <div class="snow-wrap">
+    <div class="snow-layer back">
+      <!-- 10 snowflakes + 5 twinkles -->
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake twinkle"></div>
+      <div class="flake twinkle"></div>
+      <div class="flake twinkle"></div>
+      <div class="flake twinkle"></div>
+      <div class="flake twinkle"></div>
+    </div>
+    <div class="snow-layer front">
+      <!-- 10 snowflakes + 5 twinkles -->
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake snow"></div>
+      <div class="flake twinkle"></div>
+      <div class="flake twinkle"></div>
+      <div class="flake twinkle"></div>
+      <div class="flake twinkle"></div>
+      <div class="flake twinkle"></div>
+    </div>
   </div>
 
   <main>
@@ -414,7 +496,18 @@
       });
     }
 
-    // === modal gate (secret preview stays the same) ===
+    // === Parallax for snow wrap ===
+    const snowWrap = document.querySelector(".snow-wrap");
+    if (snowWrap) {
+      window.addEventListener("scroll", () => {
+        const y = window.scrollY || window.pageYOffset || 0;
+        const maxShift = 22; // px
+        const offset = Math.max(-maxShift, Math.min(maxShift, y * -0.2));
+        snowWrap.style.transform = `translateY(${offset}px)`;
+      });
+    }
+
+    // === modal gate (secret preview) ===
     const SECRET_CODE = "frankiemoji2025";
     const PREVIEW_URL = "index-main.html";
 
