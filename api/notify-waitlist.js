@@ -29,7 +29,7 @@ function setCors(res) {
     process.env.FRONTEND_BASE_URL || 'https://www.frankiemoji.com';
 
   res.setHeader('Access-Control-Allow-Origin', origin);
-  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
@@ -37,22 +37,28 @@ function setCors(res) {
 
 export default async function handler(req, res) {
   setCors(res);
-  console.log('[notify-waitlist] incoming', { method: req.method, url: req.url });
+  console.log('[notify-waitlist] incoming', {
+    method: req.method,
+    url: req.url,
+  });
 
   // OPTIONS preflight – always JSON
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ ok: true }));
+    res.end(JSON.stringify({ ok: true, preflight: true }));
     return;
   }
 
-  // Only POST
+  // For safety: if something hits us with GET, still reply JSON (no 405)
   if (req.method !== 'POST') {
-    res.statusCode = 405;
-    res.setHeader('Allow', 'POST,OPTIONS');
+    res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ ok: false, error: 'Method Not Allowed', method: req.method }));
+    res.end(JSON.stringify({
+      ok: false,
+      info: 'notify-waitlist expects POST',
+      method: req.method,
+    }));
     return;
   }
 
@@ -70,7 +76,7 @@ export default async function handler(req, res) {
     body =
       typeof req.body === 'string'
         ? JSON.parse(req.body)
-        : req.body || {};
+        : (req.body || {});
   } catch (err) {
     console.error('[notify-waitlist] invalid JSON', err);
     res.statusCode = 400;
