@@ -1,5 +1,4 @@
 <!doctype html>
-<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -17,18 +16,18 @@
     *{box-sizing:border-box;}
     body{
       margin:0;
-      /* Slightly darker, warm holiday gradient */
+      /* Darker, richer holiday gradient */
       background:
         radial-gradient(circle at 50% 0,
-          #f0d39a 0%,
-          #f5e1b8 32%,
-          rgba(245,229,196,0.9) 55%,
+          #e7b066 0%,
+          #f0c98f 30%,
+          rgba(243,214,166,0.96) 55%,
           transparent 75%
         ),
         linear-gradient(to bottom,
-          #f0d4a0 0%,
-          #f3dfb8 40%,
-          #f6ebd2 75%,
+          #dfaa5c 0%,
+          #efc88f 35%,
+          #f4dfb2 70%,
           var(--cream) 100%
         );
       color:var(--espresso);
@@ -40,7 +39,7 @@
       overflow-x:hidden;
     }
 
-    /* ORNAMENT FRAME (soft baubles) — only above fold */
+    /* ORNAMENT FRAME (multi-color baubles) — only above fold */
     .ornaments-wrap{
       position:fixed;
       top:0;
@@ -53,15 +52,12 @@
     .ornament{
       position:absolute;
       border-radius:50%;
-      opacity:0.55;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.95) 0%, rgba(255,248,230,0.85) 18%, transparent 55%),
-        radial-gradient(circle at 50% 70%, rgba(228,166,72,0.8) 0%, rgba(196,132,54,0.25) 35%, transparent 70%);
+      opacity:0.60;
       box-shadow:0 12px 26px rgba(44,36,25,0.18);
-      filter:blur(0.2px);
+      filter:blur(0.15px);
     }
     .ornament::before{
-      /* tiny string */
+      /* hanging string */
       content:"";
       position:absolute;
       top:-16px;
@@ -69,17 +65,41 @@
       transform:translateX(-50%);
       width:2px;
       height:18px;
-      background:linear-gradient(to bottom, rgba(44,36,25,0.3), rgba(44,36,25,0.05));
+      background:linear-gradient(to bottom, rgba(44,36,25,0.32), rgba(44,36,25,0.05));
       border-radius:999px;
+    }
+    /* color variants */
+    .ornament--gold{
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.95) 0%, rgba(255,248,230,0.9) 20%, transparent 56%),
+        radial-gradient(circle at 50% 75%, rgba(228,166,72,0.85) 0%, rgba(196,132,54,0.3) 36%, transparent 72%);
+    }
+    .ornament--red{
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.9) 0%, rgba(255,239,234,0.9) 20%, transparent 56%),
+        radial-gradient(circle at 50% 75%, rgba(206,74,74,0.88) 0%, rgba(153,35,51,0.35) 36%, transparent 72%);
+    }
+    .ornament--green{
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.9) 0%, rgba(233,249,238,0.9) 20%, transparent 56%),
+        radial-gradient(circle at 50% 75%, rgba(32,129,92,0.9) 0%, rgba(14,80,60,0.4) 36%, transparent 72%);
     }
 
     /* positions / sizes for frame */
-    .ornament--tl-large{ top:6vh;  left:9vw;  width:78px; height:78px; }
-    .ornament--tl-small{ top:19vh; left:4vw;  width:52px; height:52px; opacity:0.42; }
-    .ornament--tr-large{ top:9vh;  right:10vw; width:80px; height:80px; }
-    .ornament--tr-small{ top:24vh; right:5vw; width:54px; height:54px; opacity:0.4; }
-    .ornament--bl-small{ top:35vh; left:14vw; width:48px; height:48px; opacity:0.38; }
-    .ornament--br-small{ top:38vh; right:15vw;width:50px; height:50px; opacity:0.38; }
+    .orn-pos-1 { top:6vh;  left:7vw;  width:82px; height:82px; }
+    .orn-pos-2 { top:20vh; left:3vw;  width:52px; height:52px; opacity:0.45; }
+    .orn-pos-3 { top:10vh; right:8vw; width:86px; height:86px; }
+    .orn-pos-4 { top:23vh; right:4vw; width:54px; height:54px; opacity:0.45; }
+    .orn-pos-5 { top:32vh; left:14vw; width:46px; height:46px; opacity:0.4; }
+    .orn-pos-6 { top:35vh; right:16vw;width:50px; height:50px; opacity:0.42; }
+    .orn-pos-7 { top:14vh; left:22vw; width:40px; height:40px; opacity:0.5; }
+    .orn-pos-8 { top:16vh; right:23vw;width:44px; height:44px; opacity:0.5; }
+    .orn-pos-9 { top:5vh;  left:34vw; width:38px; height:38px; opacity:0.46; }
+    .orn-pos-10{ top:7vh;  right:34vw;width:42px; height:42px; opacity:0.46; }
+    .orn-pos-11{ top:28vh; left:28vw;width:36px; height:36px; opacity:0.52; }
+    .orn-pos-12{ top:27vh; right:28vw;width:36px; height:36px; opacity:0.52; }
+    .orn-pos-13{ top:40vh; left:6vw; width:40px; height:40px; opacity:0.38; }
+    .orn-pos-14{ top:42vh; right:7vw;width:42px; height:42px; opacity:0.38; }
 
     /* SNOW + STARS WRAP (only above the fold) */
     .snow-wrap{
@@ -231,7 +251,7 @@
       font-size:0.7rem;
       letter-spacing:0.12em;
       font-weight:600;
-      border:1px solid rgba(44,36,25,0.04);
+      border:1px solid rgba(44,36,25,0.06);
       margin-bottom:1.1rem;
     }
     h1{
@@ -255,8 +275,6 @@
       font-size:.85rem;
       color:rgba(44,36,25,.6);
       margin-bottom:1.1rem;
-      letter-spacing:0;
-      text-transform:none;
     }
 
     .email-row{
@@ -400,8 +418,8 @@
       h1{font-size:2.05rem;}
       .subtitle{margin-bottom:1.1rem;}
       .secret-logo::before{width:210px; height:210px;}
-      .ornament--tl-large{ left:4vw;}
-      .ornament--tr-large{ right:4vw;}
+      .orn-pos-1{ left:3vw;}
+      .orn-pos-3{ right:3vw;}
     }
   </style>
 </head>
@@ -409,12 +427,20 @@
 
   <!-- ORNAMENT FRAME -->
   <div class="ornaments-wrap">
-    <div class="ornament ornament--tl-large"></div>
-    <div class="ornament ornament--tl-small"></div>
-    <div class="ornament ornament--tr-large"></div>
-    <div class="ornament ornament--tr-small"></div>
-    <div class="ornament ornament--bl-small"></div>
-    <div class="ornament ornament--br-small"></div>
+    <div class="ornament ornament--gold  orn-pos-1"></div>
+    <div class="ornament ornament--red   orn-pos-2"></div>
+    <div class="ornament ornament--gold  orn-pos-3"></div>
+    <div class="ornament ornament--green orn-pos-4"></div>
+    <div class="ornament ornament--gold  orn-pos-5"></div>
+    <div class="ornament ornament--red   orn-pos-6"></div>
+    <div class="ornament ornament--green orn-pos-7"></div>
+    <div class="ornament ornament--green orn-pos-8"></div>
+    <div class="ornament ornament--red   orn-pos-9"></div>
+    <div class="ornament ornament--gold  orn-pos-10"></div>
+    <div class="ornament ornament--gold  orn-pos-11"></div>
+    <div class="ornament ornament--red   orn-pos-12"></div>
+    <div class="ornament ornament--green orn-pos-13"></div>
+    <div class="ornament ornament--gold  orn-pos-14"></div>
   </div>
 
   <!-- SNOW + STARS (two depth layers, above the fold) -->
