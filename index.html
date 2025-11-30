@@ -12,277 +12,189 @@
       --cream:#FAF3E0;
       --espresso:#2C2419;
       --paper:#FEFAF3;
+      --gold:#E0A85A;
+      --soft-red:#E78B7D;
+      --soft-green:#7BBE98;
+      --soft-ivory:#F8E6C8;
     }
+
     *{box-sizing:border-box;}
+
     body{
       margin:0;
-      /* Darker, richer holiday gradient */
-      background:
-        radial-gradient(circle at 50% 0,
-          #e7b066 0%,
-          #f0c98f 30%,
-          rgba(243,214,166,0.96) 55%,
-          transparent 75%
-        ),
-        linear-gradient(to bottom,
-          #dfaa5c 0%,
-          #efc88f 35%,
-          #f4dfb2 70%,
-          var(--cream) 100%
-        );
-      color:var(--espresso);
-      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       min-height:100vh;
+      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--espresso);
+      background:radial-gradient(circle at top, #FFEBC7 0%, #F0C27B 40%, #E8B56A 70%, #F9E7C9 100%);
       display:flex;
       flex-direction:column;
-      position:relative;
       overflow-x:hidden;
     }
 
-    /* subtle paper grain overlay */
-    body::before{
-      content:"";
-      position:fixed;
+    .scene{
+      position:relative;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:1.8rem 1.2rem 1.4rem;
+    }
+
+    /* Snow + twinkles layers */
+    .snow-layer{
+      pointer-events:none;
+      position:absolute;
       inset:0;
-      pointer-events:none;
-      z-index:0;
-      opacity:0.35;
-      background-image:
-        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.35) 0, transparent 1px),
-        radial-gradient(circle at 3px 2px, rgba(243,220,180,0.35) 0, transparent 1px);
-      background-size:6px 6px, 7px 7px;
-      mix-blend-mode:soft-light;
-    }
-
-    /* ORNAMENT FRAME (multi-color baubles) — only above fold */
-    .ornaments-wrap{
-      position:fixed;
-      top:0;
-      left:0;
-      right:0;
-      height:75vh;
-      pointer-events:none;
-      z-index:0;
-    }
-    .ornament{
-      position:absolute;
-      border-radius:50%;
-      opacity:0.9;
-      box-shadow:0 14px 30px rgba(44,36,25,0.28);
-      filter:blur(0.15px);
-    }
-    .ornament::before{
-      /* hanging string */
-      content:"";
-      position:absolute;
-      top:-16px;
-      left:50%;
-      transform:translateX(-50%);
-      width:2px;
-      height:18px;
-      background:linear-gradient(to bottom, rgba(44,36,25,0.38), rgba(44,36,25,0.08));
-      border-radius:999px;
-    }
-    /* color variants (stronger tones) */
-    .ornament--gold{
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.98) 0%, rgba(255,248,230,0.95) 20%, transparent 56%),
-        radial-gradient(circle at 50% 75%, rgba(235,176,82,0.98) 0%, rgba(187,121,37,0.55) 38%, transparent 72%);
-    }
-    .ornament--red{
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.98) 0%, rgba(255,239,234,0.95) 20%, transparent 56%),
-        radial-gradient(circle at 50% 75%, rgba(214,68,68,0.98) 0%, rgba(153,35,51,0.6) 38%, transparent 72%);
-    }
-    .ornament--green{
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.98) 0%, rgba(233,249,238,0.95) 20%, transparent 56%),
-        radial-gradient(circle at 50% 75%, rgba(35,141,98,0.98) 0%, rgba(12,86,61,0.6) 38%, transparent 72%);
-    }
-
-    /* positions / sizes for frame */
-    .orn-pos-1 { top:6vh;  left:7vw;  width:86px; height:86px; }
-    .orn-pos-2 { top:22vh; left:3vw;  width:60px; height:60px; opacity:0.8; }
-    .orn-pos-3 { top:10vh; right:8vw; width:90px; height:90px; }
-    .orn-pos-4 { top:23vh; right:4vw; width:60px; height:60px; opacity:0.8; }
-    .orn-pos-5 { top:32vh; left:14vw; width:52px; height:52px; opacity:0.82; }
-    .orn-pos-6 { top:35vh; right:16vw;width:56px; height:56px; opacity:0.82; }
-    .orn-pos-7 { top:14vh; left:22vw; width:46px; height:46px; opacity:0.88; }
-    .orn-pos-8 { top:16vh; right:23vw;width:50px; height:50px; opacity:0.88; }
-    .orn-pos-9 { top:5vh;  left:34vw; width:44px; height:44px; opacity:0.9; }
-    .orn-pos-10{ top:7vh;  right:34vw;width:46px; height:46px; opacity:0.9; }
-    .orn-pos-11{ top:28vh; left:28vw;width:42px; height:42px; opacity:0.9; }
-    .orn-pos-12{ top:27vh; right:28vw;width:42px; height:42px; opacity:0.9; }
-    .orn-pos-13{ top:40vh; left:6vw; width:48px; height:48px; opacity:0.8; }
-    .orn-pos-14{ top:42vh; right:7vw;width:50px; height:50px; opacity:0.8; }
-    /* extra ornaments for richer frame */
-    .orn-pos-15{ top:18vh; left:10vw; width:40px; height:40px; opacity:0.92; }
-    .orn-pos-16{ top:18vh; right:11vw;width:40px; height:40px; opacity:0.92; }
-    .orn-pos-17{ top:30vh; left:20vw;width:36px; height:36px; opacity:0.94; }
-    .orn-pos-18{ top:30vh; right:21vw;width:36px; height:36px; opacity:0.94; }
-    .orn-pos-19{ top:10vh; left:18vw;width:34px; height:34px; opacity:0.96; }
-    .orn-pos-20{ top:10vh; right:19vw;width:34px; height:34px; opacity:0.96; }
-
-    /* SNOW + STARS WRAP (only above the fold) */
-    .snow-wrap{
-      position:fixed;
-      top:0;
-      left:0;
-      right:0;
-      height:75vh;
-      pointer-events:none;
       overflow:hidden;
       z-index:0;
-      transform:translateY(0);
-      will-change:transform;
     }
-    .snow-layer{
+
+    .snow-back::before,
+    .snow-front::before{
+      content:"";
       position:absolute;
-      inset:0;
+      top:-10%;
+      left:-10%;
+      width:120%;
+      height:120%;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.36) 0, rgba(255,255,255,0) 60%),
+        radial-gradient(circle, rgba(255,255,255,0.28) 0, rgba(255,255,255,0) 55%),
+        radial-gradient(circle, rgba(255,255,255,0.18) 0, rgba(255,255,255,0) 50%);
+      background-size:280px 280px, 360px 360px, 420px 420px;
+      background-repeat:repeat;
+      opacity:.35;
+      animation:snowDriftBack 42s linear infinite;
     }
-    .flake{
+
+    .snow-front::before{
+      opacity:.50;
+      background-size:220px 220px, 300px 300px, 360px 360px;
+      animation:snowDriftFront 26s linear infinite;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+      -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+    }
+
+    @keyframes snowDriftBack{
+      0% { transform:translate3d(0,0,0); }
+      100% { transform:translate3d(-40px,40px,0); }
+    }
+
+    @keyframes snowDriftFront{
+      0% { transform:translate3d(0,0,0); }
+      100% { transform:translate3d(-80px,80px,0); }
+    }
+
+    /* Ornaments */
+    .ornaments-layer{
+      pointer-events:none;
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:60vh;
+      max-height:540px;
+      z-index:1;
+      overflow:visible;
+    }
+
+    .ornament{
+      position:absolute;
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:radial-gradient(circle at 30% 20%, #fff 0, rgba(255,255,255,0.75) 18%, rgba(0,0,0,0.08) 100%);
+      box-shadow:0 10px 30px rgba(44,36,25,0.26);
+      transform-origin:center top;
+      animation:ornamentFloat 18s ease-in-out infinite;
+    }
+
+    .ornament::before{
+      content:"";
+      position:absolute;
+      top:-12px;
+      left:50%;
+      transform:translateX(-50%);
+      width:8px;
+      height:10px;
+      border-radius:4px 4px 2px 2px;
+      background:rgba(44,36,25,0.14);
+    }
+
+    .ornament::after{
+      content:"";
       position:absolute;
       top:-24px;
-      border-radius:50%;
-      pointer-events:none;
+      left:50%;
+      transform:translateX(-50%);
+      width:1px;
+      height:22px;
+      background:linear-gradient(to top, rgba(44,36,25,0.19), rgba(44,36,25,0.02));
     }
 
-    /* base snow */
-    .snow{
-      background:rgba(255,255,255,0.9);
-      box-shadow:0 0 8px rgba(255,255,255,0.7);
-      opacity:0.9;
-      animation:snowfallDrift linear infinite;
-      filter:blur(0.8px);
+    /* Color variations */
+    .ornament.gold{
+      background:radial-gradient(circle at 30% 20%, #FFF4DA 0, #F2C67D 28%, #C88A3B 100%);
+    }
+    .ornament.red{
+      background:radial-gradient(circle at 30% 20%, #FFECEC 0, #F39A8A 28%, #C4564B 100%);
+    }
+    .ornament.green{
+      background:radial-gradient(circle at 30% 20%, #E9FFF3 0, #8BD1A8 28%, #4C9D78 100%);
+    }
+    .ornament.cream{
+      background:radial-gradient(circle at 30% 20%, #FFFFFF 0, #F8EBD7 28%, #DFC6A2 100%);
     }
 
-    /* tiny twinkling stars */
-    .twinkle{
-      width:3px;
-      height:3px;
-      background:transparent;
-      box-shadow:0 0 7px rgba(255,255,255,0.95);
-      opacity:0;
-      animation:twinkle 4.5s ease-in-out infinite;
-      filter:blur(0.3px);
+    .ornament.small{width:26px;height:26px;}
+    .ornament.medium{width:34px;height:34px;}
+    .ornament.large{width:56px;height:56px;}
+
+    .ornament.slow{animation-duration:22s;}
+    .ornament.fast{animation-duration:15s;}
+
+    @keyframes ornamentFloat{
+      0%   { transform:translate3d(0,0,0); }
+      50%  { transform:translate3d(0,10px,0); }
+      100% { transform:translate3d(0,0,0); }
     }
 
-    /* depth layers */
-    .snow-layer.back .snow{
-      width:5px;
-      height:5px;
-      opacity:0.55;
-      filter:blur(1.4px);
-      animation-duration:28s;
-    }
-    .snow-layer.front .snow{
-      width:8px;
-      height:8px;
-      opacity:0.92;
-      filter:blur(0.9px);
-      animation-duration:18s;
-    }
-
-    /* drift + fall */
-    @keyframes snowfallDrift{
-      0%{
-        transform:translate3d(0,-24px,0);
-      }
-      50%{
-        transform:translate3d(14px,46vh,0);
-      }
-      100%{
-        transform:translate3d(-8px,100vh,0);
-      }
-    }
-
-    /* twinkle pulse */
-    @keyframes twinkle{
-      0%,100%{ opacity:0; transform:scale(0.9); }
-      30%{ opacity:1; transform:scale(1.18); }
-      55%{ opacity:0.4; }
-    }
-
-    /* individual positions & timings (back layer snow) */
-    .snow-layer.back .snow:nth-child(1){ left:4%;  animation-delay:-2s;}
-    .snow-layer.back .snow:nth-child(2){ left:14%; animation-delay:-9s;}
-    .snow-layer.back .snow:nth-child(3){ left:24%; animation-delay:-5s;}
-    .snow-layer.back .snow:nth-child(4){ left:35%; animation-delay:-13s;}
-    .snow-layer.back .snow:nth-child(5){ left:46%; animation-delay:-7s;}
-    .snow-layer.back .snow:nth-child(6){ left:57%; animation-delay:-16s;}
-    .snow-layer.back .snow:nth-child(7){ left:68%; animation-delay:-4s;}
-    .snow-layer.back .snow:nth-child(8){ left:78%; animation-delay:-11s;}
-    .snow-layer.back .snow:nth-child(9){ left:88%; animation-delay:-6s;}
-    .snow-layer.back .snow:nth-child(10){left:96%; animation-delay:-14s;}
-
-    /* front layer snow */
-    .snow-layer.front .snow:nth-child(1){ left:10%; animation-delay:-3s;}
-    .snow-layer.front .snow:nth-child(2){ left:20%; animation-delay:-8s;}
-    .snow-layer.front .snow:nth-child(3){ left:32%; animation-delay:-12s;}
-    .snow-layer.front .snow:nth-child(4){ left:44%; animation-delay:-5s;}
-    .snow-layer.front .snow:nth-child(5){ left:56%; animation-delay:-10s;}
-    .snow-layer.front .snow:nth-child(6){ left:68%; animation-delay:-15s;}
-    .snow-layer.front .snow:nth-child(7){ left:80%; animation-delay:-4s;}
-    .snow-layer.front .snow:nth-child(8){ left:26%; animation-delay:-18s;}
-    .snow-layer.front .snow:nth-child(9){ left:62%; animation-delay:-1s;}
-    .snow-layer.front .snow:nth-child(10){left:90%; animation-delay:-9s;}
-
-    /* star positions */
-    .snow-layer.back .twinkle:nth-child(11){left:8%;  top:12vh;}
-    .snow-layer.back .twinkle:nth-child(12){left:28%; top:8vh;}
-    .snow-layer.back .twinkle:nth-child(13){left:52%; top:18vh;}
-    .snow-layer.back .twinkle:nth-child(14){left:72%; top:10vh;}
-    .snow-layer.back .twinkle:nth-child(15){left:88%; top:16vh;}
-
-    .snow-layer.front .twinkle:nth-child(11){left:18%; top:26vh;}
-    .snow-layer.front .twinkle:nth-child(12){left:38%; top:30vh;}
-    .snow-layer.front .twinkle:nth-child(13){left:60%; top:24vh;}
-    .snow-layer.front .twinkle:nth-child(14){left:76%; top:32vh;}
-    .snow-layer.front .twinkle:nth-child(15){left:92%; top:22vh;}
-
+    /* Main card */
     main{
-      flex:1;
+      position:relative;
+      z-index:3;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:1.6rem 1.2rem 1.6rem;
-      position:relative;
-      z-index:1;
+      width:100%;
+      pointer-events:none;
     }
 
-    /* delayed storefront-style entrance for the card */
     .card{
+      pointer-events:auto;
       background:var(--paper);
-      border:1px solid rgba(44,36,25,.04);
-      border-radius:1.5rem;
-      max-width:650px;
+      border-radius:1.6rem;
+      max-width:560px;
       width:100%;
+      padding:2.2rem 2.4rem 2.1rem;
       text-align:center;
-      padding:2rem 2.4rem 2.1rem;
-      box-shadow:0 22px 60px rgba(44,36,25,.12);
+      box-shadow:
+        0 26px 70px rgba(44,36,25,0.35),
+        0 0 0 1px rgba(255,255,255,0.65);
       opacity:0;
-      transform:translateY(18px) scale(0.985);
-      animation:cardIn 0.9s ease forwards;
-      animation-delay:0.9s; /* delay so snow/ornaments greet first */
+      transform:translateY(22px) scale(0.98);
+      transition:opacity .7s ease, transform .7s ease;
     }
-    @keyframes cardIn{
-      0%{
-        opacity:0;
-        transform:translateY(18px) scale(0.985);
-      }
-      60%{
-        opacity:1;
-        transform:translateY(-4px) scale(1);
-      }
-      100%{
-        opacity:1;
-        transform:translateY(0) scale(1);
-      }
+
+    .card.card-visible{
+      opacity:1;
+      transform:translateY(0) scale(1);
     }
 
     .pill{
       display:inline-block;
-      background:#FAF3E0;
+      background:rgba(250,243,224,0.95);
       padding:0.55rem 1.8rem;
       border-radius:999px;
       text-transform:uppercase;
@@ -290,132 +202,179 @@
       letter-spacing:0.12em;
       font-weight:600;
       border:1px solid rgba(44,36,25,0.06);
-      margin-bottom:1.1rem;
-      transition:box-shadow .18s ease, transform .18s ease;
-    }
-    .pill:hover{
-      box-shadow:0 0 0 1px rgba(255,255,255,0.8),
-                 0 6px 16px rgba(44,36,25,0.18);
-      transform:translateY(-1px);
+      margin-bottom:1.2rem;
     }
 
     h1{
       font-family:"DM Serif Display",serif;
-      font-size:2.4rem;
-      margin:0 0 .4rem;
+      font-size:2.25rem;
+      margin:0 0 .55rem;
     }
+
     .subtitle{
-      color:rgba(44,36,25,.65);
-      margin-bottom:1.4rem;
+      color:rgba(44,36,25,.68);
+      margin-bottom:0.4rem;
       line-height:1.45;
+      font-size:.9rem;
     }
 
-    .go-live{
-      font-size:.82rem;
-      color:rgba(44,36,25,.75);
-      margin-bottom:0.1rem;
+    .subtitle-strong{
       font-weight:600;
+      margin-bottom:0.85rem;
+      font-size:.87rem;
     }
-    .holiday-line{
+
+    .subtitle-small{
       font-size:.85rem;
-      color:rgba(44,36,25,.6);
-      margin-bottom:1.1rem;
+      color:rgba(44,36,25,0.6);
+      margin-bottom:1.3rem;
     }
 
-    .email-row{
+    /* Notify form */
+    .notify-form{
       display:flex;
-      flex-wrap:wrap;
-      gap:0.5rem;
+      align-items:center;
       justify-content:center;
-      margin-bottom:0.8rem;
-    }
-    .email-input{
-      min-width:0;
-      flex:1 1 180px;
-      max-width:260px;
-      padding:0.55rem 0.7rem;
-      border-radius:999px;
-      border:1px solid rgba(44,36,25,.18);
-      font-size:.8rem;
+      gap:.45rem;
+      margin-bottom:.4rem;
+      flex-wrap:wrap;
     }
 
-    .cta{
-      display:inline-block;
+    .notify-input-wrap{
+      position:relative;
+      flex:1 1 220px;
+      max-width:260px;
+    }
+
+    .notify-input{
+      width:100%;
+      padding:.55rem .85rem;
+      border-radius:999px;
+      border:1px solid rgba(44,36,25,0.16);
+      font-size:.83rem;
+      outline:none;
+      background:#F9F4EA;
+      transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .notify-input:focus{
+      border-color:rgba(44,36,25,0.5);
+      background:#FFF9F0;
+      box-shadow:0 0 0 1px rgba(44,36,25,0.08);
+    }
+
+    .notify-btn{
+      appearance:none;
+      border:none;
+      border-radius:999px;
+      padding:.55rem 1.25rem;
+      font-size:.83rem;
+      font-weight:600;
+      cursor:pointer;
       background:#2C2419;
       color:#fff;
-      border:none;
-      padding:0.65rem 1.6rem;
-      border-radius:999px;
-      font-weight:600;
-      font-size:.8rem;
-      cursor:pointer;
-      box-shadow:0 10px 26px rgba(44,36,25,0.18);
-      transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+      box-shadow:0 10px 26px rgba(44,36,25,0.55);
+      transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+      white-space:nowrap;
     }
-    .cta:hover{
+
+    .notify-btn:hover{
       transform:translateY(-1px);
-      background:#1f1912;
-      box-shadow:0 12px 30px rgba(44,36,25,0.22);
+      box-shadow:0 13px 32px rgba(44,36,25,0.6);
+      background:#1F1912;
     }
 
-    #notify-message{
-      font-size:.75rem;
-      color:rgba(44,36,25,.6);
-      min-height:1.1em;
-      margin-bottom:0.5rem;
+    .notify-btn:active{
+      transform:translateY(0);
+      box-shadow:0 8px 18px rgba(44,36,25,0.45);
     }
 
-    /* logo trigger */
+    .notify-btn[disabled]{
+      opacity:.6;
+      cursor:default;
+      transform:none;
+      box-shadow:0 8px 18px rgba(44,36,25,0.4);
+    }
+
+    .notify-error,
+    .notify-success{
+      font-size:.74rem;
+      margin-top:.35rem;
+    }
+
+    .notify-error{
+      color:#c0392b;
+    }
+
+    .notify-success{
+      color:#1E824C;
+    }
+
+    /* Logo trigger */
     .secret-logo{
       text-align:center;
       margin-top:1.2rem;
-      margin-bottom:.4rem;
       cursor:pointer;
       position:relative;
     }
+
     .secret-logo::before{
       content:"";
       position:absolute;
       top:50%; left:50%;
       transform:translate(-50%, -50%);
-      width:270px; height:270px;
-      background:
-        radial-gradient(circle at 50% 35%, rgba(255,255,255,0.9) 0%, transparent 52%),
-        radial-gradient(circle, rgba(250,243,224,0.7) 0%, transparent 70%);
+      width:230px; height:230px;
+      background:radial-gradient(circle, rgba(250,243,224,0.75) 0%, transparent 70%);
       z-index:-1;
+      opacity:.95;
     }
+
     .secret-logo img{
-      max-width:232px;
+      max-width:210px;
       height:auto;
       display:inline-block;
-      transition:transform .3s ease, filter .3s ease;
-      filter:drop-shadow(0 10px 25px rgba(44,36,25,0.05));
+      transition:transform .25s ease, filter .25s ease;
+      filter:drop-shadow(0 10px 25px rgba(44,36,25,0.15));
     }
+
     .secret-logo:hover img{
-      transform:scale(1.04);
-      filter:drop-shadow(0 14px 28px rgba(44,36,25,0.15));
+      transform:translateY(-2px);
+      filter:drop-shadow(0 16px 30px rgba(44,36,25,0.35));
     }
 
     footer{
-      text-align:center;
-      padding:1.2rem 1rem 1.5rem;
-      font-size:.72rem;
-      color:rgba(44,36,25,.45);
       position:relative;
-      z-index:1;
+      z-index:2;
+      text-align:center;
+      padding:0 1rem 1.1rem;
+      font-size:.72rem;
+      color:rgba(44,36,25,.48);
+      margin-top:auto;
     }
 
-    /* modal */
+    footer span{
+      backdrop-filter:blur(4px);
+      -webkit-backdrop-filter:blur(4px);
+      background:linear-gradient(to right, rgba(250,243,224,0.85), rgba(250,243,224,0.78));
+      padding:.35rem .9rem;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.8);
+      box-shadow:0 6px 16px rgba(44,36,25,0.22);
+    }
+
+    /* Access modal */
     .access-backdrop{
       position:fixed;
       inset:0;
-      background:rgba(44,36,25,.25);
+      background:rgba(44,36,25,.22);
       display:none;
       align-items:center;
       justify-content:center;
       z-index:40;
-      backdrop-filter:blur(3px);
+      backdrop-filter:blur(4px);
+      -webkit-backdrop-filter:blur(4px);
     }
+
     .access-box{
       background:#fff;
       border-radius:1.2rem;
@@ -423,18 +382,34 @@
       width:92%;
       max-width:340px;
       text-align:left;
-      box-shadow:0 18px 50px rgba(44,36,25,0.12);
+      box-shadow:0 18px 50px rgba(44,36,25,.35);
     }
-    .access-box h2{margin:0 0 .4rem;font-size:1.25rem;}
-    .access-box p{margin:0 0 .7rem;font-size:.8rem;color:rgba(44,36,25,.6);}
+
+    .access-box h2{
+      margin:0 0 .4rem;
+      font-size:1.25rem;
+    }
+
+    .access-box p{
+      margin:0 0 .7rem;
+      font-size:.8rem;
+      color:rgba(44,36,25,.65);
+    }
+
     .access-box input{
       width:100%;
       padding:.55rem .6rem;
-      border:1px solid rgba(44,36,25,.12);
+      border:1px solid rgba(44,36,25,.18);
       border-radius:.6rem;
       font-size:.8rem;
       margin-bottom:.6rem;
+      outline:none;
     }
+
+    .access-box input:focus{
+      border-color:rgba(44,36,25,.65);
+    }
+
     .access-box button{
       display:inline-block;
       background:#2C2419;
@@ -446,240 +421,259 @@
       font-size:.78rem;
       cursor:pointer;
     }
+
     .access-box button.secondary{
       background:transparent;
-      color:rgba(44,36,25,.5);
+      color:rgba(44,36,25,.6);
       margin-left:.35rem;
     }
-    .error-msg{
+
+    .access-error{
       color:#c0392b;
       font-size:.72rem;
       margin-top:.45rem;
+      display:none;
     }
 
-    @media (max-width:540px){
-      main{padding:1rem .9rem 1.1rem;}
-      .card{padding:1.6rem 1rem 1.6rem;}
-      h1{font-size:2.05rem;}
-      .subtitle{margin-bottom:1.1rem;}
-      .secret-logo::before{width:210px; height:210px;}
-      .orn-pos-1{ left:3vw;}
-      .orn-pos-3{ right:3vw;}
+    @media (max-width:640px){
+      .scene{padding:1.4rem 1rem 1.1rem;}
+      .card{padding:1.7rem 1.2rem 1.7rem;}
+      h1{font-size:2rem;}
+      .subtitle{font-size:.86rem;}
+      .subtitle-strong{font-size:.84rem;}
+      .subtitle-small{font-size:.82rem;}
+      .notify-form{flex-direction:column;align-items:stretch;}
+      .notify-btn{width:100%;justify-content:center;text-align:center;}
+      .secret-logo::before{width:200px;height:200px;}
+      .ornaments-layer{height:52vh;}
     }
   </style>
 </head>
 <body>
+  <div class="scene">
+    <!-- Snow / twinkles -->
+    <div class="snow-layer snow-back" aria-hidden="true"></div>
+    <div class="snow-layer snow-front" aria-hidden="true"></div>
 
-  <!-- ORNAMENT FRAME -->
-  <div class="ornaments-wrap">
-    <div class="ornament ornament--gold  orn-pos-1"></div>
-    <div class="ornament ornament--red   orn-pos-2"></div>
-    <div class="ornament ornament--gold  orn-pos-3"></div>
-    <div class="ornament ornament--green orn-pos-4"></div>
-    <div class="ornament ornament--gold  orn-pos-5"></div>
-    <div class="ornament ornament--red   orn-pos-6"></div>
-    <div class="ornament ornament--green orn-pos-7"></div>
-    <div class="ornament ornament--green orn-pos-8"></div>
-    <div class="ornament ornament--red   orn-pos-9"></div>
-    <div class="ornament ornament--gold  orn-pos-10"></div>
-    <div class="ornament ornament--gold  orn-pos-11"></div>
-    <div class="ornament ornament--red   orn-pos-12"></div>
-    <div class="ornament ornament--green orn-pos-13"></div>
-    <div class="ornament ornament--gold  orn-pos-14"></div>
-    <div class="ornament ornament--red   orn-pos-15"></div>
-    <div class="ornament ornament--green orn-pos-16"></div>
-    <div class="ornament ornament--gold  orn-pos-17"></div>
-    <div class="ornament ornament--red   orn-pos-18"></div>
-    <div class="ornament ornament--green orn-pos-19"></div>
-    <div class="ornament ornament--gold  orn-pos-20"></div>
-  </div>
+    <!-- Ornaments -->
+    <div class="ornaments-layer" aria-hidden="true">
+      <!-- left cluster -->
+      <span class="ornament large gold slow" style="top:9%; left:6%;" data-depth="0.18"></span>
+      <span class="ornament medium cream fast" style="top:20%; left:14%;" data-depth="0.12"></span>
+      <span class="ornament small red slow" style="top:30%; left:10%;" data-depth="0.2"></span>
+      <span class="ornament small green fast" style="top:36%; left:22%;" data-depth="0.16"></span>
 
-  <!-- SNOW + STARS (two depth layers, above the fold) -->
-  <div class="snow-wrap">
-    <div class="snow-layer back">
-      <!-- 10 snowflakes + 5 twinkles -->
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake twinkle"></div>
-      <div class="flake twinkle"></div>
-      <div class="flake twinkle"></div>
-      <div class="flake twinkle"></div>
-      <div class="flake twinkle"></div>
+      <!-- mid-top cluster -->
+      <span class="ornament medium red fast" style="top:6%; left:35%;" data-depth="0.24"></span>
+      <span class="ornament small cream slow" style="top:18%; left:44%;" data-depth="0.18"></span>
+      <span class="ornament small green fast" style="top:26%; left:38%;" data-depth="0.22"></span>
+
+      <!-- right cluster -->
+      <span class="ornament large cream slow" style="top:11%; right:7%;" data-depth="0.17"></span>
+      <span class="ornament medium gold fast" style="top:23%; right:14%;" data-depth="0.2"></span>
+      <span class="ornament small red slow" style="top:31%; right:9%;" data-depth="0.26"></span>
+      <span class="ornament small green fast" style="top:38%; right:20%;" data-depth="0.15"></span>
+
+      <!-- deeper background small accents -->
+      <span class="ornament small cream slow" style="top:14%; left:55%; opacity:.75;" data-depth="0.08"></span>
+      <span class="ornament small red fast" style="top:34%; left:63%; opacity:.8;" data-depth="0.1"></span>
+      <span class="ornament small green slow" style="top:18%; right:32%; opacity:.78;" data-depth="0.12"></span>
     </div>
-    <div class="snow-layer front">
-      <!-- 10 snowflakes + 5 twinkles -->
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake snow"></div>
-      <div class="flake twinkle"></div>
-      <div class="flake twinkle"></div>
-      <div class="flake twinkle"></div>
-      <div class="flake twinkle"></div>
-      <div class="flake twinkle"></div>
-    </div>
-  </div>
 
-  <main>
-    <div class="card">
-      <div class="pill">Holiday Preview</div>
-      <h1>A Season of Expressions.</h1>
+    <main>
+      <div class="card card-hidden" id="season-card">
+        <div class="pill">Holiday Preview</div>
+        <h1>A Season of Expressions.</h1>
 
-      <p class="subtitle">
-        We’re warming up the Frankiemoji studio for the holidays —<br />
+        <p class="subtitle">
+          We’re warming up the Frankiemoji studio for the holidays — custom emojis for you, your friends, and your family.
+        </p>
+        <p class="subtitle-strong">
+          Your emoji portrait with a uniquely crafted style is on the way.
+        </p>
+        <p class="subtitle-small">
+          Join the early access list and be the first to know when we open.
+        </p>
 
-      </p>
+        <form class="notify-form" id="notify-form">
+          <div class="notify-input-wrap">
+            <input
+              type="email"
+              id="notify-email"
+              class="notify-input"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <button type="submit" class="notify-btn" id="notify-btn">
+            Notify Me
+          </button>
+        </form>
+        <div id="notify-error" class="notify-error" style="display:none;">
+          Please enter a valid email address.
+        </div>
+        <div id="notify-success" class="notify-success" style="display:none;">
+          You’re on the list — we’ll email you when the studio opens.
+        </div>
 
-      <p class="go-live">Your emoji portrait with a uniquely crafted style for you, your friends, and your family.</p>
-      <p class="holiday-line">Join the early access list and be the first to know when we open.</p>
-
-      <!-- email notify form -->
-      <div class="email-row">
-        <input
-          id="notify-email"
-          class="email-input"
-          type="email"
-          placeholder="you@example.com"
-          autocomplete="email"
-        />
-        <button class="cta" type="button" id="notify-submit">
-          Notify Me
-        </button>
+        <!-- logo trigger -->
+        <div class="secret-logo" id="secret-logo">
+          <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji Logo">
+        </div>
       </div>
-      <p id="notify-message"></p>
-
-      <!-- logo trigger (secret preview / pass key) -->
-      <div class="secret-logo" onclick="openAccessModal()">
-        <img src="images/frankiemoji-logo-main.png" alt="Frankiemoji Logo">
-      </div>
-    </div>
-  </main>
+    </main>
+  </div>
 
   <footer>
-    © 2025 Frankiemoji™ Studios JMK LLC. Born with a Pencil. Evolved with Technology.
+    <span>© 2025 Frankiemoji™ Studios JMK LLC. Born with a Pencil. Evolved with Technology.</span>
   </footer>
 
-  <!-- modal -->
+  <!-- access modal -->
   <div id="access-modal" class="access-backdrop">
     <div class="access-box">
-      <h2>Pre-release access</h2>
-      <p>Enter your code to view the studio preview.</p>
+      <h2>Studio preview access</h2>
+      <p>Enter your access code to view the studio preview experience.</p>
       <input type="password" id="access-input" placeholder="Enter code">
       <button id="access-submit">Continue</button>
       <button id="access-cancel" class="secondary">Cancel</button>
-      <p id="access-error" class="error-msg" style="display:none;">Code not recognized.</p>
+      <p id="access-error" class="access-error">Code not recognized.</p>
     </div>
   </div>
 
   <script>
-    // === Notify form → /api/notify ===
-    const emailInput = document.getElementById("notify-email");
-    const notifyBtn  = document.getElementById("notify-submit");
-    const msgEl      = document.getElementById("notify-message");
+    // ----- Card entrance delay -----
+    window.addEventListener("load", () => {
+      const card = document.getElementById("season-card");
+      setTimeout(() => {
+        card.classList.add("card-visible");
+      }, 900);
+    });
 
-    async function submitNotify() {
-      const email = (emailInput.value || "").trim();
-      msgEl.style.color = "rgba(44,36,25,.6)";
-      msgEl.textContent = "";
+    // ----- Simple parallax for ornaments -----
+    (function(){
+      const layer = document.querySelector(".ornaments-layer");
+      if(!layer) return;
+      const ornaments = Array.from(layer.querySelectorAll(".ornament"));
 
-      if (!email || !email.includes("@")) {
-        msgEl.style.color = "#c0392b";
-        msgEl.textContent = "Please enter a valid email.";
+      window.addEventListener("scroll", () => {
+        const scrollY = window.scrollY || window.pageYOffset;
+        ornaments.forEach(el => {
+          const depth = parseFloat(el.getAttribute("data-depth") || "0.15");
+          const translateY = scrollY * depth * 0.15;
+          el.style.transform = `translate3d(0, ${translateY}px, 0)`;
+        });
+      });
+    })();
+
+    // ----- Notify form -----
+    const notifyForm   = document.getElementById("notify-form");
+    const notifyEmail  = document.getElementById("notify-email");
+    const notifyBtn    = document.getElementById("notify-btn");
+    const notifyError  = document.getElementById("notify-error");
+    const notifySuccess= document.getElementById("notify-success");
+
+    function isValidEmail(value){
+      const email = value.trim();
+      // simple, robust email pattern
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    notifyEmail.addEventListener("input", () => {
+      notifyError.style.display = "none";
+      notifySuccess.style.display = "none";
+    });
+
+    notifyForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = notifyEmail.value.trim();
+
+      notifyError.style.display = "none";
+      notifySuccess.style.display = "none";
+
+      if(!isValidEmail(email)){
+        notifyError.textContent = "Please enter a valid email address.";
+        notifyError.style.display = "block";
         return;
       }
 
       notifyBtn.disabled = true;
-      notifyBtn.textContent = "Sending…";
 
-      try {
+      try{
         const res = await fetch("/api/notify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email })
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({ email })
         });
 
-        if (!res.ok) throw new Error("Request failed");
-
-        msgEl.style.color = "rgba(44,36,25,.7)";
-        msgEl.textContent = "You’re on the list. Thank you! ✨";
-        emailInput.value = "";
-      } catch (err) {
-        console.error(err);
-        msgEl.style.color = "#c0392b";
-        msgEl.textContent = "Something went wrong. Please try again in a moment.";
-      } finally {
+        if(res.ok){
+          notifySuccess.textContent = "You’re on the list — we’ll email you when the studio opens.";
+          notifySuccess.style.display = "block";
+          notifyEmail.value = "";
+        }else{
+          notifyError.textContent = "Something went wrong. Please try again.";
+          notifyError.style.display = "block";
+        }
+      }catch(err){
+        notifyError.textContent = "Network hiccup. Please try again in a moment.";
+        notifyError.style.display = "block";
+      }finally{
         notifyBtn.disabled = false;
-        notifyBtn.textContent = "Notify Me";
       }
-    }
+    });
 
-    if (notifyBtn && emailInput) {
-      notifyBtn.addEventListener("click", submitNotify);
-      emailInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") submitNotify();
-      });
-    }
-
-    // === Parallax for snow + ornaments ===
-    const snowWrap = document.querySelector(".snow-wrap");
-    const ornamentsWrap = document.querySelector(".ornaments-wrap");
-    function handleScroll(){
-      const y = window.scrollY || window.pageYOffset || 0;
-      const maxShift = 22; // px
-      const snowOffset = Math.max(-maxShift, Math.min(maxShift, y * -0.2));
-      const ornamentOffset = Math.max(-maxShift, Math.min(maxShift, y * -0.1));
-      if (snowWrap) snowWrap.style.transform = `translateY(${snowOffset}px)`;
-      if (ornamentsWrap) ornamentsWrap.style.transform = `translateY(${ornamentOffset}px)`;
-    }
-    window.addEventListener("scroll", handleScroll);
-
-    // === modal gate (secret preview) ===
+    // ----- Secret logo access gate -----
     const SECRET_CODE = "frankiemoji2025";
     const PREVIEW_URL = "index-main.html";
 
-    const modal = document.getElementById("access-modal");
-    const input = document.getElementById("access-input");
-    const accessBtn = document.getElementById("access-submit");
-    const cancelBtn = document.getElementById("access-cancel");
-    const errorMsg = document.getElementById("access-error");
+    const logoTrigger = document.getElementById("secret-logo");
+    const modal       = document.getElementById("access-modal");
+    const accessInput = document.getElementById("access-input");
+    const accessSubmit= document.getElementById("access-submit");
+    const accessCancel= document.getElementById("access-cancel");
+    const accessError = document.getElementById("access-error");
 
     function openAccessModal(){
       modal.style.display = "flex";
-      errorMsg.style.display = "none";
-      input.value = "";
-      setTimeout(() => input.focus(), 50);
+      accessError.style.display = "none";
+      accessInput.value = "";
+      setTimeout(() => accessInput.focus(), 60);
     }
 
-    accessBtn.addEventListener("click", checkCode);
-    input.addEventListener("keydown", (e) => {
-      if(e.key === "Enter") checkCode();
-    });
-    cancelBtn.addEventListener("click", () => {
+    function closeAccessModal(){
       modal.style.display = "none";
-    });
+    }
 
-    function checkCode(){
-      const attempt = input.value.trim();
+    function checkAccessCode(){
+      const attempt = accessInput.value.trim();
       if(attempt === SECRET_CODE){
         window.location.href = PREVIEW_URL;
-      } else {
-        errorMsg.style.display = "block";
+      }else{
+        accessError.style.display = "block";
       }
     }
+
+    logoTrigger.addEventListener("click", openAccessModal);
+    accessSubmit.addEventListener("click", checkAccessCode);
+    accessCancel.addEventListener("click", closeAccessModal);
+
+    accessInput.addEventListener("keydown", (e) => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        checkAccessCode();
+      }else{
+        accessError.style.display = "none";
+      }
+    });
+
+    modal.addEventListener("click", (e) => {
+      if(e.target === modal){
+        closeAccessModal();
+      }
+    });
   </script>
 </body>
 </html>
