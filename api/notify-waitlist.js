@@ -147,7 +147,7 @@ export default async function handler(req, res) {
         });
       } catch (err) {
         console.error('[notify-waitlist] Resend email error', err);
-        // Do not fail the whole request just because email failed
+        // Don’t fail the whole request because email failed
       }
     } else {
       console.warn('[notify-waitlist] Resend client not configured, skipping email');
