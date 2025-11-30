@@ -9,8 +9,8 @@ import { Resend } from 'resend';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE;
 
-const resendKey   = process.env.RESEND_API_KEY;
-const resendFrom  = process.env.RESEND_FROM_EMAIL || 'waitlist@frankiemoji.com';
+const resendKey  = process.env.RESEND_API_KEY;
+const resendFrom = process.env.RESEND_FROM_EMAIL || 'waitlist@frankiemoji.com';
 
 const supabase =
   supabaseUrl && supabaseKey
@@ -39,18 +39,20 @@ export default async function handler(req, res) {
   setCors(res);
   console.log('[notify-waitlist] incoming', { method: req.method, url: req.url });
 
-  // Preflight
+  // OPTIONS preflight – always JSON
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;
-    res.end('OK');
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ ok: true }));
     return;
   }
 
-  // Only POST is allowed
+  // Only POST
   if (req.method !== 'POST') {
     res.statusCode = 405;
     res.setHeader('Allow', 'POST,OPTIONS');
-    res.end('Method Not Allowed');
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ ok: false, error: 'Method Not Allowed', method: req.method }));
     return;
   }
 
@@ -105,7 +107,7 @@ export default async function handler(req, res) {
       .single();
 
     if (error) {
-      // Unique-constraint violation => already on list, that’s OK
+      // Unique-constraint = already on list
       if (error.code === '23505') {
         console.log('[notify-waitlist] duplicate email', email);
         res.statusCode = 200;
