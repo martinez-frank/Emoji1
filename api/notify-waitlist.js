@@ -6,157 +6,168 @@ import { Resend } from 'resend';
 
 // ---------- Env ----------
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE;
-
-const resendKey  = process.env.RESEND_API_KEY;
-const resendFrom = process.env.RESEND_FROM_EMAIL || 'waitlist@frankiemoji.com';
+const supabaseUrl  = process.env.SUPABASE_URL;
+const supabaseKey  = process.env.SUPABASE_SERVICE_ROLE;
+const resendKey    = process.env.RESEND_API_KEY;
+const resendFrom   = process.env.RESEND_FROM_EMAIL || 'waitlist@frankiemoji.com';
 
 const supabase =
-  supabaseUrl && supabaseKey
-    ? createClient(supabaseUrl, supabaseKey)
-    : null;
+  supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 const resend =
-  resendKey
-    ? new Resend(resendKey)
-    : null;
+  resendKey ? new Resend(resendKey) : null;
 
-// ---------- CORS ----------
-
-function setCors(res) {
-  const origin =
-    process.env.FRONTEND_BASE_URL || 'https://www.frankiemoji.com';
-
+function cors(res) {
+  const origin = process.env.FRONTEND_BASE_URL || 'https://www.frankiemoji.com';
   res.setHeader('Access-Control-Allow-Origin', origin);
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type'
+  );
+}
+
+function sendJson(res, status, payload) {
+  res.statusCode = status;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(payload));
+}
+
+// Safely read body whether this is a plain Node function or Next-style
+async function readBody(req) {
+  if (req.body && typeof req.body === 'object') {
+    // Next.js API route style – already parsed
+    return req.body;
+  }
+
+  if (typeof req.body === 'string') {
+    // Some runtimes put the raw string on req.body
+    try {
+      return JSON.parse(req.body);
+    } catch {
+      return {};
+    }
+  }
+
+  // Raw Node.js IncomingMessage – read the stream
+  return await new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', chunk => { data += chunk; });
+    req.on('end', () => {
+      if (!data) return resolve({});
+      try {
+        resolve(JSON.parse(data));
+      } catch (err) {
+        reject(err);
+      }
+    });
+    req.on('error', reject);
+  });
 }
 
 // ---------- Handler ----------
 
 export default async function handler(req, res) {
-  setCors(res);
+  cors(res);
+
   console.log('[notify-waitlist] incoming', {
     method: req.method,
     url: req.url,
   });
 
-  // OPTIONS preflight – always JSON
   if (req.method === 'OPTIONS') {
+    // Preflight
     res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ ok: true, preflight: true }));
+    res.end('OK');
     return;
   }
 
-  // For safety: if something hits us with GET, still reply JSON (no 405)
   if (req.method !== 'POST') {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({
+    return sendJson(res, 405, {
       ok: false,
-      info: 'notify-waitlist expects POST',
-      method: req.method,
-    }));
-    return;
+      error: `Method ${req.method} Not Allowed`,
+    });
   }
 
   if (!supabase) {
-    console.error('[notify-waitlist] Supabase not configured');
-    res.statusCode = 500;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ ok: false, error: 'Server not configured' }));
-    return;
+    console.error('[notify-waitlist] Supabase env missing');
+    return sendJson(res, 500, {
+      ok: false,
+      error: 'Server not configured',
+    });
   }
 
-  // Parse JSON body
-  let body = {};
+  let body;
   try {
-    body =
-      typeof req.body === 'string'
-        ? JSON.parse(req.body)
-        : (req.body || {});
+    body = await readBody(req);
   } catch (err) {
-    console.error('[notify-waitlist] invalid JSON', err);
-    res.statusCode = 400;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ ok: false, error: 'Invalid JSON' }));
-    return;
+    console.error('[notify-waitlist] JSON parse error', err);
+    return sendJson(res, 400, { ok: false, error: 'Invalid JSON body' });
   }
 
   const {
     email,
     tag = 'splash',
-    userAgent,
-    referer,
-  } = body;
+    userAgent = '',
+    referer = '',
+  } = body || {};
 
-  if (!email || !email.includes('@')) {
-    res.statusCode = 400;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ ok: false, error: 'Invalid email' }));
-    return;
+  if (!email || typeof email !== 'string' || !email.includes('@')) {
+    return sendJson(res, 400, { ok: false, error: 'Invalid email' });
   }
 
   try {
-    // Insert into notify_waitlist
+    // ----- Insert into Supabase -----
     const { data, error } = await supabase
       .from('notify_waitlist')
-      .insert([{
-        email,
-        tag,
-        user_agent: userAgent || null,
-        referer: referer || null,
-      }])
+      .insert([
+        {
+          email,
+          tag,
+          user_agent: userAgent,
+          referer,
+        },
+      ])
       .select()
       .single();
 
     if (error) {
-      // Unique-constraint = already on list
-      if (error.code === '23505') {
-        console.log('[notify-waitlist] duplicate email', email);
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ ok: true, duplicate: true }));
-        return;
-      }
-
-      console.error('[notify-waitlist] insert error', error);
-      res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ ok: false, error: 'Database error' }));
-      return;
+      console.error('[notify-waitlist] Supabase insert error', error);
+      return sendJson(res, 500, {
+        ok: false,
+        error: 'Database error',
+      });
     }
 
-    // Fire-and-forget confirmation email
-    if (resend && resendFrom) {
+    // ----- Optional confirmation email -----
+    if (resend && resendKey) {
       try {
         await resend.emails.send({
           from: resendFrom,
           to: email,
-          subject: 'You’re on the Frankiemoji holiday list 🎄',
+          subject: 'You’re on the Frankiemoji holiday list ✨',
           text:
-`Thanks for joining the Frankiemoji holiday waitlist.
-
-You’ll be the first to know when the studio opens
-and we start shipping emoji portraits.
-
-– Frankiemoji Studio`,
+            `Thanks for joining the Frankiemoji holiday preview list!\n\n` +
+            `You’ll be one of the first to know when the studio opens.\n\n` +
+            `– Frankiemoji Studios`,
         });
       } catch (err) {
         console.error('[notify-waitlist] Resend error', err);
-        // Don’t fail the request if email sending fails
+        // don’t fail the whole request if email send fails
       }
     }
 
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ ok: true, id: data.id }));
+    return sendJson(res, 200, {
+      ok: true,
+      email,
+      tag,
+      row: data,
+    });
   } catch (err) {
-    console.error('[notify-waitlist] unexpected error', err);
-    res.statusCode = 500;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ ok: false, error: 'Server error' }));
+    console.error('[notify-waitlist] Unexpected error', err);
+    return sendJson(res, 500, {
+      ok: false,
+      error: 'Unexpected server error',
+    });
   }
 }
